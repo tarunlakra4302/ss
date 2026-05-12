@@ -1,42 +1,93 @@
 "use client";
-
-import React from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import AnimatedScanLoader from '@/components/animated-scan-loader';
+import { useLoading } from './loading-context';
+
+
+const LOADER_FADEOUT_DURATION = 300; // ms — loader fade after expansion
+const TEXT_REVEAL_DELAY = 400;       // ms — when hero text + navbar appear
 
 export function InitialLoader({ children }: { children: React.ReactNode }) {
-  const [isLoading, setIsLoading] = React.useState(true);
+  const { setIsLoading, setIsComplete, setHeroImage } = useLoading();
   const shouldReduceMotion = useReducedMotion();
 
-  React.useEffect(() => {
+  const [loaderVisible, setLoaderVisible] = useState(true);
+  const [loaderOpacity, setLoaderOpacity] = useState(1);
+  const [childrenReady, setChildrenReady] = useState(false);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
     if (shouldReduceMotion) {
       setIsLoading(false);
+      setIsComplete(true);
+      setLoaderVisible(false);
+      setChildrenReady(true);
+    } else {
+      // Reset state on mount for non-reduce-motion users to ensure animations sync on every visit
+      setIsLoading(true);
+      setIsComplete(false);
     }
-  }, [shouldReduceMotion]);
+  }, [shouldReduceMotion, setIsLoading, setIsComplete]);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, []);
+
+  const handleScanComplete = (finalImage: string) => {
+    setTimeout(() => {
+      setHeroImage(finalImage);
+      setIsLoading(false);
+    }, 0);
+  };
+
+  const handleExpansionStart = () => {
+    setChildrenReady(true);
+  };
+
+  const handleExpansionComplete = () => {
+    setLoaderOpacity(0);
+
+    setTimeout(() => {
+      setLoaderVisible(false);
+      setIsComplete(true);
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }, LOADER_FADEOUT_DURATION);
+  };
 
   return (
-    <AnimatePresence mode="wait">
-      {isLoading ? (
+    <div className="relative min-h-screen bg-background overflow-x-clip flex flex-col flex-1">
+      <div
+        className={`relative flex flex-col flex-1 ${childrenReady ? 'pointer-events-auto' : 'pointer-events-none'}`}
+        style={{ opacity: childrenReady ? 1 : 0 }}
+      >
+        {children}
+      </div>
+
+      {loaderVisible && (
         <motion.div
-          key="loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-white"
+          className="fixed inset-0 z-[40]"
+          animate={{ opacity: loaderOpacity }}
+          transition={{
+            opacity: {
+              duration: LOADER_FADEOUT_DURATION / 1000,
+              ease: 'easeInOut',
+            },
+          }}
         >
-          <AnimatedScanLoader onComplete={() => setIsLoading(false)} />
-        </motion.div>
-      ) : (
-        <motion.div
-          key="content"
-          initial={{ opacity: 0, scale: 0.98 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="min-h-screen bg-white"
-        >
-          {children}
+          <AnimatedScanLoader
+            onComplete={handleScanComplete}
+            onExpansionStart={handleExpansionStart}
+            onExpansionComplete={handleExpansionComplete}
+          />
         </motion.div>
       )}
-    </AnimatePresence>
+    </div>
   );
 }
