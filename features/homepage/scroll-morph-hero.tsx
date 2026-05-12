@@ -274,10 +274,11 @@ export default function IntroAnimation() {
                 {/* Intro Text (Fades out) */}
                 <div className="absolute z-0 flex flex-col items-center justify-center text-center pointer-events-none top-1/2 -translate-y-1/2 px-4 sm:px-6 lg:px-12 w-full">
                     <motion.h1
-                        initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
-                        animate={introPhase === "circle" && textMorphValue < 0.5 ? { opacity: 1 - textMorphValue * 2, y: 0, filter: "blur(0px)" } : { opacity: 0, filter: "blur(10px)" }}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={introPhase === "circle" && textMorphValue < 0.5 ? { opacity: 1 - textMorphValue * 2, y: 0 } : { opacity: 0 }}
                         transition={{ duration: 1 }}
                         className="text-lg sm:text-xl lg:text-3xl font-medium tracking-tight text-gray-800"
+                        style={{ willChange: "transform, opacity" }}
                     >
                         The future is built on us.
                     </motion.h1>

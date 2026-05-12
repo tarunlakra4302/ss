@@ -18,11 +18,10 @@ const containerVariants: Variants = {
 };
 
 const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 20, filter: "blur(4px)" },
+  hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: "blur(0px)",
     transition: {
       duration: 0.8,
       ease: [0.22, 1, 0.36, 1],
@@ -48,14 +47,15 @@ export function Hero() {
         animate={isComplete ? "visible" : "hidden"}
         className="flex flex-col items-start text-left space-y-12 relative z-20 pt-20 w-full px-8 md:px-16 lg:px-24"
       >
-        <motion.div variants={itemVariants} className="space-y-4">
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter uppercase leading-[0.85] text-neutral-900">
+        <motion.div variants={itemVariants} className="space-y-4" style={{ willChange: "transform, opacity" }}>
+          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter uppercase leading-[0.85] text-neutral-900" style={{ willChange: "transform, opacity" }}>
             Sustainable <br /> <span className="text-neutral-400">Sundays</span>
           </motion.h1>
           <div className="flex flex-wrap gap-3">
             <Link href="/events" className="inline-block">
               <motion.span
                 variants={itemVariants}
+                style={{ willChange: "transform, opacity" }}
                 className="inline-block px-4 py-1.5 rounded-full border border-neutral-200 bg-white text-black text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-neutral-100 transition-colors shadow-sm"
               >
                 Upcoming Events
@@ -63,6 +63,7 @@ export function Hero() {
             </Link>
             <motion.span
               variants={itemVariants}
+              style={{ willChange: "transform, opacity" }}
               onClick={() => {
                 const element = document.getElementById('donation-section');
                 if (element) {
@@ -78,6 +79,7 @@ export function Hero() {
 
         <motion.p 
           variants={itemVariants}
+          style={{ willChange: "transform, opacity" }}
           className="max-w-[700px] text-xl md:text-2xl text-neutral-600 font-medium leading-relaxed tracking-tight"
         >
           Living sustainably shouldn&apos;t feel like a chore. We’ve distilled complex climate science into actionable, weekly rituals.
