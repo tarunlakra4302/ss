@@ -35,10 +35,6 @@ export function Hero() {
   return (
     <SectionContainer 
       className="min-h-screen flex items-center justify-center bg-[#a6ff00] relative overflow-hidden"
-      style={{
-        opacity: isComplete ? 1 : 0,
-        transition: 'opacity 0.05s linear'
-      }}
     >
       {/* Hero Content - Animates only after expansion complete */}
       <motion.div
