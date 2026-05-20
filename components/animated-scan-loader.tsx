@@ -130,7 +130,7 @@ const Loader = ({ onComplete, onExpansionComplete, onExpansionStart }: LoaderPro
               initial={{ y: '-100%' }}
               animate={{ y: 0 }}
               transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-              className="absolute inset-0 w-full h-full bg-[#a6ff00]"
+              className="absolute inset-0 w-full h-full bg-[#228B22]"
               style={{ zIndex: 10 }}
             />
           )}

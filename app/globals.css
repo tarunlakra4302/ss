@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -77,13 +77,19 @@
   --color-surface: #f7f7f7;
   --color-surface-container-low: #f5f5f5;
   --color-surface-container-high: #ebebeb;
-  --color-outline-variant: #e0e0e0;
+  --color-outline-variant: #c2c8c0;
   --font-serif: "Cormorant Garamond", "Georgia", serif;
   --font-sans: "Inter", "Helvetica Neue", sans-serif;
   --color-brand-bg: #F7F6F2;
   --color-brand-ink: #111111;
   --color-brand-accent: #E84333;
   --color-brand-border: rgba(17, 17, 17, 0.1);
+  --color-primary-container: #0f2e1b;
+  --color-primary-fixed-dim: #accfb3;
+  --color-on-primary-container: #76977e;
+  --color-on-primary: #ffffff;
+  --font-size-body-lg: 1.125rem;
+  --font-sora: "Sora", sans-serif;
 }
 
 body {
@@ -233,8 +239,8 @@ body {
 
 /* Adaptive menu button for large screens */
 @media (min-width: 768px) {
-  body .site-header-wrapper.is-dark-bg .nav-close-btn p,
-  body .site-header-wrapper.is-dark-bg .nav-close-btn .menu-button-icon {
+  body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn p,
+  body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn .menu-button-icon {
     color: #fff !important;
     fill: #fff !important;
   }

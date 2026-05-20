@@ -55,7 +55,7 @@ const EVENTS_DATA: Record<string, any> = {
   "plogging": {
     title: "Plogging",
     location: "Cubbon Park, KA",
-    subLocation: "Location TBD",
+    subLocation: "",
     date: "September 27, 2026",
     time: "07:00 PM – 11:00 PM",
     heroImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuClS9sW-O-mUHSHPzz3U-wOzQaIf5qtdOiwmw5USaMmnpmqI7x72jmnAcT3kIqeh6r0o7BMJarYqDvi1-P5U2N52Ln3R6qh519LIf13Dhbh91Wtt5LKhCbojLTyGwcTCqZHW47bH956BebYT-kB3esrg996Z3_1IrS_-rx6361_dQekB6LSXr1rx_FCloW9ejzcmHwxPDu1mTUeR1AI63gZl9XkL9oInpEByUOmFkDe6QIuwFV9F2RzTKwnNKRDZWOWCeaVCwFXFv8",
@@ -248,7 +248,9 @@ export function EventDetail({ slug }: EventDetailProps) {
                   </div>
                   <div className="flex flex-col">
                     <p className="font-bold text-lg leading-tight m-0">{event.location}</p>
-                    <p className="text-secondary text-sm leading-tight m-0 opacity-60">{event.subLocation}</p>
+                    {event.subLocation && (
+                      <p className="text-secondary text-sm leading-tight m-0 opacity-60">{event.subLocation}</p>
+                    )}
                   </div>
                 </div>
                 <div className="flex items-center gap-5">

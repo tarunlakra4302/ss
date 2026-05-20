@@ -62,10 +62,10 @@ export const Timeline = ({ data }: TimelineProps) => {
           >
             {/* Left Column / Top Section - Year */}
             <div className="flex flex-col">
-              <h2 className={`font-black text-[#0B1B34] leading-[1] md:leading-[0.8] tracking-tighter antialiased whitespace-nowrap ${
+              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased whitespace-nowrap ${
                 isNaN(Number(item.year))
-                  ? "text-[32px] md:text-[60px] lg:text-[80px]"
-                  : "text-[56px] md:text-[120px] lg:text-[180px]"
+                  ? "text-[32px] md:text-[60px] lg:text-[80px] leading-none"
+                  : "text-[56px] md:text-[120px] lg:text-[180px] leading-[1] md:leading-[0.8]"
               }`}>
                 {item.year}
               </h2>
@@ -78,7 +78,9 @@ export const Timeline = ({ data }: TimelineProps) => {
             </div>
 
             {/* Right Column / Bottom Section - Content */}
-            <div className="flex flex-col pt-0 md:pt-6">
+            <div className={`flex flex-col pt-0 ${
+              isNaN(Number(item.year)) ? "md:pt-1 lg:pt-[6px]" : "md:pt-6"
+            }`}>
               {/* Desktop Only Title */}
               <h3 className="hidden md:block text-[24px] font-bold text-[#0B1B34] mb-8 tracking-tight max-w-[500px]">
                 {item.title}

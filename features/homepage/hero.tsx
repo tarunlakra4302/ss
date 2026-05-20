@@ -34,7 +34,8 @@ export function Hero() {
 
   return (
     <SectionContainer 
-      className="min-h-screen flex items-center justify-center bg-[#a6ff00] relative overflow-hidden"
+      data-theme="dark"
+      className="min-h-screen flex items-center justify-center bg-primary-container relative overflow-hidden"
     >
       {/* Hero Content - Animates only after expansion complete */}
       <motion.div
@@ -44,39 +45,39 @@ export function Hero() {
         className="flex flex-col items-start text-left space-y-12 relative z-20 pt-20 w-full px-8 md:px-16 lg:px-24"
       >
         <motion.div variants={itemVariants} className="space-y-4" style={{ willChange: "transform, opacity" }}>
-          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter uppercase leading-[0.85] text-neutral-900" style={{ willChange: "transform, opacity" }}>
-            Sustainable <br /> <span className="text-neutral-400">Sundays</span>
+          <motion.h1 variants={itemVariants} className="text-5xl md:text-7xl lg:text-9xl font-sora font-black tracking-tight uppercase leading-[0.9] text-primary-fixed-dim" style={{ willChange: "transform, opacity" }}>
+            Sustainable <br /> <span className="text-outline-variant">Sundays</span>
           </motion.h1>
           <div className="flex flex-wrap gap-3">
             <Link href="/events" className="inline-block">
               <motion.span
                 variants={itemVariants}
                 style={{ willChange: "transform, opacity" }}
-                className="inline-block px-4 py-1.5 rounded-full border border-neutral-200 bg-white text-black text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-neutral-100 transition-colors shadow-sm"
+                className="inline-block px-4 py-1.5 rounded-full bg-surface text-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 transition-colors"
               >
                 Upcoming Events
               </motion.span>
             </Link>
-            <motion.span
-              variants={itemVariants}
-              style={{ willChange: "transform, opacity" }}
-              onClick={() => {
-                const element = document.getElementById('donation-section');
-                if (element) {
-                  element.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="inline-block px-4 py-1.5 rounded-full border border-neutral-200 bg-neutral-100/50 backdrop-blur-md text-neutral-900 md:text-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-neutral-200 transition-colors"
-            >
-              Donate us
-            </motion.span>
+            <Link href="#donation-section" className="inline-block">
+              <motion.span
+                variants={itemVariants}
+                style={{ willChange: "transform, opacity" }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('donation-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="inline-block px-4 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-white/10 transition-colors"
+              >
+                Donate us
+              </motion.span>
+            </Link>
           </div>
         </motion.div>
 
         <motion.p 
           variants={itemVariants}
           style={{ willChange: "transform, opacity" }}
-          className="max-w-[700px] text-xl md:text-2xl text-neutral-600 font-medium leading-relaxed tracking-tight"
+          className="max-w-[700px] text-body-lg md:text-2xl text-on-primary-container font-medium leading-relaxed tracking-tight"
         >
           Living sustainably shouldn&apos;t feel like a chore. We’ve distilled complex climate science into actionable, weekly rituals.
         </motion.p>

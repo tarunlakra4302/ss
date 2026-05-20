@@ -67,27 +67,30 @@ export function ArchiveHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-8 right-6 md:bottom-12 md:right-16 lg:right-24 flex flex-col items-center gap-6 z-20"
+        className="absolute bottom-8 right-6 md:bottom-12 md:right-16 lg:right-24 flex flex-col items-center gap-4 z-20"
       >
-        <div className="flex items-center gap-4">
-          <div className="h-[1px] w-12 bg-white/20" />
-          <span className="text-[10px] uppercase tracking-[0.4em] text-white/50 font-black">
+        <div className="flex items-center gap-3">
+          <div className="h-[1px] w-8 bg-white/20" />
+          <span className="text-[9px] uppercase tracking-[0.5em] text-white/60 font-medium">
             Scroll down
           </span>
-          <div className="h-[1px] w-12 bg-white/20" />
+          <div className="h-[1px] w-8 bg-white/20" />
         </div>
 
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="w-5 h-8 rounded-full border-2 border-white/20 flex justify-center p-1"
-        >
-          <div className="w-1 h-2 bg-brand-accent rounded-full" />
-        </motion.div>
+        <div className="w-5 h-9 rounded-full border border-white/10 flex justify-center p-1.5 bg-black/10 backdrop-blur-sm relative">
+          <motion.div
+            animate={{
+              y: [0, 12, 0],
+              opacity: [0.4, 1, 0.4],
+            }}
+            transition={{
+              duration: 2.2,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="w-1 h-1.5 bg-brand-accent rounded-full"
+          />
+        </div>
       </motion.div>
     </section>
   )
