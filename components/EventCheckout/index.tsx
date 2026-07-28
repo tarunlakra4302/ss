@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { submitToGoogleScript } from "@/lib/google/script";
 
 // ─── CONFIG — Edit these values for each event ───────────────────────────────
 const EVENT_CONFIG = {
@@ -55,7 +56,7 @@ export default function EventCheckout() {
     setQuantity((q) => Math.max(1, Math.min(EVENT_CONFIG.totalAvailable, q + delta)));
   };
 
-  const handleDetailsSubmit = () => {
+  const handleDetailsSubmit = async () => {
     resetError();
     if (!firstName.trim()) { setError("Please enter your first name."); return; }
     if (!lastName.trim())  { setError("Please enter your last name."); return; }
@@ -66,6 +67,22 @@ export default function EventCheckout() {
     }
 
     setIsLoading(true);
+
+    try {
+      await submitToGoogleScript({
+        formType: "event",
+        firstName,
+        lastName,
+        phone,
+        email,
+        quantity,
+        amount: ticketTotal,
+        donationTime: new Date().toLocaleString(),
+      });
+    } catch (e) {
+      console.warn("Failed to submit event checkout data to Google Sheets:", e);
+    }
+
     openPayment({
       amount: ticketTotal,
       type: "ticket",
@@ -81,7 +98,7 @@ export default function EventCheckout() {
     });
   };
 
-  const handleDonateNow = () => {
+  const handleDonateNow = async () => {
     resetError();
     const amount = resolvedDonation;
     if (!amount || isNaN(amount) || amount < 1) {
@@ -89,6 +106,17 @@ export default function EventCheckout() {
       return;
     }
     setIsLoading(true);
+
+    try {
+      await submitToGoogleScript({
+        formType: "donation",
+        amount: Number(amount),
+        donationTime: new Date().toLocaleString(),
+      });
+    } catch (e) {
+      console.warn("Failed to submit donation to Google Sheets:", e);
+    }
+
     openPayment({
       amount,
       type: "donation",

@@ -8,6 +8,13 @@ import { useLoading } from './loading-context';
 const LOADER_FADEOUT_DURATION = 300; // ms — loader fade after expansion
 const TEXT_REVEAL_DELAY = 400;       // ms — when hero text + navbar appear
 
+function removeLoaderShield() {
+  const shield = document.getElementById('__loader-shield');
+  if (shield) shield.remove();
+  document.body.classList.remove('is-loading');
+  document.documentElement.classList.remove('is-loading');
+}
+
 export function InitialLoader({ children }: { children: React.ReactNode }) {
   const { setIsLoading, setIsComplete, setHeroImage } = useLoading();
   const shouldReduceMotion = useReducedMotion();
@@ -23,10 +30,12 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       setIsComplete(true);
       setLoaderVisible(false);
       setChildrenReady(true);
+      removeLoaderShield();
     } else {
       // Reset state on mount for non-reduce-motion users to ensure animations sync on every visit
       setIsLoading(true);
       setIsComplete(false);
+      removeLoaderShield();
     }
   }, [shouldReduceMotion, setIsLoading, setIsComplete]);
 
@@ -52,10 +61,10 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
 
   const handleExpansionComplete = () => {
     setLoaderOpacity(0);
+    setIsComplete(true);
 
     setTimeout(() => {
       setLoaderVisible(false);
-      setIsComplete(true);
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     }, LOADER_FADEOUT_DURATION);
@@ -64,8 +73,9 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen bg-background overflow-x-clip flex flex-col flex-1">
       <div
-        className={`relative flex flex-col flex-1 ${childrenReady ? 'pointer-events-auto' : 'pointer-events-none'}`}
-        style={{ opacity: childrenReady ? 1 : 0 }}
+        className={`relative flex flex-col flex-1 transition-opacity duration-300 ${
+          childrenReady ? 'pointer-events-auto opacity-100 visible' : 'pointer-events-none opacity-0 invisible'
+        }`}
       >
         {children}
       </div>
@@ -73,6 +83,7 @@ export function InitialLoader({ children }: { children: React.ReactNode }) {
       {loaderVisible && (
         <motion.div
           className="fixed inset-0 z-[40]"
+          style={{ opacity: loaderOpacity }}
           animate={{ opacity: loaderOpacity }}
           transition={{
             opacity: {

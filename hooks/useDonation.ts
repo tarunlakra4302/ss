@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { submitToGoogleScript } from "@/lib/google/script";
 
 
 interface UseDonationOptions {
@@ -18,6 +19,22 @@ export function useDonation(options: UseDonationOptions = {}) {
   const initiateDonation = async (amount: number, note?: string) => {
     setError(null);
     setIsLoading(true);
+
+    // Record donation to Google Sheets via Apps Script Web App
+    try {
+      await submitToGoogleScript({
+        formType: "donation",
+        amount: Number(amount),
+        donationTime: new Date().toLocaleString(),
+        note: note || "",
+        donorName: options.donorName || "",
+        donorEmail: options.donorEmail || "",
+        donorPhone: options.donorPhone || "",
+      });
+    } catch (e) {
+      console.warn("Failed to log donation to Google Sheets:", e);
+    }
+
 
     try {
       // Step 1: Create Razorpay order from backend

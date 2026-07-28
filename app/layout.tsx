@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Sustainable Sundays",
   description: "Sustainable Sundays",
   icons: {
-    icon: "/image.png",
+    icon: "/SS Logo_white Text clean.png",
   },
 };
 
@@ -30,6 +30,7 @@ export default function RootLayout({
     >
       <head>
         <link rel="preload" as="image" href="/ss%20preloader%20images/1.jpeg" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/font-share/v2/css?f[]=nohemi@400,500,600,700,800,900&display=swap" />
       </head>
       <body className="min-h-full flex flex-col bg-white text-black font-sans relative">
         <LoadingProvider>

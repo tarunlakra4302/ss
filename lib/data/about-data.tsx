@@ -65,28 +65,28 @@ export const gridCards = [
 export const timelineData = [
   {
     year: "2025",
-    title: "Founded by Anjali Lakra",
-    description: "Sustainable Sundays was established with a singular mission: to improve cancer care, specifically radiation care, in developing countries and underserved communities globally."
+    title: "Founded in Bangalore",
+    description: "Sustainable Sundays was established with a singular mission: to simplify environmental action and build a community focused on sustainable weekly rituals and urban ecology."
   },
   {
     year: "January 2026",
-    title: "First Major Equipment Placement",
-    description: "Successfully facilitated the placement of a linear accelerator in Dakar, Senegal, marking our first significant infrastructure project in Africa."
+    title: "First Community Waste Audit",
+    description: "Successfully conducted our first neighborhood-wide waste audit and clean-up in Bangalore, diverting 500+ kg of waste from landfills and establishing local composting hubs."
   },
   {
     year: "February 2026",
-    title: "Expanding Through Adventure",
-    description: "Launched our signature mountain climbing initiatives, combining adventure with philanthropy to raise awareness and funds for global cancer care."
+    title: "Green Rituals Initiative",
+    description: "Launched our signature zero-waste guides and sustainable Sundays workshops, combining environmental awareness with hands-on learning for eco-friendly urban living."
   },
   {
     year: "March 2026",
-    title: "Global Training Network",
-    description: "Established a comprehensive training and education program, connecting oncology professionals from developed nations with teams in 30+ countries."
+    title: "Local Partnerships Network",
+    description: "Established a comprehensive collaboration network with local artisans, organic farms, and recycling groups, connecting Bangalore residents to direct sustainability resources."
   },
   {
     year: "April 2026",
-    title: "Reaching New Heights",
-    description: "Continuing to bridge the gap in cancer care access, ensuring that every patient, regardless of location, has access to life-saving radiation treatment."
+    title: "Expanding Our Canopy",
+    description: "Continuing to grow our urban green spaces and volunteer hubs, ensuring that sustainable living becomes accessible, practical, and standard for every household."
   }
 ];
 

@@ -15,6 +15,8 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(CustomEase);
 }
 
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
 export function Navbar() {
   // We need a ref for the parent container to scope GSAP
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,7 +24,6 @@ export function Navbar() {
   const { isComplete } = useLoading();
   const pathname = usePathname();
   const isHome = pathname === "/";
-  const [isDarkBg, setIsDarkBg] = useState(false);
 
   // Initial Setup & Hover Effects
   useEffect(() => {
@@ -189,32 +190,93 @@ export function Navbar() {
     }
   }, [isComplete, isHome]);
 
-  // Background Theme Detection
-  useEffect(() => {
-    const checkTheme = () => {
-      const darkSections = document.querySelectorAll('[data-theme="dark"]');
-      const navbarHeight = 80;
-      let foundDark = false;
+  // Background Theme & Scroll Direction Detection
+  // ALL scroll-driven behavior uses direct DOM manipulation (never React state)
+  // to prevent re-renders from wiping the is-dark-bg class on site-header-wrapper.
+  useIsomorphicLayoutEffect(() => {
+    let lastScrollY = window.scrollY;
+    let rafId: number | null = null;
 
-      darkSections.forEach(section => {
-        const rect = section.getBoundingClientRect();
-        // If the navbar area (top of screen) overlaps with this dark section
-        if (rect.top <= navbarHeight && rect.bottom >= 0) {
+    const detectBackground = (headerWrapper: HTMLElement | null) => {
+      const checkPointX = window.innerWidth - 80;
+      const checkPointY = 40;
+      const menuContainer = document.querySelector('.fullscreen-menu-container') as HTMLElement | null;
+
+      // Temporarily hide fixed overlays so elementFromPoint hits actual page content
+      if (headerWrapper) headerWrapper.style.visibility = 'hidden';
+      if (menuContainer) menuContainer.style.visibility = 'hidden';
+
+      const elementAtPoint = document.elementFromPoint(checkPointX, checkPointY);
+
+      if (headerWrapper) headerWrapper.style.visibility = '';
+      if (menuContainer) menuContainer.style.visibility = '';
+
+      let foundDark = false;
+      if (elementAtPoint) {
+        const darkParent = elementAtPoint.closest('[data-theme="dark"]');
+        if (darkParent) {
           foundDark = true;
+        } else {
+          let currentEl: HTMLElement | null = elementAtPoint as HTMLElement;
+          while (currentEl && currentEl !== document.body) {
+            const bg = window.getComputedStyle(currentEl).backgroundColor;
+            if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
+              const match = bg.match(/\d+/g);
+              if (match && match.length >= 3) {
+                const r = parseInt(match[0], 10);
+                const g = parseInt(match[1], 10);
+                const b = parseInt(match[2], 10);
+                const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+                if (brightness < 128) foundDark = true;
+              }
+              break;
+            }
+            currentEl = currentEl.parentElement;
+          }
         }
-      });
-      setIsDarkBg(foundDark);
+      }
+
+      // Direct DOM toggle for theme — zero lag
+      if (headerWrapper) {
+        headerWrapper.classList.toggle('is-dark-bg', foundDark);
+      }
     };
 
-    window.addEventListener('scroll', checkTheme, { passive: true });
-    checkTheme(); // Initial check
-    
-    // Also check on window resize
-    window.addEventListener('resize', checkTheme);
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const menuBtn = document.querySelector('.nav-close-btn') as HTMLElement | null;
+
+      // Scroll direction → show/hide menu button via direct DOM class toggle
+      if (menuBtn) {
+        if (currentScrollY <= 50 || currentScrollY < lastScrollY - 5) {
+          menuBtn.classList.remove('is-scroll-hidden');
+        } else if (currentScrollY > lastScrollY + 5) {
+          menuBtn.classList.add('is-scroll-hidden');
+        }
+      }
+
+      lastScrollY = currentScrollY;
+
+      // Throttle background detection to one check per animation frame
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        const headerWrapper = document.querySelector('.site-header-wrapper') as HTMLElement | null;
+        detectBackground(headerWrapper);
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll);
+
+    // Immediate synchronous initial detection
+    const headerWrapper = document.querySelector('.site-header-wrapper') as HTMLElement | null;
+    detectBackground(headerWrapper);
+    handleScroll();
 
     return () => {
-      window.removeEventListener('scroll', checkTheme);
-      window.removeEventListener('resize', checkTheme);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, []);
 
@@ -234,59 +296,60 @@ export function Navbar() {
 
   return (
     <div ref={containerRef}>
-        <div className={`site-header-wrapper ${isDarkBg ? 'is-dark-bg' : ''} ${isHome && !isComplete ? 'opacity-0 invisible' : ''}`}>
+        <div className={`site-header-wrapper ${isMenuOpen ? 'is-menu-open' : ''} ${isHome && !isComplete ? 'opacity-0 invisible' : ''}`}>
           <header className="header">
             <div className="container is--full">
               <nav className="nav-row">
-                <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-center w-12 h-12 md:w-24 md:h-24 bg-none border-none rounded-full overflow-hidden" style={{ pointerEvents: 'auto' }}>
+                <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-start h-14 md:h-20 shrink-0 z-10" style={{ pointerEvents: 'auto' }}>
                    <Image 
-                     src="/image.png" 
+                     src="/SS Logo_white Text clean.png" 
                      alt="Sustainable Sundays Logo" 
-                     width={96}
-                     height={96}
+                     width={320}
+                     height={100}
                      priority
-                     className="w-full h-full object-contain mix-blend-multiply bg-transparent"
+                     className="h-12 sm:h-14 md:h-20 w-auto max-w-[210px] sm:max-w-[260px] md:max-w-[320px] object-contain shrink-0"
                    />
                 </Link>
                 <div className="nav-row__right">
-                  <button role="button" className="nav-close-btn" onClick={toggleMenu} style={{ pointerEvents: 'auto' }}>
+                  <button 
+                    role="button" 
+                    className="nav-close-btn"
+                    onClick={toggleMenu} 
+                    style={{ pointerEvents: 'auto' }}
+                  >
                     <div className="menu-button-text">
                       <p className="p-large">Menu</p>
                       <p className="p-large">Close</p>
                     </div>
-                    <div className="icon-wrap">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="100%"
-                        viewBox="0 0 16 16"
-                        fill="none"
-                        className="menu-button-icon"
-                      >
-                        <path
-                          d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M6 7.33333L7.33333 7.33333L7.33333 6C7.33333 6.73637 6.73638 7.33333 6 7.33333Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M10 7.33333L8.66667 7.33333L8.66667 6C8.66667 6.73638 9.26362 7.33333 10 7.33333Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M6 8.66667L7.33333 8.66667L7.33333 10C7.33333 9.26362 6.73638 8.66667 6 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                        <path
-                          d="M10 8.66667L8.66667 8.66667L8.66667 10C8.66667 9.26362 9.26362 8.66667 10 8.66667Z"
-                          fill="currentColor"
-                        ></path>
-                      </svg>
+                    <div className="icon-wrap flex items-center justify-center">
+                      {isMenuOpen ? (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="100%"
+                          viewBox="0 0 16 16"
+                          fill="none"
+                          className="menu-button-icon"
+                        >
+                          <path d="M7.33333 16L7.33333 -3.2055e-07L8.66667 -3.78832e-07L8.66667 16L7.33333 16Z" fill="currentColor" />
+                          <path d="M16 8.66667L-2.62269e-07 8.66667L-3.78832e-07 7.33333L16 7.33333L16 8.66667Z" fill="currentColor" />
+                        </svg>
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="18"
+                          height="14"
+                          viewBox="0 0 18 14"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          className="menu-button-icon"
+                        >
+                          <line x1="0" y1="2" x2="18" y2="2" />
+                          <line x1="0" y1="7" x2="18" y2="7" />
+                          <line x1="0" y1="12" x2="18" y2="12" />
+                        </svg>
+                      )}
                     </div>
                   </button>
                 </div>
@@ -383,15 +446,15 @@ export function Navbar() {
                     <div className="nav-link-hover-bg pointer-events-none"></div>
                   </Link>
                 </li>
-                <li className="menu-list-item" data-shape="4">
-                  <Link href="/zero-waste-archive" className="nav-link w-inline-block">
-                    <TextRoll className="nav-link-text">Zero Waste Hub</TextRoll>
-                    <div className="nav-link-hover-bg pointer-events-none"></div>
-                  </Link>
-                </li>
                 <li className="menu-list-item" data-shape="3">
                   <Link href="/events" className="nav-link w-inline-block">
                     <TextRoll className="nav-link-text">Events</TextRoll>
+                    <div className="nav-link-hover-bg pointer-events-none"></div>
+                  </Link>
+                </li>
+                <li className="menu-list-item" data-shape="4">
+                  <Link href="/zero-waste-archive" className="nav-link w-inline-block">
+                    <TextRoll className="nav-link-text">Zero Waste Hub</TextRoll>
                     <div className="nav-link-hover-bg pointer-events-none"></div>
                   </Link>
                 </li>
@@ -412,13 +475,13 @@ export function Navbar() {
 
             <div className="menu-socials absolute bottom-12 left-0 w-full px-[10%] flex gap-8 z-20">
               <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
-                <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">LinkedIn</TextRoll>
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
                 <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">WhatsApp</TextRoll>
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
                 <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">Instagram</TextRoll>
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
+                <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">LinkedIn</TextRoll>
               </a>
             </div>
           </nav>

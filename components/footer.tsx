@@ -16,7 +16,7 @@ export function Footer() {
             <h3 className="text-[1.5rem] font-medium text-[#000000] tracking-tight">About</h3>
             <ul className="flex flex-col gap-3">
               <li><Link href="/about" className="text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Why We Do It</Link></li>
-              <li><Link href="/about#timeframe" className="text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Timeframe</Link></li>
+              <li><Link href="/about#team" className="text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Team</Link></li>
             </ul>
           </div>
 

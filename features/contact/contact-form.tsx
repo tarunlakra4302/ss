@@ -1,10 +1,60 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { submitToGoogleScript } from "@/lib/google/script";
 
 export const ContactForm = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setIsSubmitting(true);
+
+    const contactData = {
+      formType: "contact",
+      firstName: firstName || (document.getElementById("firstName") as HTMLInputElement)?.value || "",
+      lastName: lastName || (document.getElementById("lastName") as HTMLInputElement)?.value || "",
+      email: email || (document.getElementById("email") as HTMLInputElement)?.value || "",
+      phone: phone || (document.getElementById("phone") as HTMLInputElement)?.value || "",
+      message: message || (document.getElementById("message") as HTMLTextAreaElement)?.value || "",
+    };
+
+    try {
+      const result = await submitToGoogleScript(contactData);
+      if (result && (result.result === "success" || result.status === "success")) {
+        alert("Your message has been sent successfully!");
+        setStatus("success");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+        (e.target as HTMLFormElement).reset();
+      } else {
+        alert("Failed to send message. Please try again.");
+        setErrorMsg("Failed to send message. Please try again.");
+        setStatus("error");
+      }
+    } catch (error) {
+      console.error("Error submitting contact form:", error);
+      alert("Network error. Please try again later.");
+      setErrorMsg("Network error. Please try again later.");
+      setStatus("error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,17 +75,36 @@ export const ContactForm = () => {
         </Link>
       </div>
 
-      <form className="flex flex-col gap-4 md:gap-6 mt-2 md:mt-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium mb-2">
-            Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
-            placeholder="Your name"
-          />
+      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-6 mt-2 md:mt-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+              First Name
+            </label>
+            <input
+              type="text"
+              id="firstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+              placeholder="First name"
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+              Last Name
+            </label>
+            <input
+              type="text"
+              id="lastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+              placeholder="Last name"
+            />
+          </div>
         </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-2">
@@ -44,6 +113,9 @@ export const ContactForm = () => {
           <input
             type="email"
             id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
             className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
             placeholder="your@email.com"
           />
@@ -55,6 +127,9 @@ export const ContactForm = () => {
           <input
             type="tel"
             id="phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
             className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
             placeholder="+1 (555) 123-4567"
           />
@@ -66,29 +141,43 @@ export const ContactForm = () => {
           <textarea
             id="message"
             rows={4}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            required
             className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm md:text-base"
             placeholder="Your message..."
           />
         </div>
+
+        {status === "success" && (
+          <p className="text-sm font-semibold text-emerald-600">Your message has been sent successfully!</p>
+        )}
+        {status === "error" && (
+          <p className="text-sm font-semibold text-red-500">{errorMsg}</p>
+        )}
+
         <button
           type="submit"
-          className="px-6 py-2 md:px-8 md:py-3 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity w-fit text-sm md:text-base"
+          disabled={isSubmitting}
+          className="px-6 py-2 md:px-8 md:py-3 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity w-fit text-sm md:text-base disabled:opacity-50"
         >
-          Send Message
+          {isSubmitting ? "Sending..." : "Send Message"}
         </button>
       </form>
 
-      <div className="mt-8 md:absolute md:bottom-6 flex gap-8 justify-center md:justify-start">
-        <Link href="https://www.instagram.com" className="text-lg hover:underline">
+      <div className="mt-3 flex gap-6 justify-start">
+        <Link href="https://www.instagram.com" className="text-base md:text-lg hover:underline">
           Instagram
         </Link>
-        <Link href="https://wa.me" className="text-lg hover:underline">
+        <Link href="https://wa.me" className="text-base md:text-lg hover:underline">
           Whatsapp
         </Link>
-        <Link href="https://linkedin.com" className="text-lg hover:underline">
+        <Link href="https://linkedin.com" className="text-base md:text-lg hover:underline">
           Linkedin
         </Link>
       </div>
     </motion.div>
   );
 };
+
+

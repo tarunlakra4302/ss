@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Sora:wght@400;600;700;800&display=swap');
+@import url('https://cdn.jsdelivr.net/font-share/v2/css?f[]=nohemi@400,500,600,700,800,900&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -22,9 +22,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-inter);
+  --font-sans: "Nohemi", var(--font-inter), sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Roboto Mono, monospace;
-  --font-heading: var(--font-inter);
+  --font-heading: "Nohemi", var(--font-inter), sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -78,8 +78,8 @@
   --color-surface-container-low: #f5f5f5;
   --color-surface-container-high: #ebebeb;
   --color-outline-variant: #c2c8c0;
-  --font-serif: "Cormorant Garamond", "Georgia", serif;
-  --font-sans: "Inter", "Helvetica Neue", sans-serif;
+  --font-serif: "Nohemi", sans-serif;
+  --font-sans: "Nohemi", sans-serif;
   --color-brand-bg: #F7F6F2;
   --color-brand-ink: #111111;
   --color-brand-accent: #E84333;
@@ -89,10 +89,11 @@
   --color-on-primary-container: #76977e;
   --color-on-primary: #ffffff;
   --font-size-body-lg: 1.125rem;
-  --font-sora: "Sora", sans-serif;
+  --font-sora: "Nohemi", sans-serif;
 }
 
 body {
+  font-family: "Nohemi", sans-serif !important;
   min-height: 100vh;
   overflow-x: clip;
   position: relative;
@@ -131,9 +132,9 @@ body {
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Nohemi", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Roboto Mono, monospace;
-  --font-heading: var(--font-inter);
+  --font-heading: "Nohemi", sans-serif;
   --color-primary: #6366f1;
   --color-dark: #131313;
   --color-neutral-100: #f5f5f5;
@@ -155,12 +156,12 @@ body {
   width: 100%;
   z-index: 1000;
   pointer-events: none;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(17, 17, 17, 0.08);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: none;
   transform: translateZ(0);
-  will-change: transform, backdrop-filter;
+  will-change: transform;
 }
 
 @media (min-width: 768px) {
@@ -225,25 +226,49 @@ body {
   gap: 1rem;
   cursor: pointer;
   background: transparent !important;
-  border: none;
-  padding: 0;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
   z-index: 1001;
+  transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
+/* Hide menu button on scroll down (desktop only) */
+@media (min-width: 768px) {
+  .nav-close-btn.is-scroll-hidden {
+    opacity: 0;
+    transform: translateY(-1rem);
+    pointer-events: none;
+  }
+}
+
+/* Default state on light/white background: dark text & icon */
 .nav-close-btn p,
 .nav-close-btn .menu-button-icon {
-  color: #000 !important;
-  fill: #000 !important;
-  transition: color 0.3s ease, fill 0.3s ease;
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+  transition: color 0.1s ease-out, fill 0.1s ease-out, stroke 0.1s ease-out;
 }
 
-/* Adaptive menu button for large screens */
-@media (min-width: 768px) {
-  body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn p,
-  body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn .menu-button-icon {
-    color: #fff !important;
-    fill: #fff !important;
-  }
+/* Adaptive state on dark background: white text & icon */
+body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn p,
+body .site-header-wrapper.is-dark-bg:not(.is-menu-open) .nav-close-btn .menu-button-icon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* When menu overlay is open: dark text & icon (menu panel is white) */
+body .site-header-wrapper.is-menu-open .nav-close-btn p,
+body .site-header-wrapper.is-menu-open .nav-close-btn .menu-button-icon {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
 }
 
 
@@ -499,4 +524,40 @@ body {
 }
 .editorial-card {
   @apply bg-white border border-brand-border p-8 transition-all duration-500 hover:border-brand-accent/30;
+}
+
+@keyframes noise-animation {
+  0% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-2%, -3%);
+  }
+  20% {
+    transform: translate(-4%, 2%);
+  }
+  30% {
+    transform: translate(2%, -4%);
+  }
+  40% {
+    transform: translate(-2%, 5%);
+  }
+  50% {
+    transform: translate(-4%, 2%);
+  }
+  60% {
+    transform: translate(3%, 0);
+  }
+  70% {
+    transform: translate(0, 3%);
+  }
+  80% {
+    transform: translate(-3%, 0);
+  }
+  90% {
+    transform: translate(2%, 2%);
+  }
+  100% {
+    transform: translate(1%, 0);
+  }
 }

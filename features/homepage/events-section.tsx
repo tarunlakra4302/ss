@@ -32,14 +32,16 @@ const MOCK_EVENTS = [
   }
 ];
 
-export function EventsCardsSection() {
+export function EventsCardsSection({ showHeader = true }: { showHeader?: boolean }) {
   return (
     <section id="upcoming-events" className="py-12 px-4 md:px-6 bg-background overflow-hidden relative">
       <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col items-center text-center space-y-4 mb-16">
-          <span className="text-primary font-bold uppercase tracking-widest text-xs">Get Involved</span>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">Upcoming <span className="text-black/40">Events</span></h2>
-        </div>
+        {showHeader && (
+          <div className="flex flex-col items-center text-center space-y-4 mb-16">
+            <span className="text-primary font-bold uppercase tracking-widest text-xs">Get Involved</span>
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">Upcoming <span className="text-black/40">Events</span></h2>
+          </div>
+        )}
         
         <div className="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-8 items-center justify-center">
           {MOCK_EVENTS.map((event, index) => (

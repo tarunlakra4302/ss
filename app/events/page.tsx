@@ -28,7 +28,7 @@ const EventsPage = () => {
           </p>
         </motion.div>
       </SectionContainer>
-      <EventsCardsSection />
+      <EventsCardsSection showHeader={false} />
       <EventCalendar />
     </main>
     </>

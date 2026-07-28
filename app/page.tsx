@@ -1,24 +1,16 @@
 "use client";
-import {InitialLoader} from '@/features/homepage/initial-loader'
 import { SectionContainer } from '@/components/layout/section-container'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { Hero } from '@/features/homepage/hero'
 import { Navbar } from '@/components/navigation/navbar'
 import TextAnimation1 from '@/components/TextAnimation1'
-import dynamic from 'next/dynamic'
-
-// Dynamic imports for heavy sections to speed up preloader hydration
-const MissionSection = dynamic(() => import('@/features/homepage/mission').then(mod => mod.MissionSection))
-const StorySection = dynamic(() => import('@/features/homepage/story').then(mod => mod.StorySection))
-const ZeroWasteCTA = dynamic(() => import('@/features/homepage/zero-waste-cta').then(mod => mod.ZeroWasteCTA))
-const NewsletterSection = dynamic(() => import('@/features/homepage/newsletter-section').then(mod => mod.NewsletterSection))
-const ScrollMorphSection = dynamic(() => import('@/features/homepage/scroll-morph-section').then(mod => mod.ScrollMorphSection))
-const RelatedArticlesSection = dynamic(() => import('@/features/homepage/related-articles').then(mod => mod.RelatedArticlesSection))
-const HeroSection = dynamic(() => import('@/components/HeroSection'))
-const VideoScrollSection = dynamic(() => import('@/features/homepage/video-scroll-section').then(mod => mod.VideoScrollSection))
-const EventsCardsSection = dynamic(() => import('@/features/homepage/events-section').then(mod => mod.EventsCardsSection))
-const DonationBox = dynamic(() => import('@/components/donation-box'))
+import { ZeroWasteCTA } from '@/features/homepage/zero-waste-cta'
+import { NewsletterSection } from '@/features/homepage/newsletter-section'
+import { RelatedArticlesSection } from '@/features/homepage/related-articles'
+import HeroSection from '@/components/HeroSection'
+import { EventsCardsSection } from '@/features/homepage/events-section'
+import DonationBox from '@/components/donation-box'
 import { dummyArticles } from '@/lib/data/landing-data';
   
 const page = () => {
@@ -39,13 +31,11 @@ const page = () => {
   const textY = useTransform(smoothProgress, [0, 1], [-15, 15]);
 
   return (
-    <InitialLoader>
+    <>
       <Navbar />
       <main className="flex-1 w-full">
         <Hero />
         
-<MissionSection />
-<StorySection />
 <EventsCardsSection />
 <HeroSection />
                <SectionContainer className="bg-background">
@@ -80,7 +70,8 @@ const page = () => {
             ))}
           </div>
         </SectionContainer>
-                <SectionContainer 
+        <RelatedArticlesSection articles={dummyArticles} />
+        <SectionContainer 
                   id="donation-section"
           ref={setDonationSection}
           data-theme="dark"
@@ -116,58 +107,13 @@ const page = () => {
             </motion.div>
           </div>
         </SectionContainer>
-        <SectionContainer className="bg-white py-24 px-8 md:px-16 lg:px-24">
-          <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-start">
-            {/* Left Column: Heading */}
-            <div className="max-w-md">
-              <TextAnimation1>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-black leading-[1.1]">
-                  Change Happens When You Show Up.
-                </h1>
-              </TextAnimation1>
-            </div>
-
-            {/* Right Column: Content */}
-            <div className="flex flex-col gap-8 text-lg md:text-xl text-black leading-relaxed">
-              <TextAnimation1>
-                <p>
-                  Whether you have a story to tell, an afternoon to spare, or resources to share, you are the engine of this movement.
-                </p>
-              </TextAnimation1>
-              <div className="space-y-6">
-                <TextAnimation1>
-                  <p>
-                    <span className="font-bold">Share Your Voice:</span>{' '}We&apos;re always looking for guest writers for our sustainability blog.
-                  </p>
-                  <p>
-                    <span className="font-bold">Be There:</span>{' '}Your presence at our events is the ultimate show of solidarity.
-                  </p>
-                  <p>
-                    <span className="font-bold">Empower the Mission:</span>{' '}Your donations keep us organized, functional, and growing.
-                  </p>
-                  <p>
-                    <span className="font-bold">Join the Team:</span>{' '}Become a volunteer and work hands-on to restore our planet.
-                  </p>
-                </TextAnimation1>
-              </div>
-            </div>
-          </div>
-        </SectionContainer>
-        <ScrollMorphSection />
-
-        <RelatedArticlesSection articles={dummyArticles} />
-
-
-
-
-        <VideoScrollSection />
 
         <section className='about min-h-[60vh] flex items-center justify-center bg-background relative py-24'>
           <div className="container mx-auto px-6 md:px-12">
             <TextAnimation1>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter leading-[1.15] text-center max-w-5xl mx-auto text-neutral-900 antialiased">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter leading-[1.15] text-center max-w-5xl mx-auto text-neutral-900 antialiased">
                 We partner with local communities, businesses, and individuals to create a tangible impact on Bangalore&apos;s environmental future through collective action and sustainable rituals.
-              </h1>
+              </h2>
             </TextAnimation1>
           </div>
         </section>
@@ -176,7 +122,7 @@ const page = () => {
 
         <NewsletterSection  />
       </main>
-    </InitialLoader>
+    </>
   )
 }
 

@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EventFormSchema, EventFormValues } from '@/lib/validators/forms';
 import { Loader2, CheckCircle2, AlertCircle, Upload } from 'lucide-react';
+import { submitToGoogleScript } from '@/lib/google/script';
 
 /**
  * EventForm Component
@@ -29,7 +30,21 @@ export default function EventForm() {
     setServerMessage(null);
 
     try {
-      // CRITICAL: Construct FormData for multipart submission (including the file)
+      const nameParts = data.name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      await submitToGoogleScript({
+        formType: 'event',
+        firstName,
+        lastName,
+        phone: data.phone,
+        email: data.email,
+        eventName: data.eventName,
+        donationTime: new Date().toLocaleString(),
+      });
+
+      // Construct FormData for multipart submission (including the file)
       const formData = new FormData();
       formData.append('name', data.name);
       formData.append('email', data.email);
@@ -46,7 +61,6 @@ export default function EventForm() {
       const response = await fetch('/api/forms/event', {
         method: 'POST',
         body: formData,
-        // Browser automatically sets Content-Type to multipart/form-data with boundary
       });
 
       const result = await response.json();
@@ -57,6 +71,7 @@ export default function EventForm() {
 
       setServerMessage({ type: 'success', text: result.message });
       reset(); // Clear the form on success
+
     } catch (error: any) {
       setServerMessage({ type: 'error', text: error.message || 'An unexpected error occurred.' });
     } finally {

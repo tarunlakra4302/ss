@@ -10,7 +10,7 @@ export function StorySection() {
           <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] gap-8 md:gap-12">
             {/* Left Column - Label */}
             <div className="mb-4 md:mb-0">
-              <p className="text-xl md:text-2xl font-bold tracking-tight">Our story</p>
+              <p className="text-xl md:text-2xl font-bold tracking-tight">Our Philosophy</p>
             </div>
 
             {/* Right Column - Main Content */}

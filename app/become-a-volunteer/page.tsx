@@ -8,7 +8,7 @@ import { Component as AnimatedCharactersLoginPage } from "@/components/login-sec
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { SterlingGateKineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
+import { Navbar } from "@/components/navigation/navbar";
 
 // Register ScrollTrigger safely
 if (typeof window !== "undefined") {
@@ -54,7 +54,7 @@ const Hero = () => {
 
         <div className="max-w-2xl mx-auto">
           <p className="text-xl text-black/70 leading-relaxed">
-            At Sustainable Sundays, we believe in the strength of community. Our volunteers are the climbers who help others reach their personal summits of health and recovery.
+            At Sustainable Sundays, we believe in the strength of community. Our volunteers are the change-makers who help rebuild our urban ecosystem and guide neighbors toward sustainable, conscious living.
           </p>
         </div>
       </motion.div>
@@ -206,7 +206,7 @@ export default function BecomeAVolunteerPage() {
 
   return (
     <div className="min-h-screen">
-      <SterlingGateKineticNavigation />
+      <Navbar />
       <main>
         <Hero />
         <Purpose />
@@ -225,7 +225,7 @@ export default function BecomeAVolunteerPage() {
         {/* Preserved Section */}
         <section className="mt-20 pt-20">
           <div className="max-w-7xl mx-auto overflow-hidden">
-            <AnimatedCharactersLoginPage />
+            <AnimatedCharactersLoginPage formType="volunteering" />
           </div>
         </section>
       </main>

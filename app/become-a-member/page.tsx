@@ -8,7 +8,7 @@ import { Component as AnimatedCharactersLoginPage } from "@/components/login-sec
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { SterlingGateKineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
+import { Navbar } from "@/components/navigation/navbar";
 import { FlowHoverButton } from "@/components/ui/flow-hover-button";
 import { ArrowRight as ArrowRightIcon } from "lucide-react";
 
@@ -217,7 +217,7 @@ export default function BecomeAMemberPage() {
 
   return (
     <div className="min-h-screen">
-      <SterlingGateKineticNavigation />
+      <Navbar />
       <main>
         <Hero />
         <Purpose />
@@ -236,7 +236,7 @@ export default function BecomeAMemberPage() {
         {/* Registration Section */}
         <section id="registration-section" className="mt-20 pt-20">
           <div className="max-w-7xl mx-auto overflow-hidden">
-            <AnimatedCharactersLoginPage />
+            <AnimatedCharactersLoginPage formType="member" />
           </div>
         </section>
       </main>

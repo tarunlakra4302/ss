@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
+import { submitToGoogleScript } from "@/lib/google/script";
 
 
 interface PupilProps {
@@ -178,7 +179,11 @@ const EyeBall = ({
 
 
 
-function LoginPage() {
+interface LoginPageProps {
+  formType?: "member" | "volunteering";
+}
+
+function LoginPage({ formType = "member" }: LoginPageProps) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -294,24 +299,17 @@ function LoginPage() {
     setIsLoading(true);
 
     const payload = {
+      formType: formType || "member",
       firstName,
       lastName,
+      phone: phoneNumber,
       email,
-      phoneNumber,
       message,
     };
 
     try {
-      await fetch(process.env.NEXT_PUBLIC_MEMBERSHIP_FORM_URL!, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-        body: JSON.stringify(payload),
-      });
+      await submitToGoogleScript(payload);
 
-      // no-cors returns opaque response — treat non-throw as success
       setFirstName("");
       setLastName("");
       setPhoneNumber("");
@@ -325,6 +323,7 @@ function LoginPage() {
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="grid lg:grid-cols-2 overflow-hidden">

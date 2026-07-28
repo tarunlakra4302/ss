@@ -24,6 +24,7 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { SectionContainer } from "@/components/layout/section-container";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { submitToGoogleScript } from "@/lib/google/script";
 
 interface EventDetailProps {
   slug?: string;
@@ -85,7 +86,7 @@ export function EventDetail({ slug }: EventDetailProps) {
 
   const { openPayment } = useRazorpay();
 
-  const handleDonatePayment = () => {
+  const handleDonatePayment = async () => {
     setDonationError(null);
 
     if (!donationAmount || isNaN(donationAmount) || donationAmount < 1) {
@@ -99,6 +100,17 @@ export function EventDetail({ slug }: EventDetailProps) {
     }
 
     setSubmitState('loading');
+
+    try {
+      await submitToGoogleScript({
+        formType: 'donation',
+        amount: Number(donationAmount),
+        donationTime: new Date().toLocaleString(),
+      });
+    } catch (e) {
+      console.warn('Failed to submit event donation to Google Sheets:', e);
+    }
+
     openPayment({
       amount: donationAmount,
       type: 'donation',
@@ -122,9 +134,7 @@ export function EventDetail({ slug }: EventDetailProps) {
   const handleDonateClick = () => {
     setMode('donate');
     setTimeout(() => {
-      if (window.innerWidth < 1024) {
-        donationBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+      donationBoxRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
   };
 
@@ -167,7 +177,7 @@ export function EventDetail({ slug }: EventDetailProps) {
     setErrors(prev => ({ ...prev, [field]: validateField(field, fields[field]) }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const newErrors = {
       firstName: validateField('firstName', fields.firstName),
       lastName: validateField('lastName', fields.lastName),
@@ -180,6 +190,22 @@ export function EventDetail({ slug }: EventDetailProps) {
       setSubmitState('loading');
       
       const totalAmount = ticketCount * ticketPrice;
+
+      try {
+        await submitToGoogleScript({
+          formType: 'event',
+          firstName: fields.firstName,
+          lastName: fields.lastName,
+          phone: fields.phone,
+          email: fields.email,
+          quantity: ticketCount,
+          amount: totalAmount,
+          donationTime: new Date().toLocaleString(),
+        });
+      } catch (e) {
+        console.warn('Failed to submit event registration to Google Sheets:', e);
+      }
+
       openPayment({
         amount: totalAmount,
         type: 'ticket',

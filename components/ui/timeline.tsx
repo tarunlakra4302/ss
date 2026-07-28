@@ -50,7 +50,7 @@ export const Timeline = ({ data }: TimelineProps) => {
   }, { scope: containerRef });
 
   return (
-    <section id="timeframe" className="w-full bg-[#F5F5F5] py-[100px] px-6 md:px-20 relative overflow-hidden">
+    <section id="team" className="w-full bg-[#F5F5F5] py-[100px] px-6 md:px-20 relative overflow-hidden">
       <div 
         ref={containerRef} 
         className="max-w-7xl mx-auto flex flex-col gap-16 md:gap-32 relative"
@@ -58,14 +58,14 @@ export const Timeline = ({ data }: TimelineProps) => {
         {data.map((item, index) => (
           <div
             key={index}
-            className="timeline-item grid grid-cols-1 md:grid-cols-[40%_60%] gap-4 md:gap-16 items-start will-change-transform relative"
+            className="timeline-item flex flex-col md:flex-row gap-8 items-start will-change-transform relative w-full"
           >
             {/* Left Column / Top Section - Year */}
-            <div className="flex flex-col">
-              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased whitespace-nowrap ${
+            <div className="w-full md:w-[40%] flex flex-col items-center justify-center text-center self-center shrink-0">
+              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words w-full ${
                 isNaN(Number(item.year))
-                  ? "text-[32px] md:text-[60px] lg:text-[80px] leading-none"
-                  : "text-[56px] md:text-[120px] lg:text-[180px] leading-[1] md:leading-[0.8]"
+                  ? "text-[32px] md:text-[48px] lg:text-[60px] leading-tight"
+                  : "text-[40px] md:text-[64px] lg:text-[84px] leading-none"
               }`}>
                 {item.year}
               </h2>
@@ -78,8 +78,8 @@ export const Timeline = ({ data }: TimelineProps) => {
             </div>
 
             {/* Right Column / Bottom Section - Content */}
-            <div className={`flex flex-col pt-0 ${
-              isNaN(Number(item.year)) ? "md:pt-1 lg:pt-[6px]" : "md:pt-6"
+            <div className={`flex-1 flex flex-col pt-0 ${
+              isNaN(Number(item.year)) ? "md:pt-[8px] lg:pt-[12px]" : "md:pt-[16px] lg:pt-[24px]"
             }`}>
               {/* Desktop Only Title */}
               <h3 className="hidden md:block text-[24px] font-bold text-[#0B1B34] mb-8 tracking-tight max-w-[500px]">

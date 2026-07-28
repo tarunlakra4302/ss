@@ -1,12 +1,12 @@
 'use client';
 
 import { FlowButton } from "@/components/ui/flow-button";
-import { SterlingGateKineticNavigation } from "@/components/ui/sterling-gate-kinetic-navigation";
+import { Navbar } from "@/components/navigation/navbar";
 
 const FlowButtonDemo = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4 space-y-8">
-      <SterlingGateKineticNavigation />
+      <Navbar />
       <div className="text-center space-y-4 max-w-lg">
         <h1 className="text-4xl font-black tracking-tight uppercase">Flow Button Demo</h1>
         <p className="text-neutral-500 font-medium">A premium, animated button component with magnetic icons and smooth transitions.</p>

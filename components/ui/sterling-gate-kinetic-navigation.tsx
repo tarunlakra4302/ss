@@ -171,14 +171,14 @@ export function SterlingGateKineticNavigation() {
           <header className="header">
             <div className="container w-full">
               <nav className="nav-row">
-                <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-center w-16 h-16 md:w-24 md:h-24 bg-none border-none" onClick={closeMenu} style={{ pointerEvents: 'auto' }}>
+                <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-center h-15 md:h-20 bg-none border-none overflow-visible" onClick={closeMenu} style={{ pointerEvents: 'auto' }}>
                    <Image 
-                     src="/image.png" 
+                     src="/SS Logo_white Text clean.png" 
                      alt="Sustainable Sundays Logo" 
-                     width={96}
-                     height={96}
+                     width={270}
+                     height={85}
                      priority
-                     className="w-full h-full object-contain mix-blend-darken bg-transparent"
+                     className="h-full w-auto object-contain"
                    />
                 </Link>
                 <div className="nav-row__right">
