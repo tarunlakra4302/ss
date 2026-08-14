@@ -38,24 +38,24 @@ export function Hero() {
             </h1>
 
             <p className="max-w-[310px] text-[15px] text-white/80 font-sans font-normal leading-relaxed tracking-tight text-center pt-1">
-              Living sustainably shouldn&apos;t feel like a chore. We’ve distilled complex climate science into actionable, weekly rituals.
+              Living sustainably shouldn&apos;t feel like a chore. And we are working to distil complex climate science with you through weekly rituals and programmes.
             </p>
 
-            <div className="flex flex-col gap-3 w-full max-w-[280px] justify-center pt-3">
-              <Link href="/events" className="w-full">
-                <span className="block w-full py-3.5 px-6 rounded-xl bg-[#F6F5EE] text-[#0B2219] text-xs font-bold uppercase tracking-widest text-center cursor-pointer hover:opacity-90 transition-colors shadow-sm">
-                  Upcoming Events
+            <div className="flex flex-row items-center justify-center gap-4 w-full pt-3">
+              <Link href="/events">
+                <span className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white text-black text-[15px] font-medium tracking-tight hover:opacity-90 hover:bg-gray-100 transition-all duration-200 cursor-pointer shadow-sm whitespace-nowrap">
+                  Upcoming events
                 </span>
               </Link>
-              <Link href="#donation-section" className="w-full">
+              <Link href="#donation-section">
                 <span
                   onClick={(e) => {
                     e.preventDefault();
                     document.getElementById('donation-section')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="block w-full py-3.5 px-6 rounded-xl border border-white/25 bg-white/5 text-white text-xs font-bold uppercase tracking-widest text-center cursor-pointer hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border-[1.5px] border-white bg-transparent text-white text-[15px] font-medium tracking-tight hover:bg-white/10 transition-all duration-200 cursor-pointer whitespace-nowrap"
                 >
-                  Donate
+                  Donate now
                 </span>
               </Link>
             </div>
@@ -128,10 +128,10 @@ export function Hero() {
             <h1 className="text-7xl lg:text-9xl font-sora font-black tracking-tight uppercase leading-[0.9] text-primary-fixed-dim text-left">
               Sustainable <br /> <span className="text-outline-variant">Sundays</span>
             </h1>
-            <div className="flex flex-wrap gap-3 justify-start">
+            <div className="flex flex-row items-center justify-start gap-4">
               <Link href="/events" className="inline-block">
-                <span className="inline-block px-4 py-1.5 rounded-full bg-surface text-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:opacity-90 transition-colors">
-                  Upcoming Events
+                <span className="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-white text-black text-[15px] font-medium tracking-tight hover:opacity-90 hover:bg-gray-100 transition-all duration-200 cursor-pointer shadow-sm">
+                  Upcoming events
                 </span>
               </Link>
               <Link href="#donation-section" className="inline-block">
@@ -140,16 +140,16 @@ export function Hero() {
                     e.preventDefault();
                     document.getElementById('donation-section')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="block md:inline-block px-4 py-1.5 rounded-full border border-outline-variant bg-transparent text-on-primary text-xs font-bold uppercase tracking-widest cursor-pointer hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center justify-center px-6 py-2.5 rounded-full border-[1.5px] border-white bg-transparent text-white text-[15px] font-medium tracking-tight hover:bg-white/10 transition-all duration-200 cursor-pointer"
                 >
-                  Donate
+                  Donate now
                 </span>
               </Link>
             </div>
           </div>
 
           <p className="max-w-[700px] text-2xl text-on-primary-container font-sans font-medium leading-relaxed tracking-tight text-left">
-            Living sustainably shouldn&apos;t feel like a chore. We’ve distilled complex climate science into actionable, weekly rituals.
+            Living sustainably shouldn&apos;t feel like a chore. And we are working to distil complex climate science with you through weekly rituals and programmes.
           </p>
         </div>
 

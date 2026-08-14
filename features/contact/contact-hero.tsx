@@ -15,7 +15,7 @@ export const ContactHero = () => {
       }}
       className="w-full md:flex-1 text-left"
     >
-      <h2 className="text-6xl sm:text-7xl md:text-8xl font-bold break-words -ml-2">Contact Us</h2>
+      <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold break-words -ml-1">Contact Us</h2>
     </motion.div>
   );
 };

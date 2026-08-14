@@ -2,6 +2,7 @@
 import { SectionContainer } from '@/components/layout/section-container'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
 import { useState } from 'react'
+import { TopBanner } from '@/components/ui/top-banner'
 import { Hero } from '@/features/homepage/hero'
 import { Navbar } from '@/components/navigation/navbar'
 import TextAnimation1 from '@/components/TextAnimation1'
@@ -32,6 +33,7 @@ const page = () => {
 
   return (
     <>
+      <TopBanner />
       <Navbar />
       <main className="flex-1 w-full">
         <Hero />

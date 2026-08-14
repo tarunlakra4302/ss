@@ -18,8 +18,8 @@ const EventsPage = () => {
           className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
           <div className="space-y-4">
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black">
-              Upcoming <br /> <span className="text-black/40">Events</span>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black whitespace-nowrap">
+              Upcoming Events
             </h1>
           </div>
           

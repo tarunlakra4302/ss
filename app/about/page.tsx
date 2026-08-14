@@ -23,13 +23,13 @@ const AboutPage = () => {
         >
           <div className="space-y-4">
 
-            <h1 className="text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black">
-              About <br /> <span className="text-black/40">Us</span>
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black whitespace-nowrap">
+              About Us
             </h1>
           </div>
           
-          <p className="max-w-[700px] text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight">
-            A look inside the community redefining conscious living in our own backyards.
+          <p className="max-w-none text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight whitespace-nowrap">
+            Here is a sneak peak into our communities redefining conscious living.
           </p>
           
           <div className="flex flex-col items-center gap-2 pt-4">

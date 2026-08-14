@@ -33,7 +33,6 @@ export function Footer() {
             <h3 className="text-[1.5rem] font-medium text-[#000000] tracking-tight">Get involved</h3>
             <ul className="flex flex-col gap-3">
               <li><Link href="/become-a-volunteer" className="text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Volunteering</Link></li>
-              <li><Link href="/become-a-member" className="text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Become a member</Link></li>
             </ul>
           </div>
 

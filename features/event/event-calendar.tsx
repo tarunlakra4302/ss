@@ -70,6 +70,15 @@ const SAMPLE_EVENTS: EventMap = {
       description: 'A night of impact raising vital funds for cancer patients worldwide with Sustainable Sundays.',
     },
   ],
+  '2026-08-23': [
+    {
+      id: 7,
+      title: 'Edible Gardening Workshop',
+      time: '10:00 AM — 01:00 PM',
+      location: 'Pure & Sure Organic Cafe & Store, Jayanagar',
+      description: 'Learn soil ecology, moon phases, companion planting, beneficial insects & more by Barani Muthukumaran. Take home up to 10 heirloom seed varieties!',
+    },
+  ],
 };
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

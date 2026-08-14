@@ -28,7 +28,7 @@ export const AboutInitiatives = () => {
             variant="neubrutalism"
             title="Meet Our Team"
             description="Every Sunday, we gather to make a difference. From plogging to beach cleanups, join us in creating a sustainable future for our community."
-            className="flex-1 h-96 flex flex-col justify-center"
+            className="flex-1 h-96 flex flex-col justify-center border-none shadow-none"
           />
         </motion.div>
       </div>

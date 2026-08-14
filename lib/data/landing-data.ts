@@ -10,8 +10,8 @@ export const dummyArticles = [
         id: 2,
         imageSrc: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1280&h=720&fit=crop&crop=entropy&auto=format&q=80',
         title: 'Urban Spaces and Community',
-        linkText: 'Become a member',
-        linkHref: '/become-a-member',
+        linkText: 'Become a volunteer',
+        linkHref: '/become-a-volunteer',
     },
     {
         id: 3,

@@ -4,13 +4,13 @@ import { ThreeDCardDemo } from "@/features/homepage/3d-card-demo";
 
 const MOCK_EVENTS = [
   {
-    title: "Organic Farm Visit",
-    location: "Green Valley Farms",
-    date: "15 May",
+    title: "Edible Gardening Workshop",
+    location: "Pure & Sure Organic Cafe, Jayanagar",
+    date: "23 Aug",
     time: "10:00 AM",
-    imageUrl: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?q=80&w=2070&auto=format&fit=crop",
-    linkUrl: "/events/organic-farm-visit",
-    buttonText: "Join Tour"
+    imageUrl: "/edible-gardening-workshop.png",
+    linkUrl: "/events/edible-gardening-workshop",
+    buttonText: "Register Now"
   },
   {
     title: "Eco-Friendly Workshop",
@@ -39,7 +39,7 @@ export function EventsCardsSection({ showHeader = true }: { showHeader?: boolean
         {showHeader && (
           <div className="flex flex-col items-center text-center space-y-4 mb-16">
             <span className="text-primary font-bold uppercase tracking-widest text-xs">Get Involved</span>
-            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">Upcoming <span className="text-black/40">Events</span></h2>
+            <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-black">Upcoming Events</h2>
           </div>
         )}
         

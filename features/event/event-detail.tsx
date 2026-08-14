@@ -31,6 +31,27 @@ interface EventDetailProps {
 }
 
 const EVENTS_DATA: Record<string, any> = {
+  "edible-gardening-workshop": {
+    title: "Edible Gardening Workshop",
+    location: "Pure & Sure Organic Cafe & Store",
+    subLocation: "Jayanagar, Bangalore",
+    date: "August 23, 2026",
+    time: "10:00 AM – 01:00 PM",
+    heroImage: "/edible-gardening-workshop.png",
+    description: "Wanting to grow your own fresh vegetables and leafy greens at home? Even with limited space, be it balcony, terrace or small backyard. You can make it happen. This workshop will show you how!",
+    narrative: "Join us for the Edible Gardening Workshop by Barani Muthukumaran and learn soil ecology, moon phases, companion planting, beneficial insects & more, all in one hands-on session. Take home up to 10 heirloom seed varieties!",
+    expectations: [
+      { emoji: "🌱", label: "Soil Ecology" },
+      { emoji: "🌕", label: "Moon Phases & Planting" },
+      { emoji: "🌿", label: "Companion Planting" },
+      { emoji: "🎁", label: "10 Heirloom Seed Varieties" }
+    ],
+    tickets: [
+      { label: "₹700 per Adult", price: 700 }
+    ],
+    summary: "Edible Gardening Workshop by Barani Muthukumaran",
+    ticketTime: "Sunday Aug 23, 2026 @ 10am IST"
+  },
   "sustainable-market": {
     title: "Sustainable Market",
     location: "Town Square",
@@ -241,7 +262,7 @@ export function EventDetail({ slug }: EventDetailProps) {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-7xl md:text-[10rem] font-black tracking-tighter mb-12 leading-none"
+              className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tighter mb-12 leading-none whitespace-nowrap max-w-full overflow-hidden text-ellipsis"
             >
               {event.title}
             </motion.h1>

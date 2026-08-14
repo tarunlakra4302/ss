@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { submitToGoogleScript } from "@/lib/google/script";
 
 export const ContactForm = () => {
@@ -66,19 +66,10 @@ export const ContactForm = () => {
       }}
       className="w-full md:flex-[2] flex flex-col gap-6 md:gap-8"
     >
-      <div className="contact-copy">
-        <h2 className="text-2xl md:text-3xl">Got any questions?</h2>
-      </div>
-      <div className="contact-copy">
-        <Link className="text-xl md:text-3xl hover:underline break-all" href="mailto:sustainablesundays@gmail.com">
-          sustainablesundays@gmail.com
-        </Link>
-      </div>
-
-      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-6 mt-2 md:mt-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-4 mt-1 md:mt-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium mb-2">
+            <label htmlFor="firstName" className="block text-xs md:text-sm font-medium mb-1">
               First Name
             </label>
             <input
@@ -87,12 +78,12 @@ export const ContactForm = () => {
               value={firstName}
               onChange={(e) => setFirstName(e.target.value)}
               required
-              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+              className="w-full px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
               placeholder="First name"
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium mb-2">
+            <label htmlFor="lastName" className="block text-xs md:text-sm font-medium mb-1">
               Last Name
             </label>
             <input
@@ -101,13 +92,13 @@ export const ContactForm = () => {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               required
-              className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+              className="w-full px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
               placeholder="Last name"
             />
           </div>
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-2">
+          <label htmlFor="email" className="block text-xs md:text-sm font-medium mb-1">
             Email
           </label>
           <input
@@ -116,12 +107,12 @@ export const ContactForm = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+            className="w-full px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
             placeholder="your@email.com"
           />
         </div>
         <div>
-          <label htmlFor="phone" className="block text-sm font-medium mb-2">
+          <label htmlFor="phone" className="block text-xs md:text-sm font-medium mb-1">
             Phone Number
           </label>
           <input
@@ -130,21 +121,21 @@ export const ContactForm = () => {
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
-            className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm md:text-base"
+            className="w-full px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
             placeholder="+1 (555) 123-4567"
           />
         </div>
         <div>
-          <label htmlFor="message" className="block text-sm font-medium mb-2">
+          <label htmlFor="message" className="block text-xs md:text-sm font-medium mb-1">
             Message
           </label>
           <textarea
             id="message"
-            rows={4}
+            rows={3}
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             required
-            className="w-full px-3 py-2 md:px-4 md:py-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm md:text-base"
+            className="w-full px-3 py-1.5 md:px-4 md:py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-transparent focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
             placeholder="Your message..."
           />
         </div>
@@ -159,7 +150,7 @@ export const ContactForm = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-6 py-2 md:px-8 md:py-3 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity w-fit text-sm md:text-base disabled:opacity-50"
+          className="px-6 py-2 md:px-8 md:py-2.5 bg-foreground text-background font-semibold rounded-full hover:opacity-90 transition-opacity w-fit text-sm md:text-base disabled:opacity-50 mt-1"
         >
           {isSubmitting ? "Sending..." : "Send Message"}
         </button>

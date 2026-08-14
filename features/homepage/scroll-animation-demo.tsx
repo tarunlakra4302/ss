@@ -41,8 +41,8 @@ export function ScrollAnimationDemo() {
           className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
           
-          <p className="max-w-[700px] text-xl md:text-2xl text-black/70 font-medium leading-relaxed tracking-tight">
-            A look inside the community redefining conscious living in our own backyards.
+          <p className="max-w-none text-xl md:text-2xl text-black/70 font-medium leading-relaxed tracking-tight whitespace-nowrap">
+            Here is a sneak peak into our communities redefining conscious living.
           </p>
         </motion.div>
       </SectionContainer>

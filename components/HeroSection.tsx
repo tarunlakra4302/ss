@@ -71,8 +71,8 @@ export default function HeroSection() {
       <div className="relative">
         {/* Sticky Hero title - stays visible just below navbar on scroll */}
         <div className="sticky top-[80px] z-[30] w-full flex flex-col items-center justify-center px-6 py-8 text-center gap-2 pointer-events-none">
-          <h1 className="text-lg md:text-xl font-medium tracking-tight text-gray-900 leading-relaxed max-w-[320px]">
-            A look inside the community redefining conscious living in our own backyards.
+          <h1 className="text-lg md:text-xl font-medium tracking-tight text-gray-900 leading-relaxed whitespace-nowrap">
+            Here is a sneak peak into our communities redefining conscious living.
           </h1>
           <div className="flex flex-col items-center gap-1">
             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em]">
