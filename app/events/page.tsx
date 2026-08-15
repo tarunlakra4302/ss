@@ -3,7 +3,8 @@ import { Navbar } from '@/components/navigation/navbar'
 import { SectionContainer } from '@/components/layout/section-container'
 import { motion } from 'framer-motion'
 import { EventCalendar } from '@/features/event/event-calendar'
-import { EventsCardsSection } from '@/features/homepage/events-section'
+import { UpcomingEventsList } from '@/features/event/upcoming-events-list'
+import { Skiper54 } from '@/components/ui/skiper54'
 
 const EventsPage = () => {
   return (
@@ -28,8 +29,9 @@ const EventsPage = () => {
           </p>
         </motion.div>
       </SectionContainer>
-      <EventsCardsSection showHeader={false} />
+      <UpcomingEventsList />
       <EventCalendar />
+      <Skiper54 />
     </main>
     </>
   )

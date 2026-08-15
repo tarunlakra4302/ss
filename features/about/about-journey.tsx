@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useScroll } from "framer-motion";
 import InfiniteGallery from "@/components/ui/gallery-photography";
 
@@ -14,11 +14,14 @@ interface AboutJourneyProps {
 }
 
 export const AboutJourney = ({ images }: AboutJourneyProps) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const sectionRef = useRef<HTMLDivElement>(null);
   
   // Track scroll progress of this specific section
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: mounted ? sectionRef : undefined,
     offset: ["start end", "end start"]
   });
 

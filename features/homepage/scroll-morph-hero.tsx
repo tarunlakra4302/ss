@@ -206,9 +206,12 @@ export default function IntroAnimation() {
         return () => observer.disconnect();
     }, []);
 
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+
     // --- Scroll Logic ---
     const { scrollYProgress } = useScroll({
-        target: containerRef,
+        target: mounted ? containerRef : undefined,
         offset: ["start start", "end end"],
     });
 

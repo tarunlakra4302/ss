@@ -1,7 +1,7 @@
 "use client";
 import { SectionContainer } from '@/components/layout/section-container'
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
-import { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
 import { TopBanner } from '@/components/ui/top-banner'
 import { Hero } from '@/features/homepage/hero'
 import { Navbar } from '@/components/navigation/navbar'
@@ -12,12 +12,16 @@ import { RelatedArticlesSection } from '@/features/homepage/related-articles'
 import HeroSection from '@/components/HeroSection'
 import { EventsCardsSection } from '@/features/homepage/events-section'
 import DonationBox from '@/components/donation-box'
+import FlowArtDefaultDemo from '@/components/ui/story-scroll-demo'
 import { dummyArticles } from '@/lib/data/landing-data';
   
 const page = () => {
-  const [donationSection, setDonationSection] = useState<HTMLElement | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const donationSectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
-    target: donationSection ? { current: donationSection } : undefined,
+    target: mounted ? donationSectionRef : undefined,
     offset: ["start end", "end start"]
   });
 
@@ -40,7 +44,7 @@ const page = () => {
         
 <EventsCardsSection />
 <HeroSection />
-               <SectionContainer className="bg-background">
+        <SectionContainer className="bg-background">
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { 
@@ -62,7 +66,7 @@ const page = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="p-8 rounded-3xl border border-neutral-100 hover:border-primary/20 hover:bg-primary/5 transition-all duration-500 group flex flex-col justify-between"
+                className="p-8 rounded-3xl border border-neutral-100 flex flex-col justify-between"
               >
                 <div>
                   <h3 className="text-2xl font-bold tracking-tight mb-4">{feature.title}</h3>
@@ -72,17 +76,17 @@ const page = () => {
             ))}
           </div>
         </SectionContainer>
-        <RelatedArticlesSection articles={dummyArticles} />
+        <FlowArtDefaultDemo />
         <SectionContainer 
-                  id="donation-section"
-          ref={setDonationSection}
+          id="donation-section"
+          ref={donationSectionRef}
           data-theme="dark"
-          className="bg-[oklch(0.2_0.08_240)] text-white py-32 md:py-48 overflow-hidden"
+          className="bg-[oklch(0.2_0.08_240)] text-white py-32 md:py-48 overflow-hidden relative z-10"
         >
           <div className="flex flex-col items-center gap-16">
             <motion.div
               style={{ y: titleY }}
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}

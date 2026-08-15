@@ -106,6 +106,48 @@ const Purpose = () => (
   </section>
 );
 
+const GeneralVolunteers = () => (
+  <section className="bg-white">
+    <div className="max-w-7xl mx-auto py-16 px-6 md:px-12 lg:py-24 grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20 items-center">
+      {/* Left Column: Image */}
+      <div className="w-full md:col-span-7 aspect-[4/3] md:aspect-[4/5] overflow-hidden rounded-none">
+        <img
+          src="https://picsum.photos/seed/generalvolunteers/800/1000"
+          alt="Diverse group of outdoor volunteers"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Right Column: Content */}
+      <div className="flex flex-col max-w-lg md:col-span-5">
+        <h2 className="text-[#000000] text-5xl md:text-6xl lg:text-[72px] font-semibold tracking-tight leading-[1.1] mb-12">
+          General<br />Volunteers
+        </h2>
+        
+        <div className="flex flex-col gap-10">
+          <div>
+            <h3 className="text-[#000000] text-xl md:text-2xl font-medium mb-3">
+              Event Support
+            </h3>
+            <p className="text-gray-600 text-lg font-normal leading-relaxed">
+              Assist in organizing and running events, from local fundraisers to international symposiums.
+            </p>
+          </div>
+          
+          <div>
+            <h3 className="text-[#000000] text-xl md:text-2xl font-medium mb-3">
+              Administrative Help
+            </h3>
+            <p className="text-gray-600 text-lg font-normal leading-relaxed">
+              Provide essential back-office support to keep our operations running smoothly.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+);
+
 export default function BecomeAVolunteerPage() {
   return (
     <div className="min-h-screen">
@@ -113,6 +155,8 @@ export default function BecomeAVolunteerPage() {
       <main>
         <Hero />
         <Purpose />
+        
+        <GeneralVolunteers />
         
         {/* Preserved Section */}
         <section className="mt-20 pt-20">

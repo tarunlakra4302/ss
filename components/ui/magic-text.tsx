@@ -31,10 +31,14 @@ const Word: React.FC<WordProps> = ({ children, progress, range }) => {
 
 export const MagicText: React.FC<MagicTextProps> = ({ text, className }) => {
   const container = useRef(null);
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { scrollYProgress } = useScroll({
-    target: container,
-
+    target: mounted ? container : undefined,
     offset: ["start 0.9", "start 0.25"],
   });
   const words = text.split(" ");

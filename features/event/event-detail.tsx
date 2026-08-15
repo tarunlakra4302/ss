@@ -19,6 +19,7 @@ import {
   Music, 
   GlassWater,
   ChevronRight,
+  ChevronDown,
   ArrowLeft
 } from "lucide-react";
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
@@ -97,8 +98,13 @@ const EVENTS_DATA: Record<string, any> = {
 };
 
 export function EventDetail({ slug }: EventDetailProps) {
-  const [ticketCount, setTicketCount] = useState(1);
+  const [ticketCount, setTicketCount] = useState(0);
+  const [showSummary, setShowSummary] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+
+  const isActive = ticketCount > 0;
+  const incrementTickets = () => setTicketCount(prev => prev + 1);
+  const decrementTickets = () => setTicketCount(prev => Math.max(0, prev - 1));
   const [mode, setMode] = useState<'tickets' | 'donate' | 'form'>('tickets');
   const [donationAmount, setDonationAmount] = useState<number | null>(null);
   const [container, setContainer] = useState<HTMLElement | null>(null);
@@ -172,9 +178,6 @@ export function EventDetail({ slug }: EventDetailProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
-
-  const incrementTickets = () => setTicketCount(prev => prev + 1);
-  const decrementTickets = () => setTicketCount(prev => Math.max(1, prev - 1));
 
   // Form Handlers
   const handleFieldChange = (field: keyof typeof fields) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -282,92 +285,72 @@ export function EventDetail({ slug }: EventDetailProps) {
             </motion.div>
           </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
-            {/* Left Column */}
-            <div className="lg:col-span-7 space-y-20">
+            {/* Left Column (Main Content) */}
+            <div className="lg:col-span-6 lg:-ml-20">
               
-              {/* Metadata Cards */}
-              <div className="flex flex-col md:flex-row items-center gap-12 p-8 bg-surface-container-low rounded-2xl w-fit">
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                    <MapPin size={24} />
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-bold text-lg leading-tight m-0">{event.location}</p>
-                    {event.subLocation && (
-                      <p className="text-secondary text-sm leading-tight m-0 opacity-60">{event.subLocation}</p>
-                    )}
-                  </div>
+              {/* Meta Information (Top) */}
+              <div className="flex flex-col mb-6">
+                <div className="border-b border-gray-200 pb-2 mb-2 w-fit">
+                  <p className="text-gray-800 text-xl">📍 {event.location}</p>
                 </div>
-                <div className="flex items-center gap-5">
-                  <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                    <Calendar size={24} />
-                  </div>
-                  <div className="flex flex-col">
-                    <p className="font-bold text-lg leading-tight m-0 whitespace-nowrap">{event.date}</p>
-                    <p className="text-secondary text-sm leading-tight m-0 opacity-60">{event.time}</p>
-                  </div>
-                </div>
+                {event.subLocation && (
+                  <p className="text-gray-800 text-xl mb-2">{event.subLocation}</p>
+                )}
+                <p className="text-2xl text-gray-500 font-medium">📅 {event.date} | ⏰ {event.time}</p>
               </div>
 
-              {/* Narrative */}
-              <article className="max-w-2xl">
-                <h2 className="text-4xl font-extrabold mb-8 tracking-tight leading-tight">
-                  A Night to Remember. A Cause That Matters. 🥳
-                </h2>
-                <div className="text-lg leading-relaxed text-neutral-600 space-y-6 font-medium">
-                  <p>
-                    {event.description}
-                  </p>
-                  <p>
-                    {event.narrative}
-                  </p>
-                </div>
-              </article>
+              {/* Main Headline */}
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-black tracking-tight mt-6 mb-4 whitespace-nowrap -ml-1 sm:-ml-1.5">
+                🎉 {event.title}
+              </h1>
+
+              {/* Body Text */}
+              <div className="text-lg lg:text-xl text-gray-800 leading-relaxed space-y-4 mb-8">
+                <p>{event.description}</p>
+                <p>{event.narrative}</p>
+              </div>
 
               {/* Expect Section */}
-              <section>
-                <h3 className="text-xl font-bold mb-8 uppercase tracking-widest text-neutral-400 text-[10px]">What to Expect</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <section className="mb-10">
+                <h3 className="text-xl font-medium mt-8 mb-4">Expect:</h3>
+                <div className="flex flex-col">
                   {event.expectations.map((item: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-5 p-6 bg-white rounded-2xl shadow-sm border border-outline-variant/10">
-                      <div className="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-2xl">
-                        {item.emoji}
-                      </div>
-                      <span className="font-bold">{item.label}</span>
+                    <div key={idx} className="flex items-center gap-2 mb-2">
+                      <span className="text-2xl">{item.emoji}</span>
+                      <span className="text-lg lg:text-xl text-gray-800">{item.label}</span>
                     </div>
                   ))}
                 </div>
               </section>
 
+              {/* Tickets Section */}
+              <section className="mb-10">
+                <h3 className="text-3xl font-semibold mt-10 mb-3">🎟️ Tickets</h3>
+                <p className="text-lg lg:text-xl text-gray-800 leading-relaxed">
+                  General admission tickets are available now. Grab yours before they sell out!
+                </p>
+              </section>
 
-
-              {/* Donation Section */}
-              <section className="p-10 rounded-3xl border border-neutral-100">
-                <div className="flex items-start gap-6">
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-[oklch(0.2_0.08_240)] shadow-md">
-                    <Heart size={28} fill="currentColor" />
-                  </div>
-                  <div>
-                    <h3 className="text-2xl font-bold mb-3">Can't Attend?</h3>
-                    <p className="text-neutral-600 mb-6 leading-relaxed">
-                      You can still support the cause by making a direct donation to the Sustainable Sundays mission.
-                    </p>
-                    <button 
-                      onClick={handleDonateClick}
-                      className="flex items-center gap-2 text-[oklch(0.2_0.08_240)] font-bold hover:gap-4 transition-all group"
-                    >
-                      Donate Now <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
+              {/* Can't Attend? Section */}
+              <section className="mb-10">
+                <h3 className="text-3xl font-semibold mt-10 mb-3">❤️ Can't Attend?</h3>
+                <p className="text-lg lg:text-xl text-gray-800 leading-relaxed mb-4">
+                  You can still support the cause by making a direct donation to the Sustainable Sundays mission.
+                </p>
+                <button 
+                  onClick={handleDonateClick}
+                  className="text-[#F97316] text-lg font-medium hover:underline flex items-center gap-1"
+                >
+                  Donate Now <ChevronRight size={20} />
+                </button>
               </section>
             </div>
 
             {/* Right Column: Sticky Widget */}
-            <aside className="lg:col-span-5 relative" ref={donationBoxRef}>
-              <motion.div layout className="sticky top-32 bg-white rounded-3xl ambient-shadow overflow-hidden border border-outline-variant/10 min-h-[500px] flex flex-col">
+            <aside className="lg:col-span-6 relative lg:translate-x-16" ref={donationBoxRef}>
+              <motion.div layout className="sticky top-8 bg-white rounded-3xl ambient-shadow overflow-hidden border border-outline-variant/10 min-h-[500px] flex flex-col">
                 <AnimatePresence mode="wait">
                   {mode === 'tickets' ? (
                     <motion.div
@@ -378,65 +361,172 @@ export function EventDetail({ slug }: EventDetailProps) {
                       transition={{ duration: 0.4, ease: "easeInOut" }}
                       className="flex-1 flex flex-col"
                     >
-                      {/* Widget Header */}
-                      <div className="p-10 space-y-5">
-                        <h3 className="text-2xl font-extrabold leading-tight">
-                          {event.summary}
-                        </h3>
-                        <div className="flex items-center gap-2 text-neutral-500 font-medium text-sm">
-                          <Clock size={16} />
-                          <span>{event.ticketTime}</span>
-                        </div>
+                      <div className="min-h-[530px] flex flex-col justify-between overflow-hidden">
+                        <AnimatePresence mode="wait" initial={false}>
+                          {!showSummary ? (
+                            <motion.div
+                              key="ticket-view"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -8 }}
+                              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                              className="flex-1 flex flex-col justify-between"
+                            >
+                              {/* Widget Header */}
+                              <div className="p-10 space-y-5">
+                                <h3 className="text-2xl font-extrabold leading-tight">
+                                  {event.summary}
+                                </h3>
+                                <div className="flex items-center gap-2 text-neutral-500 font-medium text-sm">
+                                  <Clock size={16} />
+                                  <span>{event.ticketTime}</span>
+                                </div>
+                              </div>
+
+                              {/* Widget Body */}
+                              <div className="px-10 pb-6 space-y-8">
+                                {/* Ticket Stub Selection Card */}
+                                <div className={`relative flex flex-col w-full max-w-[440px] rounded-xl shadow-sm mx-auto border transition-colors duration-300 ${
+                                  isActive ? 'bg-[#FFF8F3] border-[#FF5A00]' : 'bg-white border-gray-200'
+                                }`}>
+                                  {/* 2. The Top "Spine" (Ticket Binding) */}
+                                  <div className={`w-full h-2.5 border-b rounded-t-xl transition-colors duration-300 ${
+                                    isActive ? 'bg-[#FF5A00] border-[#FF5A00]' : 'bg-[#F9FAFB] border-gray-200'
+                                  }`} />
+
+                                  {/* 3. Top Section (Ticket Info & Quantity Controls) */}
+                                  <div className="p-5 md:p-6 pb-5 flex justify-between items-start">
+                                    {/* Left Column (Text Info) */}
+                                    <div className="flex flex-col">
+                                      <h4 className="text-lg font-medium text-gray-900 tracking-tight">General Admission</h4>
+                                      <span className="text-base font-medium text-[#7C3A16]">₹{ticketPrice.toFixed(2)}</span>
+                                      <span className="text-xs font-bold text-gray-500 tracking-wider uppercase mt-1">400 REMAINING</span>
+                                    </div>
+
+                                    {/* Right Column (Quantity Counter Controls) */}
+                                    <div className="flex items-center gap-3">
+                                      <button
+                                        onClick={decrementTickets}
+                                        disabled={ticketCount === 0}
+                                        className={`w-9 h-9 rounded-[10px] flex items-center justify-center font-medium text-lg transition-all ${
+                                          ticketCount === 0 
+                                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                                            : 'bg-[#FF5A00] text-white hover:bg-[#E04F00] active:scale-95 cursor-pointer shadow-sm'
+                                        }`}
+                                        aria-label="Decrease tickets"
+                                      >
+                                        −
+                                      </button>
+                                      <span className="w-4 text-center text-base font-semibold text-gray-800">{ticketCount}</span>
+                                      <button
+                                        onClick={incrementTickets}
+                                        className="w-9 h-9 rounded-[10px] bg-[#FF5A00] text-white flex items-center justify-center font-medium text-xl hover:bg-[#E04F00] active:scale-95 transition-all shadow-sm cursor-pointer"
+                                        aria-label="Increase tickets"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* 4. The Perforation Line & Perfect Notches */}
+                                  <div className="relative w-full h-[1px]">
+                                    {/* The Dashed Line */}
+                                    <div className="absolute inset-0 border-b border-dashed border-gray-300" />
+                                    {/* Left Notch (Perfect Half-Circle) */}
+                                    <div className={`absolute top-1/2 -translate-y-1/2 -left-[1px] w-3 h-6 bg-white border-r border-y rounded-r-full z-10 transition-colors duration-300 ${
+                                      isActive ? 'border-r-[#FF5A00] border-y-[#FF5A00]' : 'border-r-gray-200 border-y-gray-200'
+                                    }`} />
+                                    {/* Right Notch (Perfect Half-Circle) */}
+                                    <div className={`absolute top-1/2 -translate-y-1/2 -right-[1px] w-3 h-6 bg-white border-l border-y rounded-l-full z-10 transition-colors duration-300 ${
+                                      isActive ? 'border-l-[#FF5A00] border-y-[#FF5A00]' : 'border-l-gray-200 border-y-gray-200'
+                                    }`} />
+                                  </div>
+
+                                  {/* 5. Bottom Section (Rules List) */}
+                                  <div className="p-5 md:p-6 pt-5 flex flex-col gap-2 rounded-b-xl">
+                                    <p className="text-sm text-gray-600 font-medium leading-normal">
+                                      💵 <span className="text-gray-900 font-semibold">₹{ticketPrice} online</span> – Buy now and save your spot!
+                                    </p>
+                                    <p className="text-sm text-gray-600 font-medium leading-normal">
+                                      💵 <span className="text-gray-900 font-semibold">₹{ticketPrice + 50} at the door</span> – If we're not sold out 😉
+                                    </p>
+                                  </div>
+                                </div>
+
+                                {/* Total Row */}
+                                <div 
+                                  onClick={() => setShowSummary(true)}
+                                  className="flex items-center justify-between px-1 cursor-pointer select-none group"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-[#00BA7C]" viewBox="0 0 24 24" fill="currentColor">
+                                      <path fillRule="evenodd" d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.09 6.273a.75.75 0 0 0-1.212-.886L10.5 12.793l-1.894-1.894a.75.75 0 0 0-1.06 1.06l2.5 2.5a.75.75 0 0 0 1.137-.089l4.423-5.921Z" clipRule="evenodd" />
+                                    </svg>
+                                    <span className="text-lg font-semibold text-black tracking-tight">Total</span>
+                                  </div>
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-lg font-semibold text-black">₹{(ticketCount * ticketPrice).toFixed(2)}</span>
+                                    <ChevronDown size={20} className="text-black stroke-[2.5] group-hover:translate-y-0.5 transition-transform" />
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          ) : (
+                            <motion.div
+                              key="summary-view"
+                              initial={{ opacity: 0, y: 8 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -8 }}
+                              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                              className="p-10 space-y-8 flex-1 flex flex-col"
+                            >
+                              {/* Summary Top Header */}
+                              <div 
+                                onClick={() => setShowSummary(false)}
+                                className="flex items-center justify-between cursor-pointer select-none"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <svg className="w-5 h-5 text-[#00BA7C]" viewBox="0 0 24 24" fill="currentColor">
+                                    <path fillRule="evenodd" d="M12.516 2.17a.75.75 0 0 0-1.032 0 11.209 11.209 0 0 1-7.877 3.08.75.75 0 0 0-.722.515A12.74 12.74 0 0 0 2.25 9.75c0 5.942 4.064 10.933 9.563 12.348a.749.749 0 0 0 .374 0c5.499-1.415 9.563-6.406 9.563-12.348 0-1.39-.223-2.73-.635-3.985a.75.75 0 0 0-.722-.516l-.143.001c-2.996 0-5.717-1.17-7.734-3.08Zm3.09 6.273a.75.75 0 0 0-1.212-.886L10.5 12.793l-1.894-1.894a.75.75 0 0 0 1.137-.089l4.423-5.921Z" clipRule="evenodd" />
+                                  </svg>
+                                  <span className="text-base font-bold text-black tracking-tight">Secure</span>
+                                </div>
+                                <ChevronDown size={20} className="text-black stroke-[2.5] rotate-180 transition-transform" />
+                              </div>
+
+                              {/* Summary Details */}
+                              <div className="pt-2 border-b border-gray-200 pb-5">
+                                <span className="text-xs font-bold text-gray-800 tracking-wider uppercase block mb-4">
+                                  SUMMARY
+                                </span>
+                                <div className="flex items-center justify-between text-base">
+                                  <span className="text-gray-700 font-normal">Subtotal</span>
+                                  <span className="text-gray-900 font-medium">₹{(ticketCount * ticketPrice).toFixed(2)}</span>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
 
-                      {/* Widget Body */}
-                      <div className="px-10 pb-10 space-y-10">
-                        <div className="p-8 bg-surface-container-low rounded-2xl">
-                          <div className="flex justify-between items-center mb-6">
-                            <span className="font-bold text-lg">General Admission</span>
-                            <span className="font-black text-2xl">₹{ticketPrice.toFixed(2)}</span>
-                          </div>
-                          
-                          <div className="flex justify-between items-center">
-                            <div className="flex flex-col">
-                              <span className="text-[10px] font-black text-[oklch(0.2_0.08_240)] tracking-widest uppercase mb-1">
-                                Availability
-                              </span>
-                              <span className="text-xs font-bold text-[oklch(0.2_0.08_240)]">400 REMAINING</span>
-                            </div>
-                            
-                            <div className="flex items-center bg-white rounded-xl shadow-sm p-1 border border-outline-variant/10">
-                              <button 
-                                onClick={decrementTickets}
-                                className="w-10 h-10 flex items-center justify-center text-[oklch(0.2_0.08_240)] hover:bg-surface-container-low rounded-lg transition-colors"
-                              >
-                                <Minus size={18} />
-                              </button>
-                              <span className="w-12 text-center font-black text-lg">{ticketCount}</span>
-                              <button 
-                                onClick={incrementTickets}
-                                className="w-10 h-10 flex items-center justify-center text-[oklch(0.2_0.08_240)] hover:bg-surface-container-low rounded-lg transition-colors"
-                              >
-                                <Plus size={18} />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-4">
-                          <button 
-                            onClick={() => setMode('form')}
-                            className="w-full py-5 bg-[oklch(0.2_0.08_240)] text-white font-black text-lg rounded-2xl shadow-lg hover:shadow-[oklch(0.2_0.08_240)]/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                          >
-                            Continue
-                          </button>
-                          <button 
-                            onClick={handleDonateClick}
-                            className="w-full py-5 text-[oklch(0.2_0.08_240)] font-bold hover:bg-[oklch(0.2_0.08_240)]/5 rounded-2xl transition-colors border border-[oklch(0.2_0.08_240)]/20"
-                          >
-                            I'd just like to donate
-                          </button>
-                        </div>
+                      <div className="px-10 pb-10 space-y-4">
+                        <button 
+                          onClick={() => setMode('form')}
+                          disabled={ticketCount === 0}
+                          className={`w-full py-5 text-white font-black text-lg rounded-2xl shadow-lg transition-all ${
+                            ticketCount === 0 
+                              ? 'bg-gray-300 cursor-not-allowed opacity-60' 
+                              : 'bg-[oklch(0.2_0.08_240)] hover:shadow-[oklch(0.2_0.08_240)]/20 hover:scale-[1.02] active:scale-[0.98]'
+                          }`}
+                        >
+                          Continue
+                        </button>
+                        <button 
+                          onClick={handleDonateClick}
+                          className="w-full py-5 text-[oklch(0.2_0.08_240)] font-bold hover:bg-[oklch(0.2_0.08_240)]/5 rounded-2xl transition-colors border border-[oklch(0.2_0.08_240)]/20"
+                        >
+                          I'd just like to donate
+                        </button>
                       </div>
                     </motion.div>
                   ) : mode === 'form' ? (

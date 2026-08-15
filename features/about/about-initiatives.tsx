@@ -1,9 +1,15 @@
 "use client";
 import { motion } from "framer-motion";
-import { DirectionAwareHover } from "@/components/ui/direction-aware-hover";
-import { Card } from "@/components/ui/card";
+import { HoverExpand_001 } from "@/components/ui/hover-expand";
+import { galleryImages } from "@/lib/data/about-data";
 
 export const AboutInitiatives = () => {
+  const formattedImages = galleryImages.map((img, idx) => ({
+    src: img.src,
+    alt: img.alt,
+    code: `# ${(idx + 1).toString().padStart(2, "0")}`,
+  }));
+
   return (
     <section className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
@@ -15,21 +21,20 @@ export const AboutInitiatives = () => {
             duration: 0.8,
             ease: "easeOut",
           }}
-          className="flex flex-col md:flex-row gap-8 justify-center items-stretch"
+          className="flex flex-col items-center justify-center gap-8 text-center"
         >
-          <DirectionAwareHover
-            imageUrl="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop"
-            className="flex-1 h-96 w-full md:w-auto"
-          >
-            <p className="font-bold text-xl">Plogging</p>
-            <p className="font-normal text-sm">Jogging while picking up litter</p>
-          </DirectionAwareHover>
-          <Card
-            variant="neubrutalism"
-            title="Meet Our Team"
-            description="Every Sunday, we gather to make a difference. From plogging to beach cleanups, join us in creating a sustainable future for our community."
-            className="flex-1 h-96 flex flex-col justify-center border-none shadow-none"
-          />
+          <div className="max-w-2xl mx-auto space-y-3">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-neutral-900">
+              Meet Our Team
+            </h2>
+            <p className="text-base sm:text-lg text-neutral-600 font-medium leading-relaxed">
+              Every Sunday, we gather to make a difference. From plogging to beach cleanups, join us in creating a sustainable future for our community.
+            </p>
+          </div>
+
+          <div className="w-full flex justify-center overflow-x-auto py-4">
+            <HoverExpand_001 images={formattedImages} />
+          </div>
         </motion.div>
       </div>
     </section>

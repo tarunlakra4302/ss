@@ -31,15 +31,10 @@ const AboutPage = () => {
           <p className="max-w-none text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight whitespace-nowrap">
             Here is a sneak peak into our communities redefining conscious living.
           </p>
-          
-          <div className="flex flex-col items-center gap-2 pt-4">
-            <span className="text-xs uppercase tracking-[0.2em] text-black/50 font-bold">Scroll Down</span>
-            <span className="text-black/50 animate-bounce">↓</span>
-          </div>
         </motion.div>
       </SectionContainer>
-            <AboutJourney images={galleryImages} />
       <StorySection />
+      <AboutJourney images={galleryImages} />
       <AboutInitiatives />
       
       {/* Redesigned Timeline Section */}

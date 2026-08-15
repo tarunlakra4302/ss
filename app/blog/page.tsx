@@ -18,17 +18,17 @@ const BlogPage = () => {
         >
           <div className="space-y-2">
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] text-black">
-              Our <br /> <span className="text-black/40">Blog</span>
+              Our Blog
             </h1>
           </div>
           
-          <p className="max-w-[700px] text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight">
+          <p className="max-w-[700px] text-lg md:text-xl text-black font-medium leading-relaxed tracking-tight">
             Explore our latest thoughts on sustainable design, technological innovation, and the future of digital architecture.
           </p>
 
           <div className="flex flex-col items-center gap-1 pt-2">
-            <span className="text-[10px] uppercase tracking-[0.2em] text-black/50 font-bold">Scroll Down</span>
-            <span className="text-black/50 animate-bounce text-xs">↓</span>
+            <span className="text-[10px] uppercase tracking-[0.2em] text-black font-bold">Scroll Down</span>
+            <span className="text-black animate-bounce text-xs">↓</span>
           </div>
         </motion.div>
       </SectionContainer>

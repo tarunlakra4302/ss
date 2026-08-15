@@ -64,9 +64,9 @@ export const ContactForm = () => {
         duration: 0.6,
         ease: "easeOut",
       }}
-      className="w-full md:flex-[2] flex flex-col gap-6 md:gap-8"
+      className="w-full max-w-md lg:max-w-lg flex flex-col gap-6 md:gap-8"
     >
-      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-4 mt-1 md:mt-2">
+      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-4 mt-1 md:mt-2 w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label htmlFor="firstName" className="block text-xs md:text-sm font-medium mb-1">

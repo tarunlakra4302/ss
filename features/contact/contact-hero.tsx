@@ -15,7 +15,9 @@ export const ContactHero = () => {
       }}
       className="w-full md:flex-1 text-left"
     >
-      <h2 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold break-words -ml-1">Contact Us</h2>
+      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold whitespace-nowrap tracking-tight -ml-3 sm:-ml-5 md:-ml-8 lg:-ml-12">
+        Contact Us
+      </h2>
     </motion.div>
   );
 };

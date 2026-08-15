@@ -109,9 +109,12 @@ export function ContainerScrollAnimation({
   ...props
 }: React.ComponentProps<'div'> & { spacerClass?: string }) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
   useSmoothScroll();
   const { scrollYProgress: rawScrollYProgress } = useScroll({
-    target: scrollRef,
+    target: mounted ? scrollRef : undefined,
   });
 
   const scrollYProgress = useSpring(rawScrollYProgress, {
