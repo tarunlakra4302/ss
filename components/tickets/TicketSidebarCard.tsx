@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Playfair_Display, DM_Sans } from "next/font/google";
-import { submitToGoogleScript } from "@/lib/google/script";
 
 const playfair = Playfair_Display({ subsets: ["latin"], weight: ["700"] });
 const dmSans = DM_Sans({
@@ -87,14 +86,18 @@ export default function TicketSidebarCard() {
     if (!Object.values(newErrors).some((err) => err !== "")) {
       setSubmitState("loading");
       try {
-        await submitToGoogleScript({
-          formType: "event",
-          firstName: fields.firstName,
-          lastName: fields.lastName,
-          phone: fields.phone,
-          email: fields.email,
-          quantity,
-          donationTime: new Date().toLocaleString(),
+        await fetch("/api/forms/submit-to-sheet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            formType: "event",
+            firstName: fields.firstName,
+            lastName: fields.lastName,
+            phone: fields.phone,
+            email: fields.email,
+            quantity,
+            donationTime: new Date().toLocaleString(),
+          }),
         });
       } catch (e) {
         console.warn("Error submitting ticket data:", e);

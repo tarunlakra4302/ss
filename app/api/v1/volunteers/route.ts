@@ -4,6 +4,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { getCachedIdempotentResponse, saveIdempotentResponse } from '@/lib/idempotency';
 import { badRequest, tooManyRequests, internalServerError } from '@/lib/errors';
 import { appendToSheet } from '@/lib/google/sheets';
+import { checkHoneypot } from '@/lib/security/honeypot';
 
 export async function POST(req: NextRequest) {
   const instancePath = '/api/v1/volunteers';
@@ -47,6 +48,19 @@ export async function POST(req: NextRequest) {
       if (!data) return badRequest('Request body must be a valid JSON object or form-data.', instancePath);
     }
 
+    // 4. Honeypot & Time-to-submit Bot Detection (Silent 201 Success)
+    const honeypotStatus = checkHoneypot(data);
+    if (honeypotStatus.isSpam) {
+      const fakePayload = {
+        status: 'SUCCESS',
+        message: 'Volunteer application received successfully.',
+      };
+      return new NextResponse(JSON.stringify(fakePayload), {
+        status: 201,
+        headers: { 'Content-Type': 'application/json', ...rateStatus.headers },
+      });
+    }
+
     const validationResult = VolunteerApplicationSchema.safeParse(data);
     if (!validationResult.success) {
       const invalidParams = Object.entries(
@@ -61,7 +75,7 @@ export async function POST(req: NextRequest) {
 
     const { name, email, phone, expertise, availability, message } = validationResult.data;
 
-    // 4. Append to Google Sheets
+    // 5. Append to Google Sheets
     const timestamp = new Date().toISOString();
     const row = [timestamp, name, email, phone, expertise, availability, message];
 
@@ -72,7 +86,7 @@ export async function POST(req: NextRequest) {
       message: 'Volunteer application received successfully.',
     };
 
-    // 5. Cache for Idempotency
+    // 6. Cache for Idempotency
     if (idempotencyKey) {
       await saveIdempotentResponse(idempotencyKey, 201, responsePayload, rateStatus.headers);
     }
@@ -89,3 +103,4 @@ export async function POST(req: NextRequest) {
     return internalServerError('Failed to submit volunteer application.', instancePath);
   }
 }
+

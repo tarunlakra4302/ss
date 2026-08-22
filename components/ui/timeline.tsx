@@ -58,19 +58,19 @@ export const Timeline = ({ data }: TimelineProps) => {
         {data.map((item, index) => (
           <div
             key={index}
-            className="timeline-item flex flex-col md:flex-row gap-8 items-start will-change-transform relative w-full"
+            className="timeline-item flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-24 items-start will-change-transform relative w-full"
           >
-            {/* Left Column / Top Section - Year */}
-            <div className="w-full md:w-[40%] flex flex-col items-center justify-center text-center self-center shrink-0">
-              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words w-full ${
+            {/* Left Column / Top Section - Year & Month */}
+            <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col items-end text-right self-start shrink-0">
+              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words leading-none w-full text-right ${
                 isNaN(Number(item.year))
-                  ? "text-[32px] md:text-[48px] lg:text-[60px] leading-tight"
-                  : "text-[40px] md:text-[64px] lg:text-[84px] leading-none"
+                  ? "text-[28px] md:text-[40px] lg:text-[48px]"
+                  : "text-[40px] md:text-[56px] lg:text-[72px]"
               }`}>
                 {item.year}
               </h2>
               {/* Mobile Only Location/Title */}
-              <div className="md:hidden mt-2">
+              <div className="md:hidden mt-2 text-right w-full">
                 <h3 className="text-[18px] font-semibold text-[#0B1B34] tracking-tight">
                   {item.title}
                 </h3>
@@ -78,14 +78,12 @@ export const Timeline = ({ data }: TimelineProps) => {
             </div>
 
             {/* Right Column / Bottom Section - Content */}
-            <div className={`flex-1 flex flex-col pt-0 ${
-              isNaN(Number(item.year)) ? "md:pt-[8px] lg:pt-[12px]" : "md:pt-[16px] lg:pt-[24px]"
-            }`}>
+            <div className="flex-1 flex flex-col items-start self-start pt-0">
               {/* Desktop Only Title */}
-              <h3 className="hidden md:block text-[24px] font-bold text-[#0B1B34] mb-8 tracking-tight max-w-[500px]">
+              <h3 className="hidden md:block text-[22px] md:text-[26px] lg:text-[28px] font-bold text-[#0B1B34] mb-4 tracking-tight leading-none max-w-[550px]">
                 {item.title}
               </h3>
-              <p className="text-[16px] md:text-[18px] lg:text-[20px] text-[#0B1B34]/80 font-medium leading-[1.6] max-w-[500px] md:max-w-full antialiased">
+              <p className="text-[16px] md:text-[18px] lg:text-[19px] text-[#0B1B34]/80 font-medium leading-[1.6] max-w-[550px] md:max-w-full antialiased">
                 {item.description}
               </p>
               

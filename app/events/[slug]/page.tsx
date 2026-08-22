@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { EventDetail } from "@/features/event/event-detail";
 import { Metadata } from "next";
 import { Navbar } from "@/components/navigation/navbar";
@@ -15,7 +16,9 @@ export default async function Page({ params }: { params: { slug: string } }) {
   return (
     <div className="flex-1 w-full bg-white">
       <Navbar />
-      <EventDetail slug={slug} />
+      <Suspense fallback={null}>
+        <EventDetail slug={slug} />
+      </Suspense>
     </div>
   );
 }

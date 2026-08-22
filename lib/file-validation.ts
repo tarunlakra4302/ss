@@ -4,12 +4,14 @@ export interface FileValidationResult {
   error?: string;
 }
 
-const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
 /**
  * Inspects buffer initial magic bytes to strictly verify genuine image files.
  * Protects against extension spoofing, SVG script injection, and arbitrary payload upload.
+ * Strictly permits only: PNG, JPEG, WEBP.
+ * Rejects: SVG, HTML, scripts, binaries.
  */
 export function validateFileMagicBytes(
   buffer: Buffer,
@@ -62,19 +64,9 @@ export function validateFileMagicBytes(
     return { valid: true, mimeType: 'image/webp' };
   }
 
-  // GIF: 47 49 46 38 ("GIF8")
-  if (
-    buffer.length >= 4 &&
-    buffer[0] === 0x47 &&
-    buffer[1] === 0x49 &&
-    buffer[2] === 0x46 &&
-    buffer[3] === 0x38
-  ) {
-    return { valid: true, mimeType: 'image/gif' };
-  }
-
   return {
     valid: false,
-    error: 'Invalid file signature. Only genuine PNG, JPEG, WEBP, and GIF images are permitted.',
+    error: 'Invalid file signature. Only genuine PNG, JPEG, and WEBP images are permitted.',
   };
 }
+

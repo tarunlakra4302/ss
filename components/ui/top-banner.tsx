@@ -45,25 +45,25 @@ export function TopBanner() {
             duration: 0.5,
             ease: [0.16, 1, 0.3, 1], // Smooth custom ease curve
           }}
-          className="fixed top-0 left-0 w-full z-[1050] bg-gradient-to-r from-[#EBF0FE] to-[#E3EAFF] py-2.5 px-4 md:px-8 border-b border-blue-100/60 shadow-sm will-change-transform"
+          className="fixed top-0 left-0 w-full z-[1050] bg-gradient-to-r from-[#EBF0FE] to-[#E3EAFF] py-1.5 px-4 md:px-8 border-b border-blue-100/60 shadow-sm will-change-transform"
         >
-          <div className="flex flex-row items-center justify-center gap-3 max-w-7xl mx-auto">
+          <div className="flex flex-row items-center justify-center gap-2.5 max-w-7xl mx-auto">
             <Link
               href="/events/edible-gardening-workshop"
-              className="flex flex-row items-center justify-center gap-3 group cursor-pointer text-decoration-none"
+              className="flex flex-row items-center justify-center gap-2.5 group cursor-pointer text-decoration-none"
             >
               {/* Badge/Button */}
-              <span className="inline-flex items-center justify-center bg-[#1149C9] text-white text-[11px] font-semibold tracking-wider uppercase rounded-sm px-2.5 py-0.5 shrink-0 transition-transform duration-200 group-hover:scale-105">
+              <span className="inline-flex items-center justify-center bg-[#1149C9] text-white text-[10px] sm:text-[11px] font-semibold tracking-wider uppercase rounded-sm px-2 py-0.5 shrink-0 transition-transform duration-200 group-hover:scale-105">
                 REGISTER
               </span>
 
               {/* Text */}
-              <span className="text-black text-xs sm:text-sm md:text-[15px] font-medium tracking-tight text-center">
+              <span className="text-black text-[11px] sm:text-xs md:text-sm font-medium tracking-tight text-center">
                 Join our upcoming Edible Gardening Workshop. Secure your spot today!
               </span>
 
               {/* Arrow */}
-              <ArrowRight className="w-4 h-4 text-black shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowRight className="w-3.5 h-3.5 text-black shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
             </Link>
           </div>
         </motion.div>

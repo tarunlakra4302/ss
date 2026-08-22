@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useRazorpay } from "@/hooks/useRazorpay";
-import { submitToGoogleScript } from "@/lib/google/script";
 
 // ─── CONFIG — Edit these values for each event ───────────────────────────────
 const EVENT_CONFIG = {
+  eventId: "sustainable-market", // must match lib/events/catalog.ts key
   title: "Sustainable Sundays x Local Artisans: Spring Market 2026",
   date: "Saturday May 30, 2026 @ 9am EDT",
   ticketLabel: "General Admission",
-  ticketPrice: 50,          // INR per ticket
+  ticketPrice: 50,          // INR per ticket (display only — server is authoritative)
   totalAvailable: 400,
   donationPresets: [25, 50, 100, 250],
   bookingFee: 0,
@@ -20,6 +21,7 @@ type Step = "tickets" | "details" | "donate";
 
 export default function EventCheckout() {
   const { openPayment } = useRazorpay();
+  const router = useRouter();
 
   // Step state
   const [step, setStep] = useState<Step>("tickets");
@@ -68,8 +70,12 @@ export default function EventCheckout() {
 
     setIsLoading(true);
 
-    try {
-      await submitToGoogleScript({
+    // Non-blocking submission with keepalive so checkout opens instantly
+    fetch("/api/forms/submit-to-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
         formType: "event",
         firstName,
         lastName,
@@ -78,14 +84,11 @@ export default function EventCheckout() {
         quantity,
         amount: ticketTotal,
         donationTime: new Date().toLocaleString(),
-      });
-    } catch (e) {
-      console.warn("Failed to submit event checkout data to Google Sheets:", e);
-    }
+      }),
+    }).catch((e) => console.warn("Failed to submit event checkout data to Google Sheets:", e));
 
     openPayment({
-      amount: ticketTotal,
-      type: "ticket",
+      eventId: EVENT_CONFIG.eventId,
       quantity,
       description: `${quantity}x ${EVENT_CONFIG.ticketLabel} — ₹${ticketTotal}`,
       prefill: {
@@ -105,25 +108,85 @@ export default function EventCheckout() {
       setError("Please select or enter a donation amount.");
       return;
     }
+    if (!Number.isInteger(amount)) {
+      setError("Please enter a whole number.");
+      return;
+    }
     setIsLoading(true);
 
-    try {
-      await submitToGoogleScript({
+    // Non-blocking donation logging with keepalive
+    fetch("/api/forms/submit-to-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
         formType: "donation",
         amount: Number(amount),
         donationTime: new Date().toLocaleString(),
-      });
-    } catch (e) {
-      console.warn("Failed to submit donation to Google Sheets:", e);
-    }
+      }),
+    }).catch((e) => console.warn("Failed to submit donation to Google Sheets:", e));
 
-    openPayment({
-      amount,
-      type: "donation",
-      description: `Donation — Sustainable Sundays ₹${amount}`,
-      onDismiss: () => { setIsLoading(false); },
-      onError: (msg) => { setIsLoading(false); setError(msg); },
-    });
+    try {
+      router.prefetch("/donate/success");
+    } catch (_) {}
+
+    // Donations use the donate API directly (free-form amount)
+    try {
+      const orderRes = await fetch("/api/donate/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.orderId) {
+        setIsLoading(false);
+        setError(orderData.error || "Could not initiate donation.");
+        return;
+      }
+
+      if (typeof window === "undefined" || !window.Razorpay) {
+        setIsLoading(false);
+        setError("Razorpay SDK failed to load. Please refresh.");
+        return;
+      }
+
+      const rzp = new window.Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
+        amount: orderData.amount,
+        currency: "INR",
+        name: "Sustainable Sundays",
+        description: `Donation — Sustainable Sundays ₹${amount}`,
+        order_id: orderData.orderId,
+        theme: { color: "#0f1f3d" },
+        modal: {
+          ondismiss: () => { setIsLoading(false); },
+        },
+        handler: (response: RazorpayPaymentResponse) => {
+          const redirectUrl = `/donate/success?amount=${amount}&paymentId=${response.razorpay_payment_id}`;
+
+          fetch("/api/donate/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            keepalive: true,
+            body: JSON.stringify({ ...response, amount, note: "" }),
+          }).catch((err) => console.error("Background donation verification error:", err));
+
+          try {
+            router.replace(redirectUrl);
+          } catch (_) {
+            window.location.replace(redirectUrl);
+          }
+        },
+      });
+      rzp.on("payment.failed", (res: any) => {
+        setIsLoading(false);
+        setError(res.error?.description || "Payment failed. Please try again.");
+      });
+      rzp.open();
+    } catch (err: any) {
+      setIsLoading(false);
+      setError(err.message || "Something went wrong. Please try again.");
+    }
   };
 
   // ── Render ─────────────────────────────────────────────────────────────────

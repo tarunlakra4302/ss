@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from 'react'
 import { Navbar } from '@/components/navigation/navbar'
 import { SectionContainer } from '@/components/layout/section-container'
 import { motion } from 'framer-motion'
@@ -10,6 +11,17 @@ import { Timeline } from '@/components/ui/timeline'
 
 
 const AboutPage = () => {
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.hash === "#team") {
+      const el = document.getElementById("team");
+      if (el) {
+        setTimeout(() => {
+          el.scrollIntoView({ behavior: "smooth" });
+        }, 150);
+      }
+    }
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -23,12 +35,12 @@ const AboutPage = () => {
         >
           <div className="space-y-4">
 
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black whitespace-nowrap">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black">
               About Us
             </h1>
           </div>
           
-          <p className="max-w-none text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight whitespace-nowrap">
+          <p className="max-w-2xl text-base sm:text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight px-4 text-center">
             Here is a sneak peak into our communities redefining conscious living.
           </p>
         </motion.div>

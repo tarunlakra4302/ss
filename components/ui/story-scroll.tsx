@@ -92,23 +92,27 @@ const FlowArt: React.FC<FlowArtProps> = ({
         const inner = section.querySelector<HTMLElement>('.flow-art-container');
         if (inner) {
           gsap.set(inner, {
-            rotation: i === 0 ? 0 : 30,
+            rotation: i === 0 ? 0 : 16,
             transformOrigin: 'bottom left',
           });
         }
       });
 
       const totalSteps = sections.length - 1;
+      const initialHold = 0.4; // Graceful pause on mount
+      const transitionDuration = 1.0;
+      const exitHold = 0.35; // Settle window for the incoming card
+      const stepDuration = initialHold + transitionDuration;
 
       // Single pinned container timeline to prevent any DOM jumps or scroll conflicts with other page components
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: () => `+=${totalSteps * 200}vh`,
+          end: () => `+=${totalSteps * 250}vh`,
           pin: true,
           pinSpacing: true,
-          scrub: 0.8,
+          scrub: 1.2, // Silky smooth inertia damping
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },
@@ -118,16 +122,16 @@ const FlowArt: React.FC<FlowArtProps> = ({
         const currentSection = sections[i];
         const currentInner = currentSection.querySelector<HTMLElement>('.flow-art-container');
         const prevSection = sections[i - 1];
-        const stepTime = i - 1;
+        const stepTime = (i - 1) * stepDuration + initialHold;
 
         if (prevSection) {
           tl.to(
             prevSection,
             {
               scale: 0.94,
-              opacity: 0.75,
-              duration: 1,
-              ease: 'none',
+              opacity: 0.7,
+              duration: transitionDuration,
+              ease: 'power1.inOut',
             },
             stepTime
           );
@@ -137,8 +141,8 @@ const FlowArt: React.FC<FlowArtProps> = ({
           currentSection,
           {
             yPercent: 0,
-            duration: 1,
-            ease: 'none',
+            duration: transitionDuration,
+            ease: 'power1.inOut',
           },
           stepTime
         );
@@ -148,13 +152,16 @@ const FlowArt: React.FC<FlowArtProps> = ({
             currentInner,
             {
               rotation: 0,
-              duration: 1,
-              ease: 'none',
+              duration: transitionDuration,
+              ease: 'power1.inOut',
             },
             stepTime
           );
         }
       }
+
+      // Settle buffer after last step
+      tl.to({}, { duration: exitHold });
 
       // Refresh ScrollTrigger after initial paint to sync all page triggers
       const timer = setTimeout(() => {

@@ -1,63 +1,62 @@
 import { NextResponse } from 'next/server';
 import { EventFormSchema } from '@/lib/validators/forms';
 import { appendToSheet } from '@/lib/google/sheets';
-import { uploadToDrive } from '@/lib/google/drive';
-import { checkRateLimit } from '@/lib/security/rateLimit';
+import { checkRateLimit } from '@/lib/rate-limit';
+import { isAllowedOrigin } from '@/lib/security/origin';
+import { checkHoneypot } from '@/lib/security/honeypot';
 
 /**
  * Hardened API Route: Event Registration
  * Includes:
- * 1. IP Extraction for Rate Limiting
- * 2. 429 Too Many Requests Handling (via Upstash Redis)
- * 3. Strict 5MB File Size Validation
- * 4. Image/* MIME Type Enforcement
+ * 1. Trusted IP Rate Limiting (5 req/min via Upstash Redis)
+ * 2. Origin & CSRF Validation
+ * 3. Off-Screen Honeypot & Timing Anti-Spam (Silent Success)
+ * 4. Text-only validation (No user file upload attack surface)
  */
 export async function POST(request: Request) {
   try {
-    // A. SECURITY CHECK: Rate Limiting
-    // -------------------------------------------------------------
-    const forwarded = request.headers.get('x-forwarded-for');
-    const ip = forwarded ? forwarded.split(',')[0] : '127.0.0.1';
-    
-    const rateStatus = await checkRateLimit(ip);
+    // 1. Rate Limiting Check
+    const rateStatus = await checkRateLimit(request, 'event_form_submit');
     if (!rateStatus.success) {
       return NextResponse.json(
         {
           success: false,
           message: 'Too many requests. Please try again in a minute.',
-          remaining: rateStatus.remaining,
-          reset: rateStatus.reset,
         },
-        { 
+        {
           status: 429,
-          headers: {
-            'X-RateLimit-Limit': rateStatus.limit.toString(),
-            'X-RateLimit-Remaining': rateStatus.remaining.toString(),
-            'X-RateLimit-Reset': rateStatus.reset.toString(),
-          }
+          headers: rateStatus.headers,
         }
       );
     }
 
-    const origin = request.headers.get('origin');
-    const allowed = [process.env.NEXT_PUBLIC_SITE_URL, 'http://localhost:3000'];
-    if (!origin || !allowed.includes(origin)) {
-      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
+    if (!isAllowedOrigin(request)) {
+      return NextResponse.json({ success: false, message: 'Forbidden: Invalid origin' }, { status: 403 });
     }
 
-    // B. EXTRACT PAYLOAD
-    // -------------------------------------------------------------
-    const formData = await request.formData();
-    
-    // Extract base data for validation
-    const data = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      eventName: formData.get('eventName'),
-    };
+    // 2. Body Parsing (JSON or FormData)
+    const contentType = request.headers.get('content-type') || '';
+    let data: any = {};
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await request.formData().catch(() => null);
+      if (formData) data = Object.fromEntries(formData.entries());
+    } else {
+      data = await request.json().catch(() => ({}));
+    }
 
-    // 1. Zod validation for text fields
+    // 3. Honeypot & Time-to-submit Bot Detection (Silent 200 Success)
+    const honeypotStatus = checkHoneypot(data);
+    if (honeypotStatus.isSpam) {
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Registration successful! We look forward to seeing you.',
+        },
+        { status: 200 }
+      );
+    }
+
+    // 4. Schema Validation
     const result = EventFormSchema.safeParse(data);
     if (!result.success) {
       return NextResponse.json(
@@ -70,66 +69,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // C. STRICT FILE VALIDATION
-    // -------------------------------------------------------------
-    const screenshot = formData.get('screenshot') as File;
-    if (!screenshot || !(screenshot instanceof File)) {
-      return NextResponse.json(
-        { success: false, message: 'A valid screenshot file is required.' },
-        { status: 400 }
-      );
-    }
-
-    // 1. File Size Check (Max 5MB)
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
-    if (screenshot.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { success: false, message: 'File is too large. Max size allowed is 5MB.' },
-        { status: 400 }
-      );
-    }
-
-    // 2. File Type Enforcement (Whitelist extensions + Reject SVG)
-    const ALLOWED_EXT = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
-    const ext = '.' + screenshot.name.split('.').pop()?.toLowerCase();
-    if (!ALLOWED_EXT.includes(ext)) {
-      return NextResponse.json({ success: false, message: 'File type not allowed.' }, { status: 400 });
-    }
-    if (ext === '.svg') {
-      return NextResponse.json({ success: false, message: 'SVG files are not permitted.' }, { status: 400 });
-    }
-
-    // D. EXTERNAL INTEGRATION (Google APIs)
-    // -------------------------------------------------------------
-    // Convert File to Buffer for Google Drive upload
-    const buffer = Buffer.from(await screenshot.arrayBuffer());
-    
-    // 3. Upload to Google Drive
-    const driveResult = await uploadToDrive(buffer, `${result.data.eventName}_screenshot_${Date.now()}`, screenshot.type);
-
-    if (!driveResult.webViewLink) {
-      throw new Error('Failed to retrieve Drive link after security checks.');
-    }
-
-    // 4. Prepare and Append to Google Sheets
+    // 5. Append Registration to Google Sheets
     const { name, email, phone, eventName } = result.data;
     const timestamp = new Date().toISOString();
-    const row = [timestamp, name, email, phone, eventName, driveResult.webViewLink];
+    const row = [timestamp, name, email, phone, eventName];
 
-    try {
-      await appendToSheet('Events', row);
-    } catch (sheetsError) {
-      // Rollback: Delete the Drive file if Sheets write fails
-      const drive = await import('@/lib/google/auth').then(m => m.getDriveClient());
-      await drive.files.delete({ fileId: driveResult.fileId }).catch(() => {});
-      throw sheetsError;
-    }
+    await appendToSheet('Events', row);
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Registration successful! Rate limited and validated for your security.',
-        driveLink: driveResult.webViewLink,
+        message: 'Registration successful! We look forward to seeing you.',
       },
       { status: 200 }
     );
@@ -144,3 +94,4 @@ export async function POST(request: Request) {
     );
   }
 }
+

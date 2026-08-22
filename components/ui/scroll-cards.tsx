@@ -32,16 +32,16 @@ const Card: FC<iCardProps> = ({
 }) => {
 	return (
 		<div 
-			className="h-screen flex items-start md:items-center justify-center sticky md:p-0 px-4 pt-[2vh] md:pt-0"
+			className="h-screen flex items-start md:items-center justify-center sticky px-3 sm:px-4 pt-[2vh] md:pt-0"
 			style={{ top: stickyOffset || "0px" }}
 		>
 			<div
-				className="relative flex flex-col h-[300px] w-[700px] py-12 px-10 md:px-12
-				rotate-0 md:h-[400px] md:w-[600px] items-center justify-center mx-auto 
-				shadow-md pr-3 pl-3 pt-3 pb-4 overflow-hidden rounded-2xl"
+				className="relative flex flex-col h-[280px] sm:h-[320px] md:h-[400px] w-full max-w-[92vw] md:w-[600px] py-6 sm:py-10 px-4 sm:px-8 md:px-12
+				rotate-0 items-center justify-center mx-auto 
+				shadow-md overflow-hidden rounded-2xl"
 				style={{backgroundColor: color}}
 			>
-				<span className="font-bold relative text-5xl md:text-7xl mt-5 z-10">
+				<span className="font-bold relative text-2xl sm:text-4xl md:text-6xl z-10 text-center">
 					<span
 						className="relative z-10 font-black tracking-tight"
 						style={{color: textColor}}
@@ -50,7 +50,7 @@ const Card: FC<iCardProps> = ({
 					</span>
 				</span>
 				<div
-					className="text-lg md:text-2xl font-medium text-center mb-0 z-10 mt-2 lowercase tracking-wide"
+					className="text-xs sm:text-base md:text-xl font-medium text-center mb-0 z-10 mt-2 lowercase tracking-wide max-w-sm sm:max-w-md px-2"
 					style={{lineHeight: 1.4, color: textColor}}
 				>
 					{description}

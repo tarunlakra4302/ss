@@ -75,7 +75,7 @@ const Purpose = () => (
           {
             num: "01",
             title: "Global Impact",
-            desc: "Extend your reach beyond borders, supporting sustainability initiatives that touch lives in underserved regions worldwide."
+            desc: "Extend your reach beyond borders, supporting sustainability initiatives that touch lives in sensitive regions of Bangalore"
           },
           {
             num: "02",
@@ -112,7 +112,7 @@ const GeneralVolunteers = () => (
       {/* Left Column: Image */}
       <div className="w-full md:col-span-7 aspect-[4/3] md:aspect-[4/5] overflow-hidden rounded-none">
         <img
-          src="https://picsum.photos/seed/generalvolunteers/800/1000"
+          src="/images/volunteer/General volunteer.jpeg"
           alt="Diverse group of outdoor volunteers"
           className="w-full h-full object-cover"
         />

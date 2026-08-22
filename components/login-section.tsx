@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Check } from "lucide-react";
-import { submitToGoogleScript } from "@/lib/google/script";
 
 
 interface PupilProps {
@@ -266,7 +265,12 @@ function LoginPage({ formType = "member" }: LoginPageProps) {
     }
   }, [isTyping]);
 
+  const [honeypot, setHoneypot] = useState("");
+  const formStartTime = useRef<number>(0);
 
+  useEffect(() => {
+    formStartTime.current = Date.now();
+  }, []);
 
   const calculatePosition = (ref: React.RefObject<HTMLDivElement | null>) => {
     if (!ref.current) return { faceX: 0, faceY: 0, bodyRotation: 0 };
@@ -298,26 +302,70 @@ function LoginPage({ formType = "member" }: LoginPageProps) {
     setError("");
     setIsLoading(true);
 
+    const fullName = `${firstName} ${lastName}`.trim();
     const payload = {
       formType: formType || "member",
       firstName,
       lastName,
+      name: fullName,
       phone: phoneNumber,
       email,
       message,
+      reason: message || "Member enrollment",
+      website: honeypot,
+      _formStartTime: formStartTime.current,
     };
 
     try {
-      await submitToGoogleScript(payload);
+      await fetch("/api/forms/submit-to-sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       setFirstName("");
       setLastName("");
       setPhoneNumber("");
       setEmail("");
       setMessage("");
+      setHoneypot("");
       setStatus("success");
 
     } catch (err) {
+      console.warn("Direct Apps Script submission failed, trying server API fallback...", err);
+      try {
+        const apiPath = formType === "volunteering" ? "/api/forms/volunteer" : "/api/forms/member";
+        const res = await fetch(apiPath, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: fullName,
+            email,
+            phone: phoneNumber,
+            city: "Bangalore",
+            reason: message || "Member enrollment",
+            expertise: "General",
+            availability: "WEEKENDS",
+            message: message || "Application",
+            website: honeypot,
+            _formStartTime: formStartTime.current,
+          }),
+        });
+
+        if (res.ok) {
+          setFirstName("");
+          setLastName("");
+          setPhoneNumber("");
+          setEmail("");
+          setMessage("");
+          setHoneypot("");
+          setStatus("success");
+          return;
+        }
+      } catch (fallbackErr) {
+        console.error("Server API fallback error:", fallbackErr);
+      }
+
       setError("Something went wrong. Please try again.");
     } finally {
       setIsLoading(false);
@@ -535,6 +583,20 @@ function LoginPage({ formType = "member" }: LoginPageProps) {
 
               {/* Login Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Anti-spam Honeypot field — visually hidden off-screen */}
+                <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+                  <label htmlFor="login_website">Website</label>
+                  <input
+                    type="text"
+                    id="login_website"
+                    name="website"
+                    value={honeypot}
+                    onChange={(e) => setHoneypot(e.target.value)}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName" className="text-sm font-medium">First Name</Label>

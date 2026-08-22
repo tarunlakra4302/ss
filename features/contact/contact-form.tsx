@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { submitToGoogleScript } from "@/lib/google/script";
 
 export const ContactForm = () => {
   const [firstName, setFirstName] = useState("");
@@ -11,48 +10,95 @@ export const ContactForm = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const formStartTime = useRef<number>(0);
+
+  useEffect(() => {
+    formStartTime.current = Date.now();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMsg("");
     setIsSubmitting(true);
 
+    const fn = firstName || (document.getElementById("firstName") as HTMLInputElement)?.value || "";
+    const ln = lastName || (document.getElementById("lastName") as HTMLInputElement)?.value || "";
+    const em = email || (document.getElementById("email") as HTMLInputElement)?.value || "";
+    const ph = phone || (document.getElementById("phone") as HTMLInputElement)?.value || "";
+    const msg = message || (document.getElementById("message") as HTMLTextAreaElement)?.value || "";
+
     const contactData = {
       formType: "contact",
-      firstName: firstName || (document.getElementById("firstName") as HTMLInputElement)?.value || "",
-      lastName: lastName || (document.getElementById("lastName") as HTMLInputElement)?.value || "",
-      email: email || (document.getElementById("email") as HTMLInputElement)?.value || "",
-      phone: phone || (document.getElementById("phone") as HTMLInputElement)?.value || "",
-      message: message || (document.getElementById("message") as HTMLTextAreaElement)?.value || "",
+      firstName: fn,
+      lastName: ln,
+      name: `${fn} ${ln}`.trim(),
+      email: em,
+      phone: ph,
+      message: msg,
+      website: honeypot,
+      _formStartTime: formStartTime.current,
     };
 
     try {
-      const result = await submitToGoogleScript(contactData);
-      if (result && (result.result === "success" || result.status === "success")) {
-        alert("Your message has been sent successfully!");
+      const res = await fetch("/api/forms/submit-to-sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contactData),
+      });
+      const result = await res.json();
+      if (res.ok && (result.result === "success" || result.status === "success")) {
         setStatus("success");
         setFirstName("");
         setLastName("");
         setEmail("");
         setPhone("");
         setMessage("");
+        setHoneypot("");
         (e.target as HTMLFormElement).reset();
-      } else {
-        alert("Failed to send message. Please try again.");
-        setErrorMsg("Failed to send message. Please try again.");
-        setStatus("error");
+        return;
       }
     } catch (error) {
-      console.error("Error submitting contact form:", error);
-      alert("Network error. Please try again later.");
-      setErrorMsg("Network error. Please try again later.");
-      setStatus("error");
-    } finally {
-      setIsSubmitting(false);
+      console.warn("Contact form submission warning, trying fallback...", error);
     }
+
+    // Server fallback try
+    try {
+      const res = await fetch("/api/forms/member", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: `${fn} ${ln}`.trim() || "Contact Inquiry",
+          email: em,
+          phone: ph || "9999999999",
+          city: "Bangalore",
+          reason: `[Contact Form Message]: ${msg}`,
+          website: honeypot,
+          _formStartTime: formStartTime.current,
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+        setFirstName("");
+        setLastName("");
+        setEmail("");
+        setPhone("");
+        setMessage("");
+        setHoneypot("");
+        (e.target as HTMLFormElement).reset();
+        return;
+      }
+    } catch (fallbackErr) {
+      console.error("Server API fallback error:", fallbackErr);
+    }
+
+    setErrorMsg("Failed to send message. Please try again.");
+    setStatus("error");
+    setIsSubmitting(false);
   };
 
   return (
@@ -67,6 +113,20 @@ export const ContactForm = () => {
       className="w-full max-w-md lg:max-w-lg flex flex-col gap-6 md:gap-8"
     >
       <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-4 mt-1 md:mt-2 w-full">
+        {/* Anti-spam Honeypot field — visually hidden off-screen */}
+        <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
+          <label htmlFor="contact_website">Website</label>
+          <input
+            type="text"
+            id="contact_website"
+            name="website"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+          />
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label htmlFor="firstName" className="block text-xs md:text-sm font-medium mb-1">

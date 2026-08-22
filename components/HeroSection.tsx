@@ -14,37 +14,37 @@ gsap.registerPlugin(ScrollTrigger);
 
 const MOBILE_CARDS: iCardItem[] = [
   {
-    title: "Lalbagh Greenery",
-    description: "Discover the historic botanical gardens and centuries-old trees at the heart of Bangalore",
-    tag: "botanical",
-    src: "/ss%20preloader%20images/1.jpeg",
+    title: "Agara Lake Walk",
+    description: "Explore urban biodiversity and wetland conservation at Agara Lake",
+    tag: "wetlands",
+    src: "/images/events/Agara Lake walk_24 May 2026.jpg",
     link: "#",
     color: "white",
     textColor: "white",
   },
   {
-    title: "Cubbon Park Cleanups",
-    description: "Join our weekly community runs and zero-waste cleanup drives in Bangalore's lungs",
-    src: "/ss%20preloader%20images/2.jpeg",
-    tag: "cleanups",
+    title: "Sapling Care Drives",
+    description: "Nurturing native saplings and restoring the green canopy across Bangalore lakes",
+    src: "/images/events/Sapling Care at Ambalipura Lake_9 August 2026.jpg",
+    tag: "sapling-care",
     link: "#",
     color: "green",
     textColor: "white",
   },
   {
-    title: "Ulsoor Lake Composting",
-    description: "Participate in lake rejuvenation projects and organic waste management workshops",
-    src: "/ss%20preloader%20images/3.jpeg",
-    tag: "ecology",
+    title: "Edible Gardening",
+    description: "Hands-on urban farming and sustainable kitchen gardening workshops",
+    src: "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
+    tag: "gardening",
     link: "#",
     color: "white",
     textColor: "white",
   },
   {
-    title: "Hesaraghatta Eco",
-    description: "Raise awareness for protecting Bangalore's last remaining grassland ecosystems",
-    src: "/ss%20preloader%20images/4.jpeg",
-    tag: "conservation",
+    title: "Soil Preparation & Rewilding",
+    description: "Rejuvenating native soil health and lake eco-restoration at Kasturinagar",
+    src: "/images/events/Soil preparation activity at Kasturinagar Lake_31 May 2026.jpeg",
+    tag: "rewilding",
     link: "#",
     color: "white",
     textColor: "white",
@@ -52,18 +52,18 @@ const MOBILE_CARDS: iCardItem[] = [
 ];
 
 const desktopImages = [
-  "/gallery/1.jpeg",
-  "/gallery/2.jpeg",
-  "/gallery/3.jpeg",
-  "/gallery/4.jpeg",
-  "/gallery/5.jpeg",
-  "/gallery/6.jpeg",
-  "/gallery/7.jpeg",
-  "/gallery/8.jpeg",
-  "/gallery/9.jpeg",
-  "/gallery/1.jpeg",
-  "/gallery/2.jpeg",
-  "/gallery/3.jpeg",
+  "/images/events/Agara Lake walk_24 May 2026.jpg",
+  "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
+  "/images/events/Edible Gardening workshop by Muthukaran_10 May2.jpg",
+  "/images/events/Impact Analytics team at Rewilding Project at Kasturinagar Lake_6 June 2026.jpg",
+  "/images/events/Kitchen Secrets_26 July 2026.jpg",
+  "/images/events/Kitchen Secrets_26 July 2026 (B).jpg",
+  "/images/events/Odette Katrak at the Kitchen Secrets event_26 July 2026.jpg",
+  "/images/events/Sapling Care at Ambalipura Lake_9 August 2026.jpg",
+  "/images/events/Soil preparation activity at Kasturinagar Lake_31 May 2026.jpeg",
+  "/images/events/Swap Gala event with music performance_22 March 2026.JPG",
+  "/images/events/Zero Waste Meet up at Swacha Graha Kalika Kendra.jpg",
+  "/images/events/1.jpeg",
 ];
 
 function DesktopHero() {
@@ -104,7 +104,7 @@ function DesktopHero() {
           transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
-          <p className="max-w-none text-xl md:text-2xl text-black font-bold leading-relaxed tracking-tight whitespace-nowrap">
+          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-black font-bold leading-relaxed tracking-tight text-center px-4">
             Here is a sneak peak into our communities redefining conscious living.
           </p>
         </motion.div>
@@ -128,8 +128,8 @@ function MobileHero() {
     <section className="w-full relative pt-8 pb-16">
       <div className="relative">
         {/* Sticky Hero title - stays visible just below navbar on scroll */}
-        <div className="sticky top-[80px] z-[30] w-full flex flex-col items-center justify-center px-6 py-8 text-center gap-2 pointer-events-none">
-          <h1 className="text-lg md:text-xl font-bold tracking-tight text-gray-900 leading-relaxed whitespace-nowrap">
+        <div className="sticky top-[80px] z-[30] w-full flex flex-col items-center justify-center px-4 py-6 text-center gap-2 pointer-events-none">
+          <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-gray-900 leading-snug max-w-sm mx-auto">
             Here is a sneak peak into our communities redefining conscious living.
           </h1>
         </div>

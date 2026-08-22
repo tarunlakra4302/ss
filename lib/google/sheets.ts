@@ -1,4 +1,5 @@
 import { getSheetsClient } from './auth';
+import { submitToGoogleScript } from './script';
 
 /**
  * Reusable Sheets service context. 
@@ -9,20 +10,83 @@ const SPREADSHEET_ID = process.env.GOOGLE_SPREADSHEET_ID;
 
 /**
  * Appends a row to a designated sheet tab.
- * In a production-ready system, this also checks for header existence.
+ * Uses Google Sheets API v4 if Service Account credentials exist,
+ * otherwise falls back to the Apps Script Web App endpoint.
  */
 export async function appendToSheet(tabName: string, rowData: (string | number | boolean)[]) {
-  const sheets = getSheetsClient();
+  const hasServiceAccount = Boolean(
+    process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL &&
+    process.env.GOOGLE_PRIVATE_KEY &&
+    SPREADSHEET_ID
+  );
 
-  if (!SPREADSHEET_ID) {
-    throw new Error('GOOGLE_SPREADSHEET_ID is missing in the environment.');
+  if (!hasServiceAccount) {
+    console.log(
+      `Service Account credentials not configured. Using Apps Script Web App for tab "${tabName}".`
+    );
+    
+    const lowerTab = tabName.toLowerCase();
+    const formType = lowerTab.includes('member') ? 'member'
+      : lowerTab.includes('volunteer') ? 'volunteering'
+      : lowerTab.includes('donat') ? 'donation'
+      : lowerTab.includes('contact') ? 'contact'
+      : 'event';
+
+    const timestamp = rowData[0] ? String(rowData[0]) : new Date().toISOString();
+    
+    let payload: Record<string, any> = { formType, donationTime: timestamp };
+
+    if (formType === 'event') {
+      payload = {
+        ...payload,
+        name: rowData[1],
+        email: rowData[2],
+        phone: rowData[3],
+        eventName: rowData[4],
+        driveLink: rowData[5],
+      };
+    } else if (formType === 'member') {
+      payload = {
+        ...payload,
+        name: rowData[1],
+        email: rowData[2],
+        phone: rowData[3],
+        city: rowData[4],
+        reason: rowData[5],
+      };
+    } else if (formType === 'volunteering') {
+      payload = {
+        ...payload,
+        name: rowData[1],
+        email: rowData[2],
+        phone: rowData[3],
+        expertise: rowData[4],
+        availability: rowData[5],
+        message: rowData[6],
+      };
+    } else if (formType === 'donation') {
+      payload = {
+        ...payload,
+        donorName: rowData[1],
+        donorEmail: rowData[2],
+        donorPhone: rowData[3],
+        amount: rowData[4],
+        note: rowData[5],
+      };
+    }
+
+    try {
+      return await submitToGoogleScript(payload);
+    } catch (fallbackError) {
+      console.error(`Apps Script fallback failed for tab ${tabName}:`, fallbackError);
+      throw new Error(`Google Sheets append failed for tab: ${tabName}`);
+    }
   }
 
   try {
-    // 1. Ensure tab exists and create it if not (simplified version)
-    // 2. Append the row with valueInputOption: 'USER_ENTERED'
+    const sheets = getSheetsClient();
     const response = await sheets.spreadsheets.values.append({
-      spreadsheetId: SPREADSHEET_ID,
+      spreadsheetId: SPREADSHEET_ID!,
       range: `${tabName}!A1`,
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
@@ -33,13 +97,22 @@ export async function appendToSheet(tabName: string, rowData: (string | number |
 
     return response.data;
   } catch (error: unknown) {
-    // If table headers are missing (empty sheet), inject them first
     if (error instanceof Error && (error as any).code === 400 && error.message.includes('A1')) {
       console.warn(`Tab ${tabName} may not exist or is empty. Attempting auto-header creation.`);
-      // Production refinement: Logic would go here to initialize headers if range is undefined
     }
     console.error('Sheets error:', error instanceof Error ? error.message : 'Unknown');
-    throw new Error(`Google Sheets append failed for tab: ${tabName}`);
+    
+    // Attempt fallback to Apps Script if API v4 throws
+    try {
+      console.warn(`Google Sheets API v4 failed. Attempting Apps Script fallback for ${tabName}.`);
+      const formType = tabName.toLowerCase() === 'members' ? 'member'
+        : tabName.toLowerCase() === 'volunteers' ? 'volunteering'
+        : tabName.toLowerCase() === 'donations' ? 'donation'
+        : 'event';
+      return await submitToGoogleScript({ formType, rowData, donationTime: new Date().toLocaleString() });
+    } catch {
+      throw new Error(`Google Sheets append failed for tab: ${tabName}`);
+    }
   }
 }
 

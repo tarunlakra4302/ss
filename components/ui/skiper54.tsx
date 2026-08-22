@@ -14,58 +14,92 @@ import {
   CarouselItem,
 } from "@/components/ui/carousel";
 
+export interface MediaItem {
+  src: string;
+  alt: string;
+  title: string;
+  type?: "image" | "video";
+}
+
 const Skiper54 = () => {
-  const images = [
+  const mediaItems: MediaItem[] = [
     {
-      src: "/gallery/1.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Edible Gardening",
+      src: "/images/events/Agara Lake walk_24 May 2026.jpg",
+      alt: "Agara Lake Walk & Biodiversity",
+      title: "Agara Lake Walk",
+      type: "image",
     },
     {
-      src: "/gallery/2.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Seed Ecology",
+      src: "/images/events/Children at Sapling Care (1).MOV",
+      alt: "Children at Sapling Care",
+      title: "Sapling Care Youth Drive",
+      type: "video",
     },
     {
-      src: "/gallery/3.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Green Harvest",
+      src: "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
+      alt: "Edible Gardening Workshop by Muthukaran",
+      title: "Edible Gardening Workshop",
+      type: "image",
     },
     {
-      src: "/gallery/4.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Urban Farming",
+      src: "/images/events/Impact Analytics team at Rewilding Project at Kasturinagar Lake_6 June 2026.jpg",
+      alt: "Rewilding Project at Kasturinagar Lake",
+      title: "Rewilding Kasturinagar Lake",
+      type: "image",
     },
     {
-      src: "/gallery/5.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Eco Workshop",
+      src: "/images/events/Kitchen Secrets_26 July 2026.jpg",
+      alt: "Kitchen Secrets Workshop",
+      title: "Kitchen Secrets Event",
+      type: "image",
     },
     {
-      src: "/gallery/6.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Community Gatherings",
+      src: "/images/events/Odette Katrak at the Kitchen Secrets event_26 July 2026.jpg",
+      alt: "Odette Katrak at Kitchen Secrets",
+      title: "Sustainable Cooking Masterclass",
+      type: "image",
     },
     {
-      src: "/gallery/7.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Zero Waste Living",
+      src: "/images/events/Sapling Care at Ambalipura Lake_9 August 2026.jpg",
+      alt: "Sapling Care at Ambalipura Lake",
+      title: "Sapling Care at Ambalipura Lake",
+      type: "image",
     },
     {
-      src: "/gallery/8.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Hands-on Planting",
+      src: "/images/events/Soil preparation activity at Kasturinagar Lake_31 May 2026.jpeg",
+      alt: "Soil preparation activity at Kasturinagar Lake",
+      title: "Soil Preparation Activity",
+      type: "image",
     },
     {
-      src: "/gallery/9.jpeg",
-      alt: "Sustainable Sundays Workshop & Community",
-      title: "Nature In The City",
+      src: "/images/events/Swap Gala event with music performance_22 March 2026.JPG",
+      alt: "Swap Gala event with music performance",
+      title: "Swap Gala & Music Fest",
+      type: "image",
+    },
+    {
+      src: "/images/events/Zero Waste Meet up at Swacha Graha Kalika Kendra.jpg",
+      alt: "Zero Waste Meet up at Swacha Graha Kalika Kendra",
+      title: "Zero Waste Community Meet",
+      type: "image",
+    },
+    {
+      src: "/images/events/Edible Gardening workshop by Muthukaran_10 May2.jpg",
+      alt: "Gardening Workshop Session",
+      title: "Organic Urban Cultivation",
+      type: "image",
+    },
+    {
+      src: "/images/events/Kitchen Secrets_26 July 2026 (B).jpg",
+      alt: "Kitchen Secrets Community",
+      title: "Zero Waste Food Prep",
+      type: "image",
     },
   ];
   return (
     <div className="flex h-full w-full items-center justify-center overflow-hidden bg-[#f5f4f3] py-12">
       <Carousel_006
-        images={images}
+        images={mediaItems}
         className=""
         loop={true}
         showNavigation={true}
@@ -76,7 +110,7 @@ const Skiper54 = () => {
 };
 
 interface Carousel_006Props {
-  images: { src: string; alt: string; title: string }[];
+  images: MediaItem[];
   className?: string;
   autoplay?: boolean;
   loop?: boolean;
@@ -124,7 +158,7 @@ const Carousel_006 = ({
       }
     >
       <CarouselContent className="flex h-[500px] w-full">
-        {images.map((img, index) => (
+        {images.map((item, index) => (
           <CarouselItem
             key={index}
             className="relative flex h-[81.5%] w-full basis-[73%] items-center justify-center sm:basis-[50%] md:basis-[30%] lg:basis-[25%] xl:basis-[21%]"
@@ -139,12 +173,23 @@ const Carousel_006 = ({
               }}
               className="h-full w-full overflow-hidden rounded-3xl"
             >
-              <div className="relative h-full w-full border">
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  className="h-full w-full scale-105 object-cover"
-                />
+              <div className="relative h-full w-full border bg-neutral-900">
+                {item.type === "video" || item.src.endsWith(".MOV") || item.src.endsWith(".mp4") ? (
+                  <video
+                    src={item.src}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="h-full w-full scale-105 object-cover"
+                  />
+                ) : (
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    className="h-full w-full scale-105 object-cover"
+                  />
+                )}
               </div>
             </motion.div>
             <AnimatePresence mode="wait">
@@ -155,7 +200,7 @@ const Carousel_006 = ({
                   transition={{ duration: 0.5 }}
                   className="absolute bottom-0 left-2 flex h-[14%] w-full translate-y-full items-center justify-center p-2 text-center font-medium tracking-tight text-black/40"
                 >
-                  {img.title}
+                  {item.title}
                 </motion.div>
               )}
             </AnimatePresence>

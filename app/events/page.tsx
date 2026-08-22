@@ -19,12 +19,12 @@ const EventsPage = () => {
           className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
           <div className="space-y-4">
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black whitespace-nowrap">
+            <h1 className="text-3xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black">
               Upcoming Events
             </h1>
           </div>
           
-          <p className="max-w-[700px] text-xl md:text-2xl text-black/70 font-medium leading-relaxed tracking-tight">
+          <p className="max-w-[700px] text-base sm:text-xl md:text-2xl text-black/70 font-medium leading-relaxed tracking-tight px-4">
             Real change happens offline. Find a local project, roll up your sleeves, and make this weekend count.
           </p>
         </motion.div>

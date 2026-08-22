@@ -2,92 +2,134 @@
 
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, ChevronDown } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { directoryData } from '@/lib/data/archive-data'
 import { DirectoryCard } from './directory-card'
-import { 
-  DropdownMenu, 
-  DropdownMenuTrigger, 
-  DropdownMenuContent, 
-  DropdownMenuItem 
-} from "@/components/ui/dropdown-menu"
+import Menu, { IMenu } from "@/components/ui/navbar"
 
 export function DirectorySection() {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
-  const [location, setLocation] = useState('All')
+  const [currentPage, setCurrentPage] = useState(1)
+  const ITEMS_PER_PAGE = 15
 
   const filteredItems = useMemo(() => {
     return directoryData.filter((item) => {
-      const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase()) || 
-                           item.description.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch =
+        item.name.toLowerCase().includes(search.toLowerCase()) ||
+        item.description.toLowerCase().includes(search.toLowerCase());
       const matchesCategory = category === 'All' || item.category === category;
-      // Note: Location filtering logic can be added here if item data includes location
       return matchesSearch && matchesCategory;
     });
   }, [search, category]);
 
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE) || 1
+
+  // Reset to page 1 when filter or search changes
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setCurrentPage(1)
+  }
+
+  const handleCategoryChange = (cat: string) => {
+    setCategory(cat)
+    setCurrentPage(1)
+  }
+
+  const displayedItems = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+    return filteredItems.slice(startIndex, startIndex + ITEMS_PER_PAGE)
+  }, [filteredItems, currentPage])
+
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1
+  const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)
+
+  const menuItems: IMenu[] = useMemo(() => [
+    {
+      id: 'all',
+      title: 'ALL',
+      active: category === 'All',
+      onClick: () => handleCategoryChange('All'),
+    },
+    {
+      id: 'product',
+      title: 'PRODUCTS',
+      active: category === 'PRODUCT',
+      onClick: () => handleCategoryChange('PRODUCT'),
+    },
+    {
+      id: 'service',
+      title: 'SERVICES',
+      active: category === 'SERVICE',
+      onClick: () => handleCategoryChange('SERVICE'),
+    },
+    {
+      id: 'book',
+      title: 'BOOKS',
+      active: category === 'BOOK',
+      onClick: () => handleCategoryChange('BOOK'),
+    },
+    {
+      id: 'event',
+      title: 'EVENTS',
+      active: category === 'EVENT',
+      onClick: () => handleCategoryChange('EVENT'),
+    },
+  ], [category]);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1)
+      const element = document.getElementById('directory-section')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1)
+      const element = document.getElementById('directory-section')
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
+    }
+  }
+
   return (
-    <section className="relative">
-      {/* Dark Filter/Search Bar */}
-      <div className="w-full bg-[#1A1A1A] text-white flex flex-col lg:flex-row items-stretch border-y border-black min-h-[80px]">
-        {/* Block 1 (Category Dropdown) */}
-        <div className="flex flex-col justify-center px-6 lg:px-8 py-6 lg:py-0 border-b lg:border-b-0 lg:border-r border-[#333] w-full lg:w-1/4 relative group">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Category</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center justify-between w-full bg-transparent text-left outline-none">
-              <span className="text-white font-serif italic text-lg lg:text-xl truncate">
-                {category === 'All' ? 'Product, Service, Book, Event, etc' : category}
-              </span>
-              <ChevronDown size={16} className="text-gray-500 group-hover:text-white transition-colors ml-2 shrink-0" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              className="bg-[#1A1A1A] border-[#333] text-white w-[var(--radix-dropdown-menu-trigger-width)] rounded-t-none border-t-0 p-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-top-4 data-[state=closed]:slide-out-to-top-4 duration-300 ease-out" 
-              sideOffset={0} 
-              align="start"
-            >
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setCategory('All')}>All Categories</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setCategory('PRODUCT')}>Product</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setCategory('SERVICE')}>Service</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setCategory('BOOK')}>Book</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setCategory('EVENT')}>Event</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+    <section id="directory-section" className="relative">
+      {/* Animated Filter & Search Navigation Bar */}
+      <div className="w-full bg-[#1A1A1A] text-white flex flex-col md:flex-row items-stretch border-y border-[#333] min-h-[72px]">
+        {/* Navigation Menu Component - Left 50% */}
+        <div className="w-full md:w-1/2 flex items-center px-4 md:px-8 py-3 md:py-0 overflow-x-auto border-b md:border-b-0 md:border-r border-[#333]">
+          <Menu
+            list={menuItems}
+            className="w-full"
+            itemClassName="text-xs tracking-[0.15em] font-sans font-bold text-gray-300 hover:text-white uppercase py-4 px-4 sm:px-5"
+            dropdownClassName="bg-[#1A1A1A] border-[#333] text-white z-50 shadow-2xl"
+            cursorClassName="bg-[#E84333]"
+          />
         </div>
 
-        {/* Block 2 (Location Dropdown) */}
-        <div className="flex flex-col justify-center px-6 lg:px-8 py-6 lg:py-0 border-b lg:border-b-0 lg:border-r border-[#333] w-full lg:w-1/4 relative group">
-          <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Location</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center justify-between w-full bg-transparent text-left outline-none">
-              <span className="text-white font-serif italic text-lg lg:text-xl truncate">
-                {location === 'All' ? 'Global Archives' : location}
-              </span>
-              <ChevronDown size={16} className="text-gray-500 group-hover:text-white transition-colors ml-2 shrink-0" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              className="bg-[#1A1A1A] border-[#333] text-white w-[var(--radix-dropdown-menu-trigger-width)] rounded-t-none border-t-0 p-0 z-50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 data-[state=open]:slide-in-from-top-4 data-[state=closed]:slide-out-to-top-4 duration-300 ease-out" 
-              sideOffset={0} 
-              align="start"
-            >
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setLocation('All')}>Global Archives</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setLocation('Asia')}>Asia</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setLocation('Europe')}>Europe</DropdownMenuItem>
-              <DropdownMenuItem className="hover:bg-brand-accent/20 focus:bg-brand-accent/20 focus:text-white cursor-pointer font-serif italic text-lg py-4 px-6 rounded-none border-b border-[#333]/50 last:border-b-0 transition-colors text-white outline-none" onClick={() => setLocation('Americas')}>Americas</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-
-        {/* Block 3 (Search) */}
-        <div className="flex flex-1 items-center px-6 lg:px-8 py-8 lg:py-0 gap-4">
-          <Search size={18} className="text-gray-500 shrink-0" />
+        {/* Search Bar - Right 50% starting at the center */}
+        <div className="w-full md:w-1/2 flex items-center px-6 lg:px-8 py-4 md:py-0 gap-4 bg-[#161616]/50">
+          <Search size={16} className="text-gray-500 shrink-0" />
           <input 
             type="text" 
             placeholder="SEARCH ARCHIVE"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="bg-transparent w-full text-[10px] font-sans font-bold uppercase tracking-[0.15em] md:tracking-[0.3em] placeholder:text-gray-700 focus:outline-none text-white"
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="bg-transparent w-full text-[11px] font-sans font-bold uppercase tracking-[0.2em] placeholder:text-gray-600 focus:outline-none text-white"
           />
+          {search && (
+            <button 
+              onClick={() => handleSearchChange('')}
+              className="text-[10px] text-gray-500 hover:text-white font-sans uppercase tracking-wider"
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
 
@@ -98,7 +140,9 @@ export function DirectorySection() {
             INDEXED <span className="italic">COLLECTION</span>
           </h2>
           <div className="text-[10px] lg:text-[12px] font-sans font-bold uppercase tracking-widest text-gray-400">
-            Items 001—{filteredItems.length.toString().padStart(3, '0')}
+            {filteredItems.length > 0
+              ? `Items ${startIndex.toString().padStart(3, '0')}—${endIndex.toString().padStart(3, '0')} of ${filteredItems.length.toString().padStart(3, '0')}`
+              : 'Items 000—000'}
           </div>
         </div>
 
@@ -107,7 +151,7 @@ export function DirectorySection() {
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
           <AnimatePresence mode="popLayout">
-            {filteredItems.map((item) => (
+            {displayedItems.map((item) => (
               <DirectoryCard key={item.id} item={item} />
             ))}
           </AnimatePresence>
@@ -120,7 +164,39 @@ export function DirectorySection() {
             </p>
           </div>
         )}
+
+        {/* Bottom Pagination Bar */}
+        {filteredItems.length > 0 && (
+          <div className="mt-16 pt-8 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="text-[11px] font-sans font-bold uppercase tracking-[0.2em] text-gray-400">
+              Page {currentPage} of {totalPages}
+            </div>
+
+            {/* Bottom Right Next / Previous Controls */}
+            <div className="flex items-center gap-3 self-end sm:self-auto">
+              {currentPage > 1 && (
+                <button
+                  onClick={handlePrevPage}
+                  className="px-5 py-3 border border-gray-300 bg-white text-brand-ink hover:border-black hover:bg-black hover:text-white transition-all duration-300 text-[11px] font-sans font-bold uppercase tracking-[0.2em] flex items-center gap-2 group cursor-pointer"
+                >
+                  <span>Prev 15</span>
+                </button>
+              )}
+              {currentPage < totalPages && (
+                <button
+                  onClick={handleNextPage}
+                  className="px-6 py-3 border border-brand-ink bg-brand-ink text-white hover:bg-brand-accent hover:border-brand-accent transition-all duration-300 text-[11px] font-sans font-bold uppercase tracking-[0.2em] flex items-center gap-3 group cursor-pointer shadow-sm"
+                >
+                  <span>Next 15</span>
+                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )
 }
+
+export default DirectorySection

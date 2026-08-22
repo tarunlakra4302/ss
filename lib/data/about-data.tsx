@@ -11,6 +11,29 @@ export const galleryImages = [
   { src: "/gallery/9.jpeg", alt: "Gallery photo 9" }
 ];
 
+export const teamMembers = [
+  {
+    name: "Anjali Lakra",
+    src: "/images/team/Anjali Lakra.png",
+    alt: "Anjali Lakra",
+  },
+  {
+    name: "Ganesh Kumar",
+    src: "/images/team/Ganesh Kumar.jpeg",
+    alt: "Ganesh Kumar",
+  },
+  {
+    name: "Komal Jain",
+    src: "/images/team/Komal Jain.jpeg",
+    alt: "Komal Jain",
+  },
+  {
+    name: "Lakshmi Shetty",
+    src: "/images/team/Lakshmi Shetty.jpeg",
+    alt: "Lakshmi Shetty",
+  },
+];
+
 export const gridCards = [
   {
     id: 1,

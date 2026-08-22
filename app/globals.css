@@ -17,6 +17,19 @@
   --cubic-default: cubic-bezier(0.65, 0.05, 0, 1);
   --expo-out: cubic-bezier(0.77, 0, 0.175, 1);
   --expo-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --color-grayscale-1: #ffffff;
+  --color-grayscale-2: #fcfcfc;
+  --color-grayscale-3: #f5f5f5;
+  --color-grayscale-4: #ebebeb;
+  --color-grayscale-5: #e0e0e0;
+  --color-grayscale-6: #d6d6d6;
+  --color-grayscale-7: #c7c7c7;
+  --color-grayscale-8: #8f8f8f;
+  --color-grayscale-9: #707070;
+  --color-grayscale-10: #4a4a4a;
+  --color-grayscale-11: #2e2e2e;
+  --color-grayscale-12: #121212;
+  --color-green-9: #16a34a;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -92,6 +105,19 @@
   --color-on-primary: #ffffff;
   --font-size-body-lg: 1.125rem;
   --font-sora: "Nohemi", sans-serif;
+  --color-grayscale-1: var(--color-grayscale-1);
+  --color-grayscale-2: var(--color-grayscale-2);
+  --color-grayscale-3: var(--color-grayscale-3);
+  --color-grayscale-4: var(--color-grayscale-4);
+  --color-grayscale-5: var(--color-grayscale-5);
+  --color-grayscale-6: var(--color-grayscale-6);
+  --color-grayscale-7: var(--color-grayscale-7);
+  --color-grayscale-8: var(--color-grayscale-8);
+  --color-grayscale-9: var(--color-grayscale-9);
+  --color-grayscale-10: var(--color-grayscale-10);
+  --color-grayscale-11: var(--color-grayscale-11);
+  --color-grayscale-12: var(--color-grayscale-12);
+  --color-green-9: var(--color-green-9);
 }
 
 body {
@@ -168,7 +194,7 @@ body {
 
 @media (min-width: 768px) {
   .site-header-wrapper {
-    top: 2.5rem;
+    top: 2rem;
     background: transparent;
     backdrop-filter: none;
     border-bottom: none;

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { submitToGoogleScript } from "@/lib/google/script";
 
 
 interface UseDonationOptions {
@@ -20,9 +19,12 @@ export function useDonation(options: UseDonationOptions = {}) {
     setError(null);
     setIsLoading(true);
 
-    // Record donation to Google Sheets via Apps Script Web App
-    try {
-      await submitToGoogleScript({
+    // Record donation to Google Sheets via server proxy in background
+    fetch("/api/forms/submit-to-sheet", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
         formType: "donation",
         amount: Number(amount),
         donationTime: new Date().toLocaleString(),
@@ -30,11 +32,13 @@ export function useDonation(options: UseDonationOptions = {}) {
         donorName: options.donorName || "",
         donorEmail: options.donorEmail || "",
         donorPhone: options.donorPhone || "",
-      });
-    } catch (e) {
-      console.warn("Failed to log donation to Google Sheets:", e);
-    }
+      }),
+    }).catch((e) => console.warn("Failed to log donation to Google Sheets:", e));
 
+
+    try {
+      router.prefetch("/donate/success");
+    } catch (_) {}
 
     try {
       // Step 1: Create Razorpay order from backend
@@ -72,25 +76,29 @@ export function useDonation(options: UseDonationOptions = {}) {
             setError("Payment was cancelled. You can try again.");
           },
         },
-        handler: async (response: RazorpayPaymentResponse) => {
-          // Step 3: Verify payment signature on backend
-          const verifyRes = await fetch("/api/donate/verify-payment", {
+        handler: (response: RazorpayPaymentResponse) => {
+          const redirectUrl = `/donate/success?amount=${amount}&paymentId=${response.razorpay_payment_id}`;
+
+          // Non-blocking background verification
+          fetch("/api/donate/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          });
+            keepalive: true,
+            body: JSON.stringify({
+              ...response,
+              donorName: options.donorName || "",
+              donorEmail: options.donorEmail || "",
+              donorPhone: options.donorPhone || "",
+              amount,
+              note: note || "",
+            }),
+          }).catch((err) => console.error("Background donation verification error:", err));
 
-          const verifyData = await verifyRes.json();
-
-          if (verifyData.success) {
-            router.push(
-              `/donate/success?amount=${amount}&paymentId=${response.razorpay_payment_id}`
-            );
-          } else {
-            setIsLoading(false);
-            setError(
-              "Payment verification failed. Contact us if amount was deducted."
-            );
+          // Instantaneous client-side navigation without full document reload
+          try {
+            router.replace(redirectUrl);
+          } catch (_) {
+            window.location.replace(redirectUrl);
           }
         },
       };

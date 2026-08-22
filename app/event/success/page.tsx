@@ -1,41 +1,45 @@
-import Link from "next/link";
+"use client";
 
-export default function EventSuccessPage({
-  searchParams,
-}: {
-  searchParams: { type?: string; amount?: string; paymentId?: string };
-}) {
-  const isTicket = searchParams.type === "ticket";
-  const amount = searchParams.amount;
-  const paymentId = searchParams.paymentId;
+import { Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import { EventSuccessView } from "@/components/EventSuccessView";
+
+function EventSuccessContent() {
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type") || "ticket";
+  const amount = searchParams.get("amount") || "700";
+  const paymentId = searchParams.get("paymentId") || undefined;
+  const eventTitle = searchParams.get("eventTitle") || "Edible Gardening Workshop";
+  const ticketTime = searchParams.get("ticketTime") || "Sunday Aug 23, 2026 @ 10am IST";
+  const date = searchParams.get("date") || undefined;
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0f1f3d] px-4">
-      <div className="bg-white rounded-2xl p-10 max-w-md w-full text-center shadow-2xl">
-        <div className="text-6xl mb-5">{isTicket ? "🎟️" : "🌱"}</div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-3">
-          {isTicket ? "You're In!" : "Thank You!"}
-        </h1>
-        <p className="text-gray-600 mb-4 leading-relaxed">
-          {isTicket
-            ? `Your ticket is confirmed. We'll see you at the Spring Market 2026! A confirmation has been sent to your email.`
-            : `Your donation of ₹${amount} has been received. Every rupee goes directly to our community and impact projects.`}
-        </p>
-        {paymentId && (
-          <p className="text-xs text-gray-400 mb-6 font-mono">
-            Payment ID: {paymentId}
-          </p>
-        )}
-        <Link
-          href="/"
-          className="inline-block bg-[#0f1f3d] text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition"
-        >
-          Back to Sustainable Sundays
-        </Link>
-        <p className="mt-6 text-xs text-gray-400">
-          🍃 Powered by Sustainable Sundays
-        </p>
+    <main className="h-screen w-full flex items-center justify-center bg-[#181818] p-4 overflow-hidden">
+      <div className="-translate-y-2 sm:-translate-y-4 w-full flex justify-center">
+        <EventSuccessView
+          type={type}
+          amount={amount}
+          paymentId={paymentId}
+          eventTitle={eventTitle}
+          ticketTime={ticketTime}
+          date={date}
+          ticketCount={1}
+        />
       </div>
     </main>
+  );
+}
+
+export default function EventSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="h-screen w-full flex items-center justify-center bg-[#181818] p-4">
+          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        </main>
+      }
+    >
+      <EventSuccessContent />
+    </Suspense>
   );
 }

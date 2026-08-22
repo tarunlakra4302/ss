@@ -62,22 +62,34 @@ export function ArchiveHero() {
         </div>
       </motion.div>
 
-      {/* Scroll Indicators - Absolute positioned to bottom right */}
+      {/* Scroll Indicators - Positioned bottom right of Hero */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="absolute bottom-8 right-6 md:bottom-12 md:right-16 lg:right-24 flex flex-col items-center gap-4 z-20"
+        onClick={() => {
+          document.getElementById('directory-section')?.scrollIntoView({ behavior: 'smooth' });
+        }}
+        className="absolute bottom-8 right-6 md:bottom-12 md:right-16 lg:right-24 flex flex-col items-center gap-4 z-20 cursor-pointer group"
+        role="button"
+        tabIndex={0}
+        aria-label="Scroll to directory collection"
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            document.getElementById('directory-section')?.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
       >
         <div className="flex items-center gap-3">
-          <div className="h-[1px] w-8 bg-white/20" />
-          <span className="text-[9px] uppercase tracking-[0.5em] text-white/60 font-medium">
+          <div className="h-[1px] w-8 bg-white/20 group-hover:bg-brand-accent/50 transition-colors" />
+          <span className="text-[9px] uppercase tracking-[0.5em] text-white/60 group-hover:text-white transition-colors font-medium select-none">
             Scroll down
           </span>
-          <div className="h-[1px] w-8 bg-white/20" />
+          <div className="h-[1px] w-8 bg-white/20 group-hover:bg-brand-accent/50 transition-colors" />
         </div>
 
-        <div className="w-5 h-9 rounded-full border border-white/10 flex justify-center p-1.5 bg-black/10 backdrop-blur-sm relative">
+        <div className="w-5 h-9 rounded-full border border-white/10 group-hover:border-white/30 flex justify-center p-1.5 bg-black/10 backdrop-blur-sm relative transition-colors">
           <motion.div
             animate={{
               y: [0, 12, 0],

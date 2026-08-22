@@ -25,7 +25,8 @@ import {
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { SectionContainer } from "@/components/layout/section-container";
 import { useRazorpay } from "@/hooks/useRazorpay";
-import { submitToGoogleScript } from "@/lib/google/script";
+import { useRouter, useSearchParams } from "next/navigation";
+import { EventSuccessView } from "@/components/EventSuccessView";
 
 interface EventDetailProps {
   slug?: string;
@@ -112,6 +113,19 @@ export function EventDetail({ slug }: EventDetailProps) {
   const [donationError, setDonationError] = useState<string | null>(null);
 
   const { openPayment } = useRazorpay();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [isPaidLocally, setIsPaidLocally] = useState(false);
+  const [localPaymentType, setLocalPaymentType] = useState<string>("ticket");
+  const [localPaidAmount, setLocalPaidAmount] = useState<number | string>(0);
+  const [localPaymentId, setLocalPaymentId] = useState<string>("");
+
+  const isUrlPaymentSuccess = searchParams?.get("payment") === "success";
+  const isPaymentSuccess = isPaidLocally || isUrlPaymentSuccess;
+  const activePaymentType = isPaidLocally ? localPaymentType : (searchParams?.get("type") || "ticket");
+  const activePaidAmount = isPaidLocally ? localPaidAmount : (searchParams?.get("amount") || 0);
+  const activePaymentId = isPaidLocally ? localPaymentId : (searchParams?.get("paymentId") || "");
 
   const handleDonatePayment = async () => {
     setDonationError(null);
@@ -126,26 +140,89 @@ export function EventDetail({ slug }: EventDetailProps) {
       return;
     }
 
+    if (!Number.isInteger(donationAmount)) {
+      setDonationError('Please enter a whole number.');
+      return;
+    }
+
     setSubmitState('loading');
 
     try {
-      await submitToGoogleScript({
-        formType: 'donation',
-        amount: Number(donationAmount),
-        donationTime: new Date().toLocaleString(),
+      await fetch("/api/forms/submit-to-sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          formType: 'donation',
+          amount: Number(donationAmount),
+          donationTime: new Date().toLocaleString(),
+        }),
       });
     } catch (e) {
       console.warn('Failed to submit event donation to Google Sheets:', e);
     }
 
-    openPayment({
-      amount: donationAmount,
-      type: 'donation',
-      description: `Donation — Sustainable Sundays ₹${donationAmount}`,
-      onDismiss: () => setSubmitState('idle'),
-      onError: (msg) => { setSubmitState('idle'); setDonationError(msg); },
-      successRedirect: `/event/success?type=donation&amount=${donationAmount}`,
-    });
+    // Donations use the donate API directly (free-form amount)
+    try {
+      const orderRes = await fetch("/api/donate/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: donationAmount }),
+      });
+      const orderData = await orderRes.json();
+      if (!orderRes.ok || !orderData.orderId) {
+        setSubmitState('idle');
+        setDonationError(orderData.error || 'Could not initiate donation.');
+        return;
+      }
+
+      if (typeof window === "undefined" || !window.Razorpay) {
+        setSubmitState('idle');
+        setDonationError('Razorpay SDK failed to load. Please refresh.');
+        return;
+      }
+
+      try {
+        router.prefetch("/event/success");
+      } catch (_) {}
+
+      const rzp = new window.Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
+        amount: orderData.amount,
+        currency: "INR",
+        name: "Sustainable Sundays",
+        description: `Donation — Sustainable Sundays ₹${donationAmount}`,
+        order_id: orderData.orderId,
+        theme: { color: "#0f1f3d" },
+        modal: {
+          ondismiss: () => setSubmitState('idle'),
+        },
+        handler: (response: RazorpayPaymentResponse) => {
+          const redirectUrl = `/event/success?type=donation&amount=${donationAmount}&paymentId=${response.razorpay_payment_id || ''}`;
+
+          fetch("/api/donate/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            keepalive: true,
+            body: JSON.stringify({ ...response, amount: donationAmount, note: "" }),
+          }).catch((err) => console.error("Background donation verification error:", err));
+
+          setSubmitState("success");
+          try {
+            router.replace(redirectUrl);
+          } catch (_) {
+            window.location.replace(redirectUrl);
+          }
+        },
+      });
+      rzp.on("payment.failed", (res: any) => {
+        setSubmitState('idle');
+        setDonationError(res.error?.description || 'Payment failed. Please try again.');
+      });
+      rzp.open();
+    } catch (err: any) {
+      setSubmitState('idle');
+      setDonationError(err.message || 'Something went wrong. Please try again.');
+    }
   };
   
   // Form states
@@ -215,8 +292,12 @@ export function EventDetail({ slug }: EventDetailProps) {
       
       const totalAmount = ticketCount * ticketPrice;
 
-      try {
-        await submitToGoogleScript({
+      // Non-blocking submission with keepalive so payment opens instantly
+      fetch("/api/forms/submit-to-sheet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        keepalive: true,
+        body: JSON.stringify({
           formType: 'event',
           firstName: fields.firstName,
           lastName: fields.lastName,
@@ -225,14 +306,11 @@ export function EventDetail({ slug }: EventDetailProps) {
           quantity: ticketCount,
           amount: totalAmount,
           donationTime: new Date().toLocaleString(),
-        });
-      } catch (e) {
-        console.warn('Failed to submit event registration to Google Sheets:', e);
-      }
+        }),
+      }).catch((e) => console.warn('Failed to submit event registration to Google Sheets:', e));
 
       openPayment({
-        amount: totalAmount,
-        type: 'ticket',
+        eventId: slug || 'plogging',
         quantity: ticketCount,
         description: `${ticketCount}x General Admission — ₹${totalAmount}`,
         prefill: {

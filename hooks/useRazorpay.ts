@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 
 interface OpenPaymentOptions {
-  amount: number;           // in INR
-  type: "ticket" | "donation";
+  eventId: string;         // server catalog key
   quantity?: number;
   prefill?: {
     name?: string;
@@ -14,6 +13,7 @@ interface OpenPaymentOptions {
   description?: string;
   onDismiss?: () => void;
   onError?: (msg: string) => void;
+  onSuccess?: (paymentId: string) => void;
   successRedirect?: string; // path to redirect on success
 }
 
@@ -22,22 +22,27 @@ export function useRazorpay() {
 
   const openPayment = async (options: OpenPaymentOptions) => {
     const {
-      amount,
-      type,
+      eventId,
       quantity = 1,
       prefill,
       description,
       onDismiss,
       onError,
+      onSuccess,
       successRedirect,
     } = options;
 
+    // Prefetch target success route so client chunks are instant in memory
     try {
-      // Step 1: Create order
+      router.prefetch(successRedirect || "/event/success");
+    } catch (_) {}
+
+    try {
+      // Step 1: Create order — server computes the amount
       const orderRes = await fetch("/api/event/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount, type, quantity }),
+        body: JSON.stringify({ eventId, quantity }),
       });
 
       const orderData = await orderRes.json();
@@ -52,10 +57,14 @@ export function useRazorpay() {
         return;
       }
 
+      // Server-authoritative amount (in paise)
+      const serverAmountPaise = orderData.amount;
+      const serverAmountINR = serverAmountPaise / 100;
+
       // Step 2: Open Razorpay modal
       const rzp = new window.Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
-        amount: orderData.amount,
+        amount: serverAmountPaise,
         currency: "INR",
         name: "Sustainable Sundays",
         description: description || "Sustainable Sundays",
@@ -67,23 +76,41 @@ export function useRazorpay() {
             onDismiss?.();
           },
         },
-        handler: async (response: RazorpayPaymentResponse) => {
-          // Step 3: Verify signature
-          const verifyRes = await fetch("/api/event/verify-payment", {
+        handler: (response: RazorpayPaymentResponse) => {
+          let redirectPath =
+            successRedirect ||
+            `/event/success?type=ticket&amount=${serverAmountINR}&paymentId=${response.razorpay_payment_id}`;
+          if (successRedirect && !redirectPath.includes("paymentId=") && response.razorpay_payment_id) {
+            const separator = redirectPath.includes("?") ? "&" : "?";
+            redirectPath = `${redirectPath}${separator}paymentId=${response.razorpay_payment_id}`;
+          }
+
+          // Fire verification non-blocking in background with keepalive
+          fetch("/api/event/verify-payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
+            keepalive: true,
+            body: JSON.stringify({
+              ...response,
+              type: "ticket",
+              eventId,
+              quantity,
+              name: prefill?.name || "",
+              email: prefill?.email || "",
+              phone: prefill?.contact || "",
+              description: description || "Event Registration",
+            }),
+          }).catch((err) => {
+            console.error("Background payment verification error:", err);
           });
 
-          const verifyData = await verifyRes.json();
+          onSuccess?.(response.razorpay_payment_id);
 
-          if (verifyData.success) {
-            const redirectPath =
-              successRedirect ||
-              `/event/success?type=${type}&amount=${amount}&paymentId=${response.razorpay_payment_id}`;
-            router.push(redirectPath);
-          } else {
-            onError?.("Payment verification failed. Contact us if amount was deducted.");
+          // Instantaneous client-side navigation without full document reload
+          try {
+            router.replace(redirectPath);
+          } catch (_) {
+            window.location.replace(redirectPath);
           }
         },
       });
@@ -101,3 +128,4 @@ export function useRazorpay() {
 
   return { openPayment };
 }
+

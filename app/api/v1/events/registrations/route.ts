@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { EventRegistrationSchema } from '@/lib/schemas';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { validateFileMagicBytes } from '@/lib/file-validation';
 import { getCachedIdempotentResponse, saveIdempotentResponse } from '@/lib/idempotency';
-import { badRequest, unprocessableEntity, tooManyRequests, internalServerError } from '@/lib/errors';
-import { uploadToDrive } from '@/lib/google/drive';
+import { badRequest, tooManyRequests, internalServerError } from '@/lib/errors';
 import { appendToSheet } from '@/lib/google/sheets';
+import { checkHoneypot } from '@/lib/security/honeypot';
 
 export async function POST(req: NextRequest) {
   const instancePath = '/api/v1/events/registrations';
@@ -36,20 +35,40 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // 3. Extract Form Data
-    const formData = await req.formData().catch(() => null);
-    if (!formData) {
-      return badRequest('Request payload must be valid multipart/form-data.', instancePath);
+    // 3. Extract Form Data (JSON or Multipart)
+    const contentType = req.headers.get('content-type') || '';
+    let rawData: any = {};
+
+    if (contentType.includes('multipart/form-data')) {
+      const formData = await req.formData().catch(() => null);
+      if (!formData) return badRequest('Failed to parse form data.', instancePath);
+      rawData = Object.fromEntries(formData.entries());
+    } else {
+      rawData = await req.json().catch(() => null);
+      if (!rawData) return badRequest('Request body must be a valid JSON object or form-data.', instancePath);
+    }
+
+    // 4. Honeypot & Time-to-submit Bot Detection (Silent 201 Success)
+    const honeypotStatus = checkHoneypot(rawData);
+    if (honeypotStatus.isSpam) {
+      const fakePayload = {
+        status: 'SUCCESS',
+        message: 'Event registration submitted successfully.',
+      };
+      return new NextResponse(JSON.stringify(fakePayload), {
+        status: 201,
+        headers: { 'Content-Type': 'application/json', ...rateStatus.headers },
+      });
     }
 
     const textFields = {
-      name: formData.get('name')?.toString() || '',
-      email: formData.get('email')?.toString() || '',
-      phone: formData.get('phone')?.toString() || '',
-      eventName: formData.get('eventName')?.toString() || '',
+      name: rawData.name?.toString() || '',
+      email: rawData.email?.toString() || '',
+      phone: rawData.phone?.toString() || '',
+      eventName: rawData.eventName?.toString() || '',
     };
 
-    // 4. Validate Text Fields
+    // 5. Validate Text Fields
     const validationResult = EventRegistrationSchema.safeParse(textFields);
     if (!validationResult.success) {
       const invalidParams = Object.entries(
@@ -62,35 +81,7 @@ export async function POST(req: NextRequest) {
       return badRequest('Validation failed for registration form fields.', instancePath, invalidParams);
     }
 
-    // 5. Extract & Validate Screenshot File via Magic Bytes
-    const screenshot = formData.get('screenshot');
-    if (!screenshot || !(screenshot instanceof File)) {
-      return badRequest('A valid screenshot file is required in multipart field "screenshot".', instancePath);
-    }
-
-    const fileBuffer = Buffer.from(await screenshot.arrayBuffer());
-    const magicValidation = validateFileMagicBytes(fileBuffer);
-
-    if (!magicValidation.valid || !magicValidation.mimeType) {
-      return unprocessableEntity(
-        magicValidation.error || 'Invalid file type signature.',
-        instancePath
-      );
-    }
-
-    // 6. Upload File to Google Drive
-    const fileName = `${validationResult.data.eventName}_screenshot_${Date.now()}`;
-    const driveResult = await uploadToDrive(
-      fileBuffer,
-      fileName,
-      magicValidation.mimeType
-    );
-
-    if (!driveResult.webViewLink || !driveResult.fileId) {
-      throw new Error('Failed to obtain Google Drive file upload response.');
-    }
-
-    // 7. Append Application Record to Google Sheets
+    // 6. Append Application Record to Google Sheets
     const timestamp = new Date().toISOString();
     const row = [
       timestamp,
@@ -98,27 +89,16 @@ export async function POST(req: NextRequest) {
       validationResult.data.email,
       validationResult.data.phone,
       validationResult.data.eventName,
-      driveResult.webViewLink,
     ];
 
-    try {
-      await appendToSheet('Events', row);
-    } catch (sheetsError) {
-      // Rollback Google Drive file upload on sheet write failure
-      const drive = await import('@/lib/google/auth').then((m) => m.getDriveClient());
-      if (driveResult.fileId) {
-        await drive.files.delete({ fileId: driveResult.fileId }).catch(() => {});
-      }
-      throw sheetsError;
-    }
+    await appendToSheet('Events', row);
 
     const responsePayload = {
       status: 'SUCCESS',
       message: 'Event registration submitted successfully.',
-      driveLink: driveResult.webViewLink,
     };
 
-    // 8. Cache for Idempotency
+    // 7. Cache for Idempotency
     if (idempotencyKey) {
       await saveIdempotentResponse(idempotencyKey, 201, responsePayload, rateStatus.headers);
     }
@@ -135,3 +115,4 @@ export async function POST(req: NextRequest) {
     return internalServerError('An internal server error occurred while processing event registration.', instancePath);
   }
 }
+

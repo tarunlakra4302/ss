@@ -1,17 +1,17 @@
 "use client";
 import { motion } from "framer-motion";
 import { HoverExpand_001 } from "@/components/ui/hover-expand";
-import { galleryImages } from "@/lib/data/about-data";
+import { teamMembers } from "@/lib/data/about-data";
 
 export const AboutInitiatives = () => {
-  const formattedImages = galleryImages.map((img, idx) => ({
-    src: img.src,
-    alt: img.alt,
-    code: `# ${(idx + 1).toString().padStart(2, "0")}`,
+  const formattedImages = teamMembers.map((member) => ({
+    src: member.src,
+    alt: member.alt,
+    code: member.name,
   }));
 
   return (
-    <section className="py-16 px-4">
+    <section id="team" className="py-16 px-4 scroll-mt-24">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 100 }}

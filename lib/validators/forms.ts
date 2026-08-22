@@ -41,9 +41,6 @@ export const EventFormSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().regex(phoneRegex, "Invalid phone number"),
   eventName: z.string().min(2, "Event name is required"),
-  // Note: For client-side, this might be a FileList/File. 
-  // For server-side, we expect a buffer or link after initial processing.
-  screenshot: z.any().optional(), 
 });
 
 // Export inferred types for convenience within this file if needed
