@@ -81,10 +81,10 @@ export const ZeroWasteCTA = ({
           <h2 className="text-white text-4xl md:text-7xl font-bold mb-8 md:mb-12 tracking-tight leading-tight">
             Building a sustainable <br className="hidden md:block" /> future, together.
           </h2>
-          <FlowHoverButton asChild className="bg-white text-black px-12 py-5 rounded-full font-bold uppercase tracking-widest text-sm h-auto border-none hover:bg-neutral-100 transition-colors">
+          <FlowHoverButton asChild className="bg-white text-black px-6 py-3.5 md:px-12 md:py-5 rounded-full font-bold uppercase tracking-wider md:tracking-widest text-xs sm:text-sm h-12 md:h-auto border-none hover:bg-neutral-100 transition-colors inline-flex items-center justify-center">
             <Link href="/zero-waste-archive" className="flex items-center gap-2">
               Explore Zero Waste Hub
-              <ArrowRight className="w-5 h-5 ml-1" />
+              <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1" />
             </Link>
           </FlowHoverButton>
         </div>

@@ -1,83 +1,45 @@
-import { Ratelimit } from '@upstash/ratelimit';
-import { Redis } from '@upstash/redis';
+export interface RateLimitOptions {
+  limit?: number; // Maximum allowed requests within window (default: 5)
+  windowMs?: number; // Time window in milliseconds (default: 60,000ms / 1 min)
+}
 
-let ratelimitInstance: Ratelimit | null = null;
-let redisCooldownUntil = 0;
+export interface RateLimitResult {
+  success: boolean;
+  limit: number;
+  remaining: number;
+  reset: number; // Unix timestamp in seconds when the current limit window resets
+  headers: Record<string, string>;
+}
 
-// In-memory sliding window rate limiter fallback when Redis is unconfigured or unreachable
-const memoryRateLimitMap = new Map<string, number[]>();
+// In-memory store: Map<identifier, timestamp[]>
+const tracker = new Map<string, number[]>();
 
-function checkMemoryRateLimit(identifier: string, limit = 5, windowMs = 60000): RateLimitResult {
+// Periodic cleanup of stale entries every 5 minutes to prevent memory leaks
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
+let lastCleanup = Date.now();
+
+function cleanupStaleEntries(windowMs: number) {
   const now = Date.now();
-  const windowStart = now - windowMs;
-  const timestamps = (memoryRateLimitMap.get(identifier) || []).filter((t) => t > windowStart);
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
 
-  if (timestamps.length >= limit) {
-    memoryRateLimitMap.set(identifier, timestamps);
-    const resetTime = Math.ceil((timestamps[0] + windowMs) / 1000);
-    return {
-      success: false,
-      limit,
-      remaining: 0,
-      reset: resetTime,
-      headers: {
-        'X-RateLimit-Limit': limit.toString(),
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': resetTime.toString(),
-      },
-    };
+  const threshold = now - windowMs;
+  for (const [key, timestamps] of tracker.entries()) {
+    const valid = timestamps.filter((t) => t > threshold);
+    if (valid.length === 0) {
+      tracker.delete(key);
+    } else {
+      tracker.set(key, valid);
+    }
   }
-
-  timestamps.push(now);
-  memoryRateLimitMap.set(identifier, timestamps);
-  const remaining = limit - timestamps.length;
-  const resetTime = Math.ceil((now + windowMs) / 1000);
-
-  return {
-    success: true,
-    limit,
-    remaining,
-    reset: resetTime,
-    headers: {
-      'X-RateLimit-Limit': limit.toString(),
-      'X-RateLimit-Remaining': remaining.toString(),
-      'X-RateLimit-Reset': resetTime.toString(),
-    },
-  };
-}
-
-function hasValidRedisConfig(): boolean {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  return Boolean(url && url.trim() && !url.includes('dummy.upstash.io'));
-}
-
-function getRatelimit(): Ratelimit {
-  if (!ratelimitInstance) {
-    const redis = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-      retry: {
-        retries: 0, // Fail fast on network/DNS errors
-      },
-    });
-
-    // 5 requests per 60 seconds (Sliding Window) for sensitive order and submission endpoints
-    ratelimitInstance = new Ratelimit({
-      redis,
-      limiter: Ratelimit.slidingWindow(5, '60 s'),
-      analytics: true,
-      prefix: '@upstash/ratelimit',
-    });
-  }
-  return ratelimitInstance;
 }
 
 /**
  * Safely extracts client IP address preventing header spoofing.
  *
- * Hosting Provider Header Hierarchy:
- * 1. Cloudflare: `cf-connecting-ip` (Cloudflare guarantees authenticity and strips client-supplied values).
- * 2. Vercel: `x-vercel-proxied-for` / `x-real-ip` (Vercel sets authenticated proxy origin).
+ * Header Priority:
+ * 1. Cloudflare: `cf-connecting-ip` (Cloudflare validates and strips spoofed headers).
+ * 2. Vercel: `x-vercel-proxied-for` / `x-real-ip`.
  * 3. Standard Reverse Proxies: `x-forwarded-for` (first IP entry).
  * 4. Fallback: `127.0.0.1` for local development.
  */
@@ -114,47 +76,65 @@ export function getClientIp(request: Request): string {
   return '127.0.0.1';
 }
 
-export interface RateLimitResult {
-  success: boolean;
-  limit: number;
-  remaining: number;
-  reset: number;
-  headers: Record<string, string>;
-}
-
+/**
+ * High-performance sliding-window in-memory rate limiter.
+ * Zero external Redis or cloud dependencies needed.
+ *
+ * @param request Request or incoming identifier
+ * @param actionPrefix Namespace / Action tag (e.g. 'orders_create', 'member_enrollment')
+ * @param options Custom limit and window duration
+ */
 export async function checkRateLimit(
   request: Request,
-  actionPrefix: string = 'api'
+  actionPrefix: string = 'api',
+  options: RateLimitOptions = {}
 ): Promise<RateLimitResult> {
+  const limit = options.limit ?? 5;
+  const windowMs = options.windowMs ?? 60_000; // 1 minute default
   const ip = getClientIp(request);
   const identifier = `${actionPrefix}_${ip}`;
   const now = Date.now();
+  const windowStart = now - windowMs;
 
-  if (!hasValidRedisConfig() || now < redisCooldownUntil) {
-    return checkMemoryRateLimit(identifier);
-  }
+  cleanupStaleEntries(windowMs);
 
-  try {
-    const ratelimit = getRatelimit();
-    const { success, limit, remaining, reset } = await ratelimit.limit(identifier);
+  const existingTimestamps = tracker.get(identifier) || [];
+  const validTimestamps = existingTimestamps.filter((t) => t > windowStart);
+
+  if (validTimestamps.length >= limit) {
+    tracker.set(identifier, validTimestamps);
+    const earliestValid = validTimestamps[0] || now;
+    const resetTimeSec = Math.ceil((earliestValid + windowMs) / 1000);
 
     return {
-      success,
+      success: false,
       limit,
-      remaining,
-      reset,
+      remaining: 0,
+      reset: resetTimeSec,
       headers: {
         'X-RateLimit-Limit': limit.toString(),
-        'X-RateLimit-Remaining': remaining.toString(),
-        'X-RateLimit-Reset': reset.toString(),
+        'X-RateLimit-Remaining': '0',
+        'X-RateLimit-Reset': resetTimeSec.toString(),
+        'Retry-After': Math.max(1, resetTimeSec - Math.ceil(now / 1000)).toString(),
       },
     };
-  } catch (error) {
-    redisCooldownUntil = Date.now() + 60000;
-    console.warn(
-      'Upstash Redis rate limit unreachable. Falling back to in-memory rate limiter:',
-      error instanceof Error ? error.message : error
-    );
-    return checkMemoryRateLimit(identifier);
   }
+
+  validTimestamps.push(now);
+  tracker.set(identifier, validTimestamps);
+
+  const remaining = limit - validTimestamps.length;
+  const resetTimeSec = Math.ceil((now + windowMs) / 1000);
+
+  return {
+    success: true,
+    limit,
+    remaining,
+    reset: resetTimeSec,
+    headers: {
+      'X-RateLimit-Limit': limit.toString(),
+      'X-RateLimit-Remaining': remaining.toString(),
+      'X-RateLimit-Reset': resetTimeSec.toString(),
+    },
+  };
 }

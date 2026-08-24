@@ -11,7 +11,7 @@ export default function FlowArtDefaultDemo() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 my-auto w-full">
           <div>
             <h1
-              className="text-[clamp(2.25rem,6.5vw,9rem)] font-bold leading-[0.85] uppercase tracking-tight"
+              className="text-[clamp(4.2rem,13vw,9.5rem)] font-bold leading-[0.85] uppercase tracking-tight"
             >
               Small
               <br />
@@ -25,7 +25,7 @@ export default function FlowArtDefaultDemo() {
 
           <Link
             href="/become-a-volunteer"
-            className="relative w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[340px] md:w-[360px] lg:w-[380px] h-[340px] sm:h-[440px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0 bg-black"
+            className="relative w-full max-w-[340px] xs:max-w-[360px] sm:max-w-[380px] md:w-[360px] lg:w-[380px] h-[390px] xs:h-[430px] sm:h-[470px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0 bg-black"
           >
             {/* Full-bleed translucent background image */}
             <img
@@ -62,7 +62,7 @@ export default function FlowArtDefaultDemo() {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 md:gap-8 my-auto w-full">
           <div>
             <h2
-              className="text-[clamp(2.25rem,6.5vw,9rem)] font-bold leading-[0.85] uppercase tracking-tight"
+              className="text-[clamp(4.2rem,13vw,9.5rem)] font-bold leading-[0.85] uppercase tracking-tight"
             >
               Learn.
               <br />
@@ -74,7 +74,7 @@ export default function FlowArtDefaultDemo() {
 
           <Link
             href="/blog"
-            className="relative w-full max-w-[280px] xs:max-w-[320px] sm:max-w-[340px] md:w-[360px] lg:w-[380px] h-[340px] sm:h-[440px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0"
+            className="relative w-full max-w-[340px] xs:max-w-[360px] sm:max-w-[380px] md:w-[360px] lg:w-[380px] h-[390px] xs:h-[430px] sm:h-[470px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0"
           >
             {/* Full-bleed background image */}
             <img

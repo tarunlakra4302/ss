@@ -19,7 +19,7 @@ export const TextRoll: React.FC<TextRollProps> = ({ children, className, center 
       whileHover="hovered"
       className={cn("relative block overflow-hidden", className)}
       style={{
-        lineHeight: 0.85,
+        lineHeight: 1.15,
       }}
     >
       {/* Top Text (Slides up) */}

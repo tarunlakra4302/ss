@@ -104,7 +104,7 @@ function DesktopHero() {
           transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
           className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
-          <p className="max-w-3xl text-lg sm:text-xl md:text-2xl text-black font-bold leading-relaxed tracking-tight text-center px-4">
+          <p className="max-w-xl md:max-w-none whitespace-normal md:whitespace-nowrap text-lg sm:text-xl md:text-2xl text-black font-bold leading-relaxed tracking-tight text-center px-4">
             Here is a sneak peak into our communities redefining conscious living.
           </p>
         </motion.div>

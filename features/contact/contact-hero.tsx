@@ -13,9 +13,9 @@ export const ContactHero = () => {
         duration: 0.8,
         ease: "easeOut",
       }}
-      className="w-full md:flex-1 text-left"
+      className="w-full md:flex-1 text-left pt-2 sm:pt-4 md:pt-0"
     >
-      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight ml-0 md:-ml-8 lg:-ml-12">
+      <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight leading-none ml-0 md:-ml-8 lg:-ml-12 mb-0">
         Contact Us
       </h2>
     </motion.div>

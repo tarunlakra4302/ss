@@ -31,15 +31,25 @@ export const FlowSection: React.FC<FlowSectionProps> = ({
       'absolute inset-0 h-full w-full overflow-hidden will-change-transform flex flex-col justify-between shadow-2xl',
       className
     )}
-    style={{ ...style }}
+    style={{
+      ...style,
+      backfaceVisibility: 'hidden',
+      WebkitBackfaceVisibility: 'hidden',
+      transform: 'translateZ(0)',
+    }}
   >
     <div
       data-flow-inner
       className={cx(
-        'flow-art-container relative flex h-full w-full flex-col justify-between gap-6 px-[4vw] pt-[clamp(2rem,6vw,4vw)] pb-[clamp(1.5rem,4vw,3.5vw)] overflow-y-auto md:overflow-hidden',
+        'flow-art-container relative flex h-full w-full flex-col justify-between gap-6 px-[4vw] pt-[clamp(2rem,6vw,4vw)] pb-[clamp(1.5rem,4vw,3.5vw)] overflow-hidden',
         'will-change-transform'
       )}
-      style={{ transformOrigin: 'bottom left' }}
+      style={{
+        transformOrigin: 'bottom left',
+        backfaceVisibility: 'hidden',
+        WebkitBackfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
+      }}
     >
       {children}
     </div>
@@ -80,41 +90,41 @@ const FlowArt: React.FC<FlowArtProps> = ({
       );
       if (sections.length <= 1) return;
 
-      // Set initial positions, rotations, and z-indexes
+      // Set initial positions, rotations, and z-indexes with hardware acceleration
       sections.forEach((section, i) => {
         gsap.set(section, {
           zIndex: i + 1,
           yPercent: i === 0 ? 0 : 100,
           scale: 1,
           opacity: 1,
+          force3D: true,
         });
 
         const inner = section.querySelector<HTMLElement>('.flow-art-container');
         if (inner) {
           gsap.set(inner, {
-            rotation: i === 0 ? 0 : 16,
+            rotation: i === 0 ? 0 : 12,
             transformOrigin: 'bottom left',
+            force3D: true,
           });
         }
       });
 
       const totalSteps = sections.length - 1;
-      const initialHold = 0.4; // Graceful pause on mount
-      const transitionDuration = 1.0;
-      const exitHold = 0.35; // Settle window for the incoming card
-      const stepDuration = initialHold + transitionDuration;
 
-      // Single pinned container timeline to prevent any DOM jumps or scroll conflicts with other page components
+      // Single pinned container timeline with smooth scrub damping
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
           start: 'top top',
-          end: () => `+=${totalSteps * 250}vh`,
+          end: () => `+=${totalSteps * 180}vh`,
           pin: true,
           pinSpacing: true,
-          scrub: 1.2, // Silky smooth inertia damping
+          scrub: 0.8, // Smooth and responsive scrub inertia
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          fastScrollEnd: true,
+          preventOverlaps: true,
         },
       });
 
@@ -122,18 +132,21 @@ const FlowArt: React.FC<FlowArtProps> = ({
         const currentSection = sections[i];
         const currentInner = currentSection.querySelector<HTMLElement>('.flow-art-container');
         const prevSection = sections[i - 1];
-        const stepTime = (i - 1) * stepDuration + initialHold;
+        const stepLabel = `step-${i}`;
+
+        tl.addLabel(stepLabel);
 
         if (prevSection) {
           tl.to(
             prevSection,
             {
               scale: 0.94,
-              opacity: 0.7,
-              duration: transitionDuration,
-              ease: 'power1.inOut',
+              opacity: 0.6,
+              duration: 1,
+              ease: 'none',
+              force3D: true,
             },
-            stepTime
+            stepLabel
           );
         }
 
@@ -141,10 +154,11 @@ const FlowArt: React.FC<FlowArtProps> = ({
           currentSection,
           {
             yPercent: 0,
-            duration: transitionDuration,
-            ease: 'power1.inOut',
+            duration: 1,
+            ease: 'none',
+            force3D: true,
           },
-          stepTime
+          stepLabel
         );
 
         if (currentInner) {
@@ -152,21 +166,26 @@ const FlowArt: React.FC<FlowArtProps> = ({
             currentInner,
             {
               rotation: 0,
-              duration: transitionDuration,
-              ease: 'power1.inOut',
+              duration: 1,
+              ease: 'none',
+              force3D: true,
             },
-            stepTime
+            stepLabel
           );
+        }
+
+        if (i < sections.length - 1) {
+          tl.to({}, { duration: 0.2 });
         }
       }
 
       // Settle buffer after last step
-      tl.to({}, { duration: exitHold });
+      tl.to({}, { duration: 0.2 });
 
       // Refresh ScrollTrigger after initial paint to sync all page triggers
       const timer = setTimeout(() => {
         ScrollTrigger.refresh();
-      }, 100);
+      }, 150);
 
       const handleResize = () => {
         ScrollTrigger.refresh();

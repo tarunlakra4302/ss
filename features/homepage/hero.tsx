@@ -48,7 +48,7 @@ export function Hero() {
 
 
         {/* Hero Content (Main Body) */}
-        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-10 mt-28 sm:mt-36 md:mt-48 flex-1 flex flex-col gap-6 md:gap-8">
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-10 mt-auto pb-20 sm:pb-24 md:mt-48 md:pb-16 flex flex-col gap-6 md:gap-8">
           <h1 className="hero-element text-[clamp(2.5rem,11vw,8.75rem)] font-black uppercase leading-[0.9] tracking-tight text-white">
             Sustainable
             <br />

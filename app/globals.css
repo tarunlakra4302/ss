@@ -420,6 +420,7 @@ body .site-header-wrapper.is-menu-open .nav-close-btn .menu-button-icon {
   display: inline-block;
   text-decoration: none;
   overflow: hidden;
+  white-space: nowrap;
 }
 
 .nav-link-text {
@@ -428,13 +429,23 @@ body .site-header-wrapper.is-menu-open .nav-close-btn .menu-button-icon {
   text-transform: uppercase;
   color: var(--color-foreground);
   margin: 0;
-  line-height: 1;
+  line-height: 1.15;
   letter-spacing: -0.03em;
+  white-space: nowrap;
 }
 
 @media (max-width: 768px) {
+  .menu-content-wrapper {
+    padding: 6vh 8%;
+  }
+
+  .menu-list-item {
+    margin-bottom: 1.25rem;
+  }
+
   .nav-link-text {
-    font-size: clamp(1.4rem, 4vh, 3rem); /* Reduced size for small screens */
+    font-size: clamp(1.25rem, 6.5vw, 2.25rem); /* Scaled fluidly for small screens so Zero Waste Hub never overlaps */
+    line-height: 1.15;
   }
 }
 

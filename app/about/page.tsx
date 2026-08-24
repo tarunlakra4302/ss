@@ -40,7 +40,7 @@ const AboutPage = () => {
             </h1>
           </div>
           
-          <p className="max-w-2xl text-base sm:text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight px-4 text-center">
+          <p className="max-w-2xl md:max-w-none whitespace-normal md:whitespace-nowrap text-base sm:text-lg md:text-xl text-black/70 font-medium leading-relaxed tracking-tight px-4 text-center">
             Here is a sneak peak into our communities redefining conscious living.
           </p>
         </motion.div>

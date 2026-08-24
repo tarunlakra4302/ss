@@ -8,21 +8,21 @@ const BlogPage = () => {
   return (
     <>
       <Navbar />
-      <main className="flex-1 w-full mt-4 sm:mt-6">
-      <SectionContainer className="min-h-[25vh] py-2 flex items-center justify-center bg-transparent">
+      <main className="flex-1 w-full mt-20">
+      <SectionContainer className="min-h-[40vh] flex items-center justify-center bg-transparent pb-0">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col items-center text-center space-y-4 relative z-20"
+          transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center text-center space-y-8 relative z-20"
         >
-          <div className="space-y-2">
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.85] text-black">
+          <div className="space-y-4">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase leading-[0.85] text-black">
               Our Blog
             </h1>
           </div>
           
-          <p className="max-w-[700px] text-lg md:text-xl text-black font-medium leading-relaxed tracking-tight">
+          <p className="max-w-[700px] text-base sm:text-xl md:text-2xl text-black/70 font-medium leading-relaxed tracking-tight px-4">
             Explore our latest thoughts on sustainable design, technological innovation, and the future of digital architecture.
           </p>
 

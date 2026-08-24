@@ -110,9 +110,9 @@ export const ContactForm = () => {
         duration: 0.6,
         ease: "easeOut",
       }}
-      className="w-full max-w-md lg:max-w-lg flex flex-col gap-6 md:gap-8"
+      className="w-full max-w-md lg:max-w-lg flex flex-col gap-3 md:gap-8 -mt-6 sm:-mt-4 md:mt-0"
     >
-      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-3 md:gap-4 mt-1 md:mt-2 w-full">
+      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:gap-3 md:gap-4 mt-0 md:mt-2 w-full">
         {/* Anti-spam Honeypot field — visually hidden off-screen */}
         <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
           <label htmlFor="contact_website">Website</label>
@@ -127,7 +127,7 @@ export const ContactForm = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3">
           <div>
             <label htmlFor="firstName" className="block text-xs md:text-sm font-medium mb-1">
               First Name
@@ -216,7 +216,7 @@ export const ContactForm = () => {
         </button>
       </form>
 
-      <div className="mt-3 flex gap-6 justify-start">
+      <div className="mt-1 sm:mt-2 flex gap-6 justify-start">
         <Link href="https://www.instagram.com" className="text-base md:text-lg hover:underline">
           Instagram
         </Link>

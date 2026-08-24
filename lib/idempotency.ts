@@ -1,37 +1,27 @@
-import { Redis } from '@upstash/redis';
-
-let redisInstance: Redis | null = null;
-let redisCooldownUntil = 0;
-
-// In-memory fallbacks when Redis is unconfigured or unreachable
+// In-memory idempotency & payment verification stores
 const memoryIdempotencyStore = new Map<string, { record: IdempotencyRecord; expiresAt: number }>();
 const memoryProcessedPayments = new Map<string, number>();
 
-function isRedisAvailable(): boolean {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  if (!url || !url.trim() || url.includes('dummy.upstash.io')) return false;
-  return Date.now() >= redisCooldownUntil;
-}
+// Periodic cleanup of expired entries every 10 minutes
+const CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
+let lastCleanup = Date.now();
 
-function triggerRedisCooldown(error: unknown) {
-  redisCooldownUntil = Date.now() + 60000;
-  console.warn(
-    'Upstash Redis idempotency check unreachable. Falling back to in-memory store:',
-    error instanceof Error ? error.message : error
-  );
-}
+function cleanupExpired() {
+  const now = Date.now();
+  if (now - lastCleanup < CLEANUP_INTERVAL_MS) return;
+  lastCleanup = now;
 
-function getRedis(): Redis {
-  if (!redisInstance) {
-    redisInstance = new Redis({
-      url: process.env.UPSTASH_REDIS_REST_URL!,
-      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-      retry: {
-        retries: 0, // Fail fast on network/DNS errors
-      },
-    });
+  for (const [key, val] of memoryIdempotencyStore.entries()) {
+    if (val.expiresAt <= now) {
+      memoryIdempotencyStore.delete(key);
+    }
   }
-  return redisInstance;
+
+  for (const [key, expiresAt] of memoryProcessedPayments.entries()) {
+    if (expiresAt <= now) {
+      memoryProcessedPayments.delete(key);
+    }
+  }
 }
 
 const UUID_V4_REGEX =
@@ -44,7 +34,7 @@ export interface IdempotencyRecord {
 }
 
 /**
- * Validates Idempotency-Key format and checks if a cached response exists in Redis.
+ * Validates Idempotency-Key format and checks if a cached response exists.
  */
 export async function getCachedIdempotentResponse(
   idempotencyKey: string | null
@@ -57,30 +47,18 @@ export async function getCachedIdempotentResponse(
     return { validKey: false, cachedRecord: null };
   }
 
-  if (!isRedisAvailable()) {
-    const entry = memoryIdempotencyStore.get(idempotencyKey);
-    if (entry && entry.expiresAt > Date.now()) {
-      return { validKey: true, cachedRecord: entry.record };
-    }
-    return { validKey: true, cachedRecord: null };
+  cleanupExpired();
+
+  const entry = memoryIdempotencyStore.get(idempotencyKey);
+  if (entry && entry.expiresAt > Date.now()) {
+    return { validKey: true, cachedRecord: entry.record };
   }
 
-  try {
-    const redis = getRedis();
-    const cached = await redis.get<IdempotencyRecord>(`idempotency:${idempotencyKey}`);
-    return { validKey: true, cachedRecord: cached };
-  } catch (error) {
-    triggerRedisCooldown(error);
-    const entry = memoryIdempotencyStore.get(idempotencyKey);
-    if (entry && entry.expiresAt > Date.now()) {
-      return { validKey: true, cachedRecord: entry.record };
-    }
-    return { validKey: true, cachedRecord: null };
-  }
+  return { validKey: true, cachedRecord: null };
 }
 
 /**
- * Stores response in Redis under the Idempotency-Key with 24h expiration.
+ * Stores response under the Idempotency-Key with 24h expiration.
  */
 export async function saveIdempotentResponse(
   idempotencyKey: string,
@@ -90,49 +68,34 @@ export async function saveIdempotentResponse(
 ): Promise<void> {
   if (!idempotencyKey || !UUID_V4_REGEX.test(idempotencyKey)) return;
 
+  cleanupExpired();
+
   const record: IdempotencyRecord = { status, headers, body };
   memoryIdempotencyStore.set(idempotencyKey, {
     record,
-    expiresAt: Date.now() + 86400 * 1000,
+    expiresAt: Date.now() + 86400 * 1000, // 24 hours
   });
-
-  if (!isRedisAvailable()) return;
-
-  try {
-    const redis = getRedis();
-    // 24 hour TTL (86400 seconds)
-    await redis.set(`idempotency:${idempotencyKey}`, record, { ex: 86400 });
-  } catch (error) {
-    triggerRedisCooldown(error);
-  }
 }
 
 /**
- * Checks if a payment verification has already been recorded in Redis.
+ * Checks if a payment verification has already been recorded.
  * Key format: `processed_payment:${razorpay_payment_id}`
  */
 export async function isPaymentProcessed(paymentId: string): Promise<boolean> {
   if (!paymentId || typeof paymentId !== 'string') return false;
+
+  cleanupExpired();
 
   const memExpiry = memoryProcessedPayments.get(paymentId);
   if (memExpiry && memExpiry > Date.now()) {
     return true;
   }
 
-  if (!isRedisAvailable()) return false;
-
-  try {
-    const redis = getRedis();
-    const processed = await redis.get<boolean | string>(`processed_payment:${paymentId}`);
-    return Boolean(processed);
-  } catch (error) {
-    triggerRedisCooldown(error);
-    return false;
-  }
+  return false;
 }
 
 /**
- * Marks a payment as successfully processed in Redis with 48h TTL.
+ * Marks a payment as successfully processed with 48h TTL.
  */
 export async function markPaymentProcessed(
   paymentId: string,
@@ -140,21 +103,7 @@ export async function markPaymentProcessed(
 ): Promise<void> {
   if (!paymentId || typeof paymentId !== 'string') return;
 
+  cleanupExpired();
+
   memoryProcessedPayments.set(paymentId, Date.now() + ttlSeconds * 1000);
-
-  if (!isRedisAvailable()) return;
-
-  try {
-    const redis = getRedis();
-    await redis.set(
-      `processed_payment:${paymentId}`,
-      {
-        processedAt: new Date().toISOString(),
-      },
-      { ex: ttlSeconds }
-    );
-  } catch (error) {
-    triggerRedisCooldown(error);
-  }
 }
-

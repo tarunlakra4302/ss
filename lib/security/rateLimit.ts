@@ -1,9 +1,9 @@
 import { checkRateLimit as coreCheckRateLimit, getClientIp } from '@/lib/rate-limit';
 
 /**
- * Reusable Rate Limiting Service using Upstash Redis.
- * Configured for Serverless (Next.js) environments.
- * Threshold: 5 requests per 60 seconds (Sliding Window).
+ * Reusable Rate Limiting Service.
+ * Lightweight sliding-window in-memory rate limiter with zero external dependencies.
+ * Default Threshold: 5 requests per 60 seconds.
  */
 
 export async function checkRateLimit(ipOrRequest: string | Request) {
@@ -18,4 +18,3 @@ export async function checkRateLimit(ipOrRequest: string | Request) {
 }
 
 export { getClientIp };
-

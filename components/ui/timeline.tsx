@@ -61,8 +61,8 @@ export const Timeline = ({ data }: TimelineProps) => {
             className="timeline-item flex flex-col md:flex-row gap-8 md:gap-16 lg:gap-24 items-start will-change-transform relative w-full"
           >
             {/* Left Column / Top Section - Year & Month */}
-            <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col items-end text-right self-start shrink-0">
-              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words leading-none w-full text-right ${
+            <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col items-start text-left md:items-end md:text-right self-start shrink-0">
+              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words leading-none w-full text-left md:text-right ${
                 isNaN(Number(item.year))
                   ? "text-[28px] md:text-[40px] lg:text-[48px]"
                   : "text-[40px] md:text-[56px] lg:text-[72px]"
@@ -70,7 +70,7 @@ export const Timeline = ({ data }: TimelineProps) => {
                 {item.year}
               </h2>
               {/* Mobile Only Location/Title */}
-              <div className="md:hidden mt-2 text-right w-full">
+              <div className="md:hidden mt-2 text-left w-full">
                 <h3 className="text-[18px] font-semibold text-[#0B1B34] tracking-tight">
                   {item.title}
                 </h3>

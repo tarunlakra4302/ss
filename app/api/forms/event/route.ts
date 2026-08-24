@@ -8,7 +8,7 @@ import { checkHoneypot } from '@/lib/security/honeypot';
 /**
  * Hardened API Route: Event Registration
  * Includes:
- * 1. Trusted IP Rate Limiting (5 req/min via Upstash Redis)
+ * 1. Trusted IP Rate Limiting (5 req/min)
  * 2. Origin & CSRF Validation
  * 3. Off-Screen Honeypot & Timing Anti-Spam (Silent Success)
  * 4. Text-only validation (No user file upload attack surface)
