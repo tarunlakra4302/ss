@@ -23,12 +23,12 @@ export function NewsletterSection({
       {...props}
     >
       <div className="mx-auto max-w-7xl px-4">
-        <div className="dark relative overflow-hidden rounded-xl bg-zinc-900 px-4 py-10 md:px-12 md:py-20">
+        <div className="dark relative overflow-hidden rounded-xl bg-zinc-900 px-4 py-8 md:px-12 md:py-14">
           <Image
-            src="/gallery/7.jpeg"
-            alt="Newsletter background"
+            src="/images/events/Kitchen Secrets_26 July 2026 (B).jpg"
+            alt="Zero Waste Food Prep"
             fill
-            className="object-cover"
+            className="object-cover object-[center_20%]"
           />
           <div className="relative z-10">
             <h2 className="mb-6 text-xl/[1.1] font-extrabold tracking-tight text-foreground md:text-2xl/[1.1]">

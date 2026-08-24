@@ -10,6 +10,7 @@ interface EventItem {
   dateRange: string;
   price: string;
   href: string;
+  startDate?: string;
 }
 
 const UPCOMING_EVENTS: EventItem[] = [
@@ -22,10 +23,21 @@ const UPCOMING_EVENTS: EventItem[] = [
     dateRange: "August 23, 2026 • 10:00 AM – 01:00 PM IST",
     price: "₹700",
     href: "/events/edible-gardening-workshop",
+    startDate: "2026-08-23T10:00:00+05:30",
   },
 ];
 
 export function UpcomingEventsList() {
+  const now = new Date();
+  const activeUpcomingEvents = UPCOMING_EVENTS.filter((event) => {
+    if (!event.startDate) return true;
+    return new Date(event.startDate) > now;
+  });
+
+  if (activeUpcomingEvents.length === 0) {
+    return null;
+  }
+
   return (
     <section id="upcoming-events" className="w-full bg-[#FFFFFF] py-12 md:py-24 text-gray-900 font-sans scroll-mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-8">
@@ -43,7 +55,7 @@ export function UpcomingEventsList() {
 
         {/* The Events List */}
         <div className="flex flex-col border-t border-gray-200 divide-y divide-gray-200">
-          {UPCOMING_EVENTS.map((event) => (
+          {activeUpcomingEvents.map((event) => (
             <div
               key={event.id}
               className="flex flex-col sm:flex-row sm:items-center py-6 sm:py-8 md:py-10 gap-6 sm:gap-8 md:gap-12"

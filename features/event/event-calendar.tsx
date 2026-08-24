@@ -305,7 +305,22 @@ export function EventCalendar() {
                     return <div key={i} className="aspect-square md:aspect-[5/4]" />;
                   }
 
-                  const hasEvent = !!SAMPLE_EVENTS[cell.key];
+                  const dayEvents = SAMPLE_EVENTS[cell.key] ?? [];
+                  const hasActiveEvent = dayEvents.some(ev => {
+                    const [y, m, d] = cell.key.split('-').map(Number);
+                    // Match start time if provided or end of start time
+                    const match = ev.time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                    let eventDate = new Date(y, m - 1, d, 23, 59, 59);
+                    if (match) {
+                      let hours = parseInt(match[1], 10);
+                      const minutes = parseInt(match[2], 10);
+                      const meridian = match[3].toUpperCase();
+                      if (meridian === 'PM' && hours < 12) hours += 12;
+                      if (meridian === 'AM' && hours === 12) hours = 0;
+                      eventDate = new Date(y, m - 1, d, hours, minutes);
+                    }
+                    return eventDate > today;
+                  });
                   const isSelected = selectedKey === cell.key;
                   const isToday = cell.key === todayKey;
                   
@@ -336,13 +351,14 @@ export function EventCalendar() {
                         
 
 
-                        {isToday && !hasEvent && (
+
+                        {isToday && !hasActiveEvent && (
                            <div className="absolute top-2 right-2 md:top-4 md:right-4 w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-[oklch(0.2_0.08_240)]/10" />
                         )}
                       </div>
 
                       {/* Event count indicator */}
-                      {hasEvent && cell.current && (
+                      {hasActiveEvent && cell.current && (
                         <div className={`absolute z-20 ${cell.day > 9 ? 'top-1.5 right-1.5 md:top-3 md:right-3' : 'top-2 right-2 md:top-4 md:right-4'}`}>
                           <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full animate-blink shadow-[0_0_10px_rgba(16,185,129,0.5)] ${isSelected ? 'bg-white' : 'bg-emerald-500'}`} />
                         </div>

@@ -7,6 +7,7 @@ const MOCK_EVENTS = [
     title: "Edible Gardening Workshop",
     location: "Pure & Sure Organic Cafe, Jayanagar",
     date: "23 Aug",
+    startDate: "2026-08-23T10:00:00+05:30",
     time: "10:00 AM",
     imageUrl: "/edible-gardening-workshop.png",
     linkUrl: "/events/edible-gardening-workshop",
@@ -15,6 +16,16 @@ const MOCK_EVENTS = [
 ];
 
 export function EventsCardsSection({ showHeader = true }: { showHeader?: boolean }) {
+  const now = new Date();
+  const upcomingEvents = MOCK_EVENTS.filter((event) => {
+    if (!event.startDate) return true;
+    return new Date(event.startDate) > now;
+  });
+
+  if (upcomingEvents.length === 0) {
+    return null;
+  }
+
   return (
     <section id="upcoming-events" className="pt-12 pb-6 md:pt-16 md:pb-8 px-4 md:px-6 bg-white overflow-hidden relative">
       <div className="max-w-6xl mx-auto">
@@ -25,7 +36,7 @@ export function EventsCardsSection({ showHeader = true }: { showHeader?: boolean
         )}
         
         <div className="flex flex-col lg:flex-row gap-8 md:gap-12 lg:gap-8 items-center justify-center">
-          {MOCK_EVENTS.map((event, index) => (
+          {upcomingEvents.map((event, index) => (
             <motion.div
               key={index}
               initial={{ y: 100, opacity: 0 }}

@@ -7,8 +7,16 @@ import { ArrowRight } from "lucide-react";
 
 export function TopBanner() {
   const [isVisible, setIsVisible] = useState(true);
+  const [isEventUpcoming, setIsEventUpcoming] = useState(true);
 
   useEffect(() => {
+    // Check if the event date has already passed or started
+    const eventStartDate = new Date("2026-08-23T10:00:00+05:30");
+    if (new Date() >= eventStartDate) {
+      setIsEventUpcoming(false);
+      return;
+    }
+
     let ticking = false;
 
     const handleScroll = () => {
@@ -33,6 +41,10 @@ export function TopBanner() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  if (!isEventUpcoming) {
+    return null;
+  }
 
   return (
     <AnimatePresence>

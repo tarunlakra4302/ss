@@ -59,7 +59,7 @@ export const ZeroWasteCTA = ({
   return (
     <section className="relative px-6 pb-32" ref={container}>
       <motion.div
-        className="relative h-[400px] md:h-[600px] rounded-[2rem] md:rounded-[2.5rem] overflow-hidden flex items-center justify-center text-center"
+        className="relative h-[340px] md:h-[500px] rounded-[2rem] md:rounded-[2.5rem] overflow-hidden flex items-center justify-center text-center"
         style={{
           clipPath,
           willChange: "clip-path",
@@ -69,7 +69,7 @@ export const ZeroWasteCTA = ({
         <motion.img
           src={image}
           alt="Zero Waste Hub"
-          className="absolute inset-0 w-full h-full object-cover brightness-[0.4]"
+          className="absolute inset-0 w-full h-full object-cover object-[center_20%] brightness-[0.4]"
           style={{
             scale,
             willChange: "transform",
