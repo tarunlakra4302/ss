@@ -10,7 +10,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-6 sm:px-8 md:px-16">
         
         {/* Top Section: Navigation Columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 sm:gap-x-12 gap-y-10 sm:gap-y-16 mb-16 sm:mb-24">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 sm:gap-x-12 gap-y-10 sm:gap-y-16 mb-16 sm:mb-24">
           {/* About Column */}
           <div className="flex flex-col gap-4 sm:gap-6">
             <h3 className="text-xl sm:text-[1.5rem] font-medium text-[#000000] tracking-tight">About</h3>
@@ -37,10 +37,11 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Events Column */}
+          {/* Get Involved Column */}
           <div className="flex flex-col gap-4 sm:gap-6">
-            <h3 className="text-xl sm:text-[1.5rem] font-medium text-[#000000] tracking-tight">Events</h3>
+            <h3 className="text-xl sm:text-[1.5rem] font-medium text-[#000000] tracking-tight">Get involved</h3>
             <ul className="flex flex-col gap-2.5 sm:gap-3">
+              <li><Link href="/become-a-volunteer" className="text-sm sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Volunteering</Link></li>
               <li>
                 <Link 
                   href="/events#upcoming-events" 
@@ -77,13 +78,6 @@ export function Footer() {
                   Events calendar
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          <div className="flex flex-col gap-4 sm:gap-6">
-            <h3 className="text-xl sm:text-[1.5rem] font-medium text-[#000000] tracking-tight">Get involved</h3>
-            <ul className="flex flex-col gap-2.5 sm:gap-3">
-              <li><Link href="/become-a-volunteer" className="text-sm sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Volunteering</Link></li>
             </ul>
           </div>
 
