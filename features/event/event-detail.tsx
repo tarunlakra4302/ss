@@ -734,7 +734,7 @@ export function EventDetail({ slug }: EventDetailProps) {
                           Support <br /><span className="text-[oklch(0.2_0.08_240)]">Sustainable Sundays</span>
                         </h3>
                         <p className="text-neutral-500 font-medium text-sm">
-                          Every contribution directly funds our community initiatives and global impact projects.
+                          Every contribution directly funds our community initiatives and local impact projects.
                         </p>
                       </div>
 

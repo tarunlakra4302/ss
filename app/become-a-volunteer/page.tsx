@@ -45,10 +45,9 @@ const Hero = () => {
         <div className="relative aspect-[16/9] mb-16 overflow-hidden rounded-2xl transition-all duration-1000 group">
           <img
             ref={image}
-            src="https://picsum.photos/seed/volunteers/1600/900"
+            src="/images/volunteer/volunteer main.png"
             alt="Volunteers working"
             className="w-full h-full object-cover scale-125 group-hover:scale-120 transition-transform duration-1000"
-            referrerPolicy="no-referrer"
           />
         </div>
 
@@ -74,7 +73,7 @@ const Purpose = () => (
         {[
           {
             num: "01",
-            title: "Global Impact",
+            title: "Local Impact",
             desc: "Extend your reach beyond borders, supporting sustainability initiatives that touch lives in sensitive regions of Bangalore"
           },
           {

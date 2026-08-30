@@ -112,7 +112,7 @@ export const ContactForm = () => {
       }}
       className="w-full max-w-md lg:max-w-lg flex flex-col gap-3 md:gap-8 -mt-6 sm:-mt-4 md:mt-0"
     >
-      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:gap-3 md:gap-4 mt-0 md:mt-2 w-full">
+      <form id="contactForm" onSubmit={handleSubmit} className="flex flex-col gap-2.5 sm:gap-3 md:gap-4 mt-0 w-full">
         {/* Anti-spam Honeypot field — visually hidden off-screen */}
         <div style={{ position: 'absolute', left: '-9999px', opacity: 0, pointerEvents: 'none' }} aria-hidden="true">
           <label htmlFor="contact_website">Website</label>
@@ -217,15 +217,15 @@ export const ContactForm = () => {
       </form>
 
       <div className="mt-1 sm:mt-2 flex gap-6 justify-start">
-        <Link href="https://www.instagram.com" className="text-base md:text-lg hover:underline">
+        <a href="https://www.instagram.com/sustainable_sundays_blr/" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg hover:underline">
           Instagram
-        </Link>
-        <Link href="https://wa.me" className="text-base md:text-lg hover:underline">
-          Whatsapp
-        </Link>
-        <Link href="https://linkedin.com" className="text-base md:text-lg hover:underline">
-          Linkedin
-        </Link>
+        </a>
+        <a href="https://www.whatsapp.com/channel/0029Vb8Ade0CHDyiSG6zlB0f" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg hover:underline">
+          WhatsApp
+        </a>
+        <a href="https://www.linkedin.com/company/sustainable-sundays" target="_blank" rel="noopener noreferrer" className="text-base md:text-lg hover:underline">
+          LinkedIn
+        </a>
       </div>
     </motion.div>
   );

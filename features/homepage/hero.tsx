@@ -3,6 +3,7 @@
 import React, { useLayoutEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
+import { FlowHoverButton } from "@/components/ui/flow-hover-button";
 
 export function Hero() {
   const containerRef = useRef<HTMLElement>(null);
@@ -60,11 +61,14 @@ export function Hero() {
           </p>
 
           <div className="hero-element flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto">
-            <Link href="/events" className="w-full sm:w-auto">
-              <span className="inline-flex items-center justify-center w-full sm:w-auto bg-white text-black px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-gray-100 transition-colors cursor-pointer shadow-lg text-center">
+            <FlowHoverButton
+              asChild
+              className="w-full sm:w-auto bg-white text-black px-8 py-3.5 rounded-full font-medium text-[15px] h-auto border-none hover:text-white before:bg-black transition-all inline-flex items-center justify-center shadow-lg"
+            >
+              <Link href="/events" className="inline-flex items-center justify-center">
                 Upcoming events
-              </span>
-            </Link>
+              </Link>
+            </FlowHoverButton>
             <Link href="#donation-section" className="w-full sm:w-auto">
               <span
                 onClick={(e) => {

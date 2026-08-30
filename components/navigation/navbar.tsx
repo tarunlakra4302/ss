@@ -510,13 +510,13 @@ export function Navbar() {
             </div>
 
             <div className="menu-socials absolute bottom-12 left-0 w-full px-[10%] flex gap-8 z-20">
-              <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
+              <a href="https://www.whatsapp.com/channel/0029Vb8Ade0CHDyiSG6zlB0f" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
                 <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">WhatsApp</TextRoll>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
+              <a href="https://www.instagram.com/sustainable_sundays_blr/" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
                 <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">Instagram</TextRoll>
               </a>
-              <a href="#" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
+              <a href="https://www.linkedin.com/company/sustainable-sundays" target="_blank" rel="noopener noreferrer" className="social-link block overflow-hidden">
                 <TextRoll className="text-[11px] uppercase tracking-[0.2em] font-bold text-black/50 hover:text-black transition-colors duration-300">LinkedIn</TextRoll>
               </a>
             </div>

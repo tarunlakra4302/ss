@@ -3,6 +3,7 @@
 import React from "react";
 import { Menu } from "lucide-react";
 import { GradientBackground } from "@/components/ui/silk-blend-gradient";
+import { FlowHoverButton } from "@/components/ui/flow-hover-button";
 
 export function HeroSection() {
   return (
@@ -43,12 +44,12 @@ export function HeroSection() {
 
             {/* Buttons Row */}
             <div className="flex flex-row items-center gap-4">
-              <button
+              <FlowHoverButton
                 type="button"
-                className="bg-white text-black px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-gray-100 transition-colors"
+                className="bg-white text-black px-8 py-3.5 rounded-full font-medium text-[15px] h-auto border-none hover:text-white before:bg-black transition-all inline-flex items-center justify-center"
               >
                 Upcoming events
-              </button>
+              </FlowHoverButton>
               <button
                 type="button"
                 className="bg-transparent border border-white text-white px-8 py-3.5 rounded-full font-medium text-[15px] hover:bg-white/10 transition-colors"

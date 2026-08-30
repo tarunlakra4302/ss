@@ -105,9 +105,9 @@ export function Footer() {
             </span>
           </div>
           <div className="flex flex-wrap items-center gap-4 sm:gap-8">
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">LinkedIn</a>
-            <a href="https://whatsapp.com" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">WhatsApp</a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Instagram</a>
+            <a href="https://www.linkedin.com/company/sustainable-sundays" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">LinkedIn</a>
+            <a href="https://www.whatsapp.com/channel/0029Vb8Ade0CHDyiSG6zlB0f" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">WhatsApp</a>
+            <a href="https://www.instagram.com/sustainable_sundays_blr/" target="_blank" rel="noopener noreferrer" className="text-xs sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200">Instagram</a>
           </div>
         </div>
 

@@ -62,11 +62,7 @@ export const Timeline = ({ data }: TimelineProps) => {
           >
             {/* Left Column / Top Section - Year & Month */}
             <div className="w-full md:w-[35%] lg:w-[30%] flex flex-col items-start text-left md:items-end md:text-right self-start shrink-0">
-              <h2 className={`font-black text-[#0B1B34] tracking-tighter antialiased break-words leading-none w-full text-left md:text-right ${
-                isNaN(Number(item.year))
-                  ? "text-[28px] md:text-[40px] lg:text-[48px]"
-                  : "text-[40px] md:text-[56px] lg:text-[72px]"
-              }`}>
+              <h2 className="font-black text-[#0B1B34] tracking-tighter antialiased break-words leading-none w-full text-left md:text-right text-[28px] sm:text-[36px] md:text-[40px] lg:text-[48px]">
                 {item.year}
               </h2>
               {/* Mobile Only Location/Title */}
@@ -80,7 +76,7 @@ export const Timeline = ({ data }: TimelineProps) => {
             {/* Right Column / Bottom Section - Content */}
             <div className="flex-1 flex flex-col items-start self-start pt-0">
               {/* Desktop Only Title */}
-              <h3 className="hidden md:block text-[22px] md:text-[26px] lg:text-[28px] font-bold text-[#0B1B34] mb-4 tracking-tight leading-none max-w-[550px]">
+              <h3 className="hidden md:block text-[22px] md:text-[26px] lg:text-[28px] font-bold text-[#0B1B34] mb-4 tracking-tight leading-none max-w-[550px] md:pt-1.5">
                 {item.title}
               </h3>
               <p className="text-[16px] md:text-[18px] lg:text-[19px] text-[#0B1B34]/80 font-medium leading-[1.6] max-w-[550px] md:max-w-full antialiased">

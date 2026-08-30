@@ -28,7 +28,7 @@ export function DirectoryCard({ item }: DirectoryCardProps) {
 
       {/* Card Middle: Content */}
       <div className="flex-grow">
-        <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif leading-tight text-brand-ink mb-4 group-hover:italic transition-all duration-300">
+        <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif leading-tight text-brand-ink mb-4 transition-all duration-300">
           {item.name}
         </h3>
         <p className="text-[15px] font-sans text-gray-500 leading-relaxed max-w-[90%]">

@@ -100,14 +100,12 @@ export function EventCalendar() {
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const detailsRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Initial and Month Transition Animation
   useGSAP(() => {
     const grid = gridRef.current;
-    const header = headerRef.current;
-    if (!grid || !header) return;
+    if (!grid) return;
     
     // Kill any existing animations to prevent overlap
     gsap.killTweensOf(grid.children);
@@ -116,11 +114,6 @@ export function EventCalendar() {
     
     mm.add("(min-width: 768px)", () => {
       const tl = gsap.timeline();
-      
-      tl.fromTo(header, 
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 1, ease: "power4.out" }
-      );
       
       tl.fromTo(grid.children, 
         { opacity: 0, scale: 0.9, y: 20 },
@@ -131,8 +124,7 @@ export function EventCalendar() {
           duration: 0.8, 
           stagger: { each: 0.02, from: "start", grid: [6, 7] }, 
           ease: "elastic.out(1, 0.75)" 
-        },
-        "-=0.6"
+        }
       );
     });
   }, { dependencies: [viewMonth, viewYear], scope: containerRef });
@@ -234,21 +226,6 @@ export function EventCalendar() {
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[oklch(0.2_0.08_240)]/5 to-transparent" />
       
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div ref={headerRef} className="mb-12 md:mb-20 flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12">
-          <div className="space-y-4 md:space-y-6">
-            <div className="flex items-center gap-4">
-              <div className="flex-1 h-[1px] bg-[oklch(0.2_0.08_240)]/10 min-w-[40px] md:min-w-[60px]" />
-            </div>
-            <h2 className="text-4xl md:text-8xl font-black text-[oklch(0.2_0.08_240)] dark:text-white leading-[0.85] tracking-tighter uppercase whitespace-pre-wrap">
-              The <span className="text-[oklch(0.2_0.08_240)]/40">Movement</span> <br />Timeline
-            </h2>
-          </div>
-          <p className="max-w-md text-base md:text-xl text-[oklch(0.2_0.08_240)]/60 font-medium leading-relaxed italic border-l-4 border-[oklch(0.2_0.08_240)] px-6 md:px-8">
-            Don’t just scroll. Show up. Find a local workshop, community cleanup, or eco-event happening near you this month.
-          </p>
-        </div>
-
         {/* Main Interface Wrapper */}
         <div className="relative grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-12 lg:gap-16">
           

@@ -351,7 +351,7 @@ export default function EventCheckout() {
           </h2>
           <p className="text-sm text-gray-500 mb-6">
             Every contribution directly funds our community initiatives and
-            global impact projects.
+            local impact projects.
           </p>
 
           <div className="grid grid-cols-2 gap-3 mb-3">

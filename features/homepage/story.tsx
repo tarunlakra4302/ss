@@ -18,11 +18,11 @@ export function StorySection() {
             {/* Column 2: The Main Content (Right Side) */}
             <div className="md:col-start-6 md:col-span-7 max-w-3xl flex flex-col gap-10 md:gap-12">
               <TextAnimation1>
-                <p className="text-4xl md:text-[40px] lg:text-[44px] font-medium leading-tight md:leading-[1.1] tracking-[-0.03em] text-black mb-10 md:mb-12">
+                <p className="text-4xl md:text-[40px] lg:text-[44px] font-medium leading-tight md:leading-[1.15] tracking-[-0.03em] text-black mb-10 md:mb-12">
                   We believe Sundays shouldn&apos;t just be for resting. By uniting people with a shared purpose, we turn the weekend into a catalyst for climate action.
                 </p>
 
-                <p className="text-2xl md:text-[30px] lg:text-[32px] font-normal leading-snug md:leading-[1.3] tracking-[-0.02em] text-black">
+                <p className="text-4xl md:text-[40px] lg:text-[44px] font-medium leading-tight md:leading-[1.15] tracking-[-0.03em] text-black">
                   Sunday is the bridge between the week behind us and the week ahead. It&apos;s the perfect day to pause, reset, and step outside. Transform your Sunday, and together, we&apos;ll change the trajectory of our environment.
                 </p>
               </TextAnimation1>
