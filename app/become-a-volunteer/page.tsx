@@ -74,7 +74,7 @@ const Purpose = () => (
           {
             num: "01",
             title: "Local Impact",
-            desc: "Extend your reach beyond borders, supporting sustainability initiatives that touch lives in sensitive regions of Bangalore"
+            desc: "Deepen your relationship with local communities and initiatives that touch lives in sensitive regions of Bangalore"
           },
           {
             num: "02",
