@@ -258,6 +258,9 @@ export function PageTransitionProvider({
             }
             isNavigatingRef.current = false;
             setIsTransitioning(false);
+            if (typeof window !== "undefined") {
+              window.dispatchEvent(new CustomEvent("pageTransitionComplete"));
+            }
           },
         });
 

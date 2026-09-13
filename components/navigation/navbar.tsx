@@ -17,13 +17,21 @@ if (typeof window !== "undefined") {
 
 const useIsomorphicLayoutEffect = typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
-export function Navbar() {
+interface NavbarProps {
+  hideLogo?: boolean;
+  hideMenuText?: boolean;
+}
+
+export function Navbar({ hideLogo = false, hideMenuText = false }: NavbarProps = {}) {
   // We need a ref for the parent container to scope GSAP
   const containerRef = useRef<HTMLDivElement>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { isComplete } = useLoading();
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const isZeroWaste = pathname?.startsWith("/zero-waste-archive");
+  const showLogo = !hideLogo && !isZeroWaste;
+  const showMenuText = !hideMenuText && !isZeroWaste;
 
   // Initial Setup & Hover Effects
   useEffect(() => {
@@ -141,7 +149,7 @@ export function Navbar() {
             tl.set(navWrap, { display: "block" })
               .set(menu, { xPercent: 0 }, "<");
               // Animate Button Text Swapping if it exists
-              if (menuButtonTexts) tl.fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.2 });
+              if (menuButtonTexts && menuButtonTexts.length > 0) tl.fromTo(menuButtonTexts, { yPercent: 0 }, { yPercent: -100, stagger: 0.2 });
               if (menuButtonIcon) tl.fromTo(menuButtonIcon, { rotate: 0 }, { rotate: 315 }, "<");
               
             tl.fromTo(overlay, { autoAlpha: 0 }, { autoAlpha: 1 }, "<")
@@ -156,7 +164,7 @@ export function Navbar() {
             tl.to(overlay, { autoAlpha: 0 })
               .to(menu, { xPercent: 120 }, "<");
               // Animate Button Text and Icon Back
-            if (menuButtonTexts) tl.to(menuButtonTexts, { yPercent: 0 }, "<");
+            if (menuButtonTexts && menuButtonTexts.length > 0) tl.to(menuButtonTexts, { yPercent: 0 }, "<");
             if (menuButtonIcon) tl.to(menuButtonIcon, { rotate: 0 }, "<");
 
             tl.set(navWrap, { display: "none" });
@@ -171,24 +179,23 @@ export function Navbar() {
   useEffect(() => {
     if (!containerRef.current) return;
     
-    // On other pages, we show immediately. On home, we wait for isComplete.
-    if (!isHome || isComplete) {
+    // On homepage, the Hero component handles the entrance animation to sync with the hero text reveal.
+    if (!isHome) {
         gsap.to(".site-header-wrapper", {
             y: 0,
             autoAlpha: 1,
             duration: 1.2,
             ease: "power4.out",
-            delay: isHome ? 0.1 : 0.2, // Match hero text entrance stagger
-            clearProps: "all" // Clear GSAP styles after animation to avoid conflicts with layout
+            clearProps: "all"
         });
     } else {
-        // Initial hidden state for home page before isComplete
+        // Initial hidden state for home page
         gsap.set(".site-header-wrapper", {
-            y: -20,
-            autoAlpha: 0
+            autoAlpha: 0,
+            y: 40 // match the shift-up offset
         });
     }
-  }, [isComplete, isHome]);
+  }, [isHome]);
 
   // Background Theme & Scroll Direction Detection
   // ALL scroll-driven behavior uses direct DOM manipulation (never React state)
@@ -336,27 +343,31 @@ export function Navbar() {
           <header className="header">
             <div className="container is--full">
               <nav className="nav-row">
-                <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-start h-14 md:h-20 shrink-0 z-10" style={{ pointerEvents: 'auto' }}>
-                   <Image 
-                     src="/SS Logo_white Text clean.png" 
-                     alt="Sustainable Sundays Logo" 
-                     width={320}
-                     height={100}
-                     priority
-                     className="h-12 sm:h-14 md:h-20 w-auto max-w-[210px] sm:max-w-[260px] md:max-w-[320px] object-contain shrink-0"
-                   />
-                </Link>
-                <div className="nav-row__right">
+                {showLogo && (
+                  <Link href="/" aria-label="home" className="nav-logo-row flex items-center justify-start h-14 md:h-20 shrink-0 z-10" style={{ pointerEvents: 'auto' }}>
+                     <Image 
+                       src="/SS Logo_white Text clean.png" 
+                       alt="Sustainable Sundays Logo" 
+                       width={320}
+                       height={100}
+                       priority
+                       className="h-12 sm:h-14 md:h-20 w-auto max-w-[210px] sm:max-w-[260px] md:max-w-[320px] object-contain shrink-0"
+                     />
+                  </Link>
+                )}
+                <div className="nav-row__right ml-auto">
                   <button 
                     role="button" 
                     className="nav-close-btn"
                     onClick={toggleMenu} 
                     style={{ pointerEvents: 'auto' }}
                   >
-                    <div className="menu-button-text">
-                      <p className="p-large">Menu</p>
-                      <p className="p-large">Close</p>
-                    </div>
+                    {showMenuText && (
+                      <div className="menu-button-text">
+                        <p className="p-large">Menu</p>
+                        <p className="p-large">Close</p>
+                      </div>
+                    )}
                     <div className="icon-wrap flex items-center justify-center">
                       {isMenuOpen ? (
                         <svg

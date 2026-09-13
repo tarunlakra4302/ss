@@ -2,16 +2,31 @@
 
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search } from 'lucide-react'
 import { directoryData } from '@/lib/data/archive-data'
 import { DirectoryCard } from './directory-card'
-import Menu, { IMenu } from "@/components/ui/navbar"
+import { FlowHoverButton } from "@/components/ui/flow-hover-button"
+import { ArrowRight, ArrowLeft } from "lucide-react"
 
-export function DirectorySection() {
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('All')
+interface DirectorySectionProps {
+  category?: string
+  onCategoryChange?: (category: string) => void
+  search?: string
+  onSearchChange?: (search: string) => void
+}
+
+export function DirectorySection({
+  category: controlledCategory,
+  onCategoryChange: controlledOnCategoryChange,
+  search: controlledSearch,
+  onSearchChange: controlledOnSearchChange,
+}: DirectorySectionProps = {}) {
+  const [internalSearch, setInternalSearch] = useState('')
+  const [internalCategory, setInternalCategory] = useState('All')
   const [currentPage, setCurrentPage] = useState(1)
   const ITEMS_PER_PAGE = 15
+
+  const search = controlledSearch !== undefined ? controlledSearch : internalSearch
+  const category = controlledCategory !== undefined ? controlledCategory : internalCategory
 
   const filteredItems = useMemo(() => {
     return directoryData.filter((item) => {
@@ -27,12 +42,20 @@ export function DirectorySection() {
 
   // Reset to page 1 when filter or search changes
   const handleSearchChange = (val: string) => {
-    setSearch(val)
+    if (controlledOnSearchChange) {
+      controlledOnSearchChange(val)
+    } else {
+      setInternalSearch(val)
+    }
     setCurrentPage(1)
   }
 
   const handleCategoryChange = (cat: string) => {
-    setCategory(cat)
+    if (controlledOnCategoryChange) {
+      controlledOnCategoryChange(cat)
+    } else {
+      setInternalCategory(cat)
+    }
     setCurrentPage(1)
   }
 
@@ -43,39 +66,6 @@ export function DirectorySection() {
 
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE + 1
   const endIndex = Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)
-
-  const menuItems: IMenu[] = useMemo(() => [
-    {
-      id: 'all',
-      title: 'ALL',
-      active: category === 'All',
-      onClick: () => handleCategoryChange('All'),
-    },
-    {
-      id: 'product',
-      title: 'PRODUCTS',
-      active: category === 'PRODUCT',
-      onClick: () => handleCategoryChange('PRODUCT'),
-    },
-    {
-      id: 'service',
-      title: 'SERVICES',
-      active: category === 'SERVICE',
-      onClick: () => handleCategoryChange('SERVICE'),
-    },
-    {
-      id: 'book',
-      title: 'BOOKS',
-      active: category === 'BOOK',
-      onClick: () => handleCategoryChange('BOOK'),
-    },
-    {
-      id: 'event',
-      title: 'EVENTS',
-      active: category === 'EVENT',
-      onClick: () => handleCategoryChange('EVENT'),
-    },
-  ], [category]);
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -99,40 +89,6 @@ export function DirectorySection() {
 
   return (
     <section id="directory-section" className="relative">
-      {/* Animated Filter & Search Navigation Bar */}
-      <div className="w-full bg-[#1A1A1A] text-white flex flex-col md:flex-row items-stretch border-y border-[#333] min-h-[72px]">
-        {/* Navigation Menu Component - Left 50% */}
-        <div className="w-full md:w-1/2 flex items-center px-4 md:px-8 py-3 md:py-0 overflow-x-auto border-b md:border-b-0 md:border-r border-[#333]">
-          <Menu
-            list={menuItems}
-            className="w-full"
-            itemClassName="text-xs tracking-[0.15em] font-sans font-bold text-gray-300 hover:text-white uppercase py-4 px-4 sm:px-5"
-            dropdownClassName="bg-[#1A1A1A] border-[#333] text-white z-50 shadow-2xl"
-            cursorClassName="bg-[#E84333]"
-          />
-        </div>
-
-        {/* Search Bar - Right 50% starting at the center */}
-        <div className="w-full md:w-1/2 flex items-center px-6 lg:px-8 py-4 md:py-0 gap-4 bg-[#161616]/50">
-          <Search size={16} className="text-gray-500 shrink-0" />
-          <input 
-            type="text" 
-            placeholder="SEARCH ARCHIVE"
-            value={search}
-            onChange={(e) => handleSearchChange(e.target.value)}
-            className="bg-transparent w-full text-[11px] font-sans font-bold uppercase tracking-[0.2em] placeholder:text-gray-600 focus:outline-none text-white"
-          />
-          {search && (
-            <button 
-              onClick={() => handleSearchChange('')}
-              className="text-[10px] text-gray-500 hover:text-white font-sans uppercase tracking-wider"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
-
       {/* Entries List */}
       <div className="max-w-7xl mx-auto px-6 py-12 lg:py-32">
         <div className="flex flex-col md:flex-row md:items-baseline justify-between mb-8 md:mb-12 border-b border-gray-300 pb-6 md:pb-8 gap-4">
@@ -175,21 +131,20 @@ export function DirectorySection() {
             {/* Bottom Right Next / Previous Controls */}
             <div className="flex items-center gap-3 self-end sm:self-auto">
               {currentPage > 1 && (
-                <button
-                  onClick={handlePrevPage}
-                  className="px-5 py-3 border border-gray-300 bg-white text-brand-ink hover:border-black hover:bg-black hover:text-white transition-all duration-300 text-[11px] font-sans font-bold uppercase tracking-[0.2em] flex items-center gap-2 group cursor-pointer"
-                >
-                  <span>Prev 15</span>
-                </button>
+                <FlowHoverButton asChild className="bg-white text-brand-ink border border-gray-300 px-6 py-3.5 md:px-12 md:py-5 rounded-full font-bold uppercase tracking-wider md:tracking-widest text-xs sm:text-sm h-12 md:h-auto hover:border-black hover:bg-black hover:text-white transition-colors inline-flex items-center justify-center cursor-pointer">
+                  <button onClick={handlePrevPage} className="flex items-center gap-2">
+                    <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-1" />
+                    Prev 15
+                  </button>
+                </FlowHoverButton>
               )}
               {currentPage < totalPages && (
-                <button
-                  onClick={handleNextPage}
-                  className="px-6 py-3 border border-brand-ink bg-brand-ink text-white hover:bg-brand-accent hover:border-brand-accent transition-all duration-300 text-[11px] font-sans font-bold uppercase tracking-[0.2em] flex items-center gap-3 group cursor-pointer shadow-sm"
-                >
-                  <span>Next 15</span>
-                  <span className="inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
-                </button>
+                <FlowHoverButton asChild className="bg-brand-ink text-white px-6 py-3.5 md:px-12 md:py-5 rounded-full font-bold uppercase tracking-wider md:tracking-widest text-xs sm:text-sm h-12 md:h-auto border-none hover:bg-brand-accent transition-colors inline-flex items-center justify-center cursor-pointer">
+                  <button onClick={handleNextPage} className="flex items-center gap-2">
+                    Next 15
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1" />
+                  </button>
+                </FlowHoverButton>
               )}
             </div>
           </div>

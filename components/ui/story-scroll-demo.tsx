@@ -48,11 +48,17 @@ export default function FlowArtDefaultDemo() {
             </div>
 
             {/* Bottom Glassmorphic CTA Bar */}
-            <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-10 h-12 sm:h-14 rounded-xl px-4 sm:px-5 flex items-center justify-between bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-300">
-              <span className="text-white text-xs sm:text-sm md:text-base font-normal tracking-normal">
+            <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-10 h-12 sm:h-14 rounded-xl sm:rounded-2xl px-4 sm:px-5 flex items-center justify-between bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] overflow-hidden will-change-transform active:scale-[0.98]">
+              {/* Shimmer highlight on hover */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+
+              <span className="relative z-10 text-white text-xs sm:text-sm md:text-base font-medium tracking-normal transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-x-0.5">
                 Join the initiative
               </span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[1.5] transition-transform duration-300 group-hover:translate-x-1" />
+
+              <span className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:bg-white group-hover:text-black group-hover:translate-x-1 shrink-0">
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:text-black transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:-rotate-45 stroke-[2]" />
+              </span>
             </div>
           </Link>
         </div>
@@ -97,11 +103,17 @@ export default function FlowArtDefaultDemo() {
             </div>
 
             {/* Bottom Glassmorphic CTA Bar */}
-            <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-10 h-12 sm:h-14 rounded-xl px-4 sm:px-5 flex items-center justify-between bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-300">
-              <span className="text-white text-xs sm:text-sm md:text-base font-normal tracking-normal">
+            <div className="absolute inset-x-3 bottom-3 sm:inset-x-4 sm:bottom-4 z-10 h-12 sm:h-14 rounded-xl sm:rounded-2xl px-4 sm:px-5 flex items-center justify-between bg-white/20 group-hover:bg-white/30 backdrop-blur-md border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] overflow-hidden will-change-transform active:scale-[0.98]">
+              {/* Shimmer highlight on hover */}
+              <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/25 to-transparent pointer-events-none" />
+
+              <span className="relative z-10 text-white text-xs sm:text-sm md:text-base font-medium tracking-normal transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-x-0.5">
                 Read blog
               </span>
-              <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[1.5] transition-transform duration-300 group-hover:translate-x-1" />
+
+              <span className="relative z-10 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:bg-white group-hover:text-black group-hover:translate-x-1 shrink-0">
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white group-hover:text-black transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:-rotate-45 stroke-[2]" />
+              </span>
             </div>
           </Link>
         </div>

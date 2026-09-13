@@ -6,7 +6,6 @@ import { TopBanner } from '@/components/ui/top-banner'
 import { Hero } from '@/features/homepage/hero'
 import { Navbar } from '@/components/navigation/navbar'
 import TextAnimation1 from '@/components/TextAnimation1'
-import { ZeroWasteCTA } from '@/features/homepage/zero-waste-cta'
 import { NewsletterSection } from '@/features/homepage/newsletter-section'
 import { RelatedArticlesSection } from '@/features/homepage/related-articles'
 import HeroSection from '@/components/HeroSection'
@@ -14,6 +13,7 @@ import { EventsCardsSection } from '@/features/homepage/events-section'
 import DonationBox from '@/components/donation-box'
 import FlowArtDefaultDemo from '@/components/ui/story-scroll-demo'
 import { dummyArticles } from '@/lib/data/landing-data';
+import { TypographySection } from '@/components/sections/typography-section';
   
 const page = () => {
   const [mounted, setMounted] = useState(false);
@@ -113,19 +113,9 @@ const page = () => {
             </motion.div>
           </div>
         </SectionContainer>
-
-        <section className='about min-h-[60vh] flex items-center justify-center bg-background relative py-24'>
-          <div className="container mx-auto px-6 md:px-12">
-            <TextAnimation1>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter leading-[1.15] text-center max-w-5xl mx-auto text-neutral-900 antialiased">
-                We partner with local communities, businesses, and individuals to create a tangible impact on Bangalore&apos;s environmental future through collective action and sustainable rituals.
-              </h2>
-            </TextAnimation1>
-          </div>
-        </section>
         
-        <ZeroWasteCTA />
-
+        <TypographySection />
+        
         <NewsletterSection  />
       </main>
     </>

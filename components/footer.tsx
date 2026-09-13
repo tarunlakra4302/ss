@@ -60,24 +60,7 @@ export function Footer() {
                   Upcoming events
                 </Link>
               </li>
-              <li>
-                <Link 
-                  href="/events#movement-timeline" 
-                  onClick={(e) => {
-                    if (typeof window !== 'undefined' && window.location.pathname === '/events') {
-                      const el = document.getElementById('movement-timeline');
-                      if (el) {
-                        e.preventDefault();
-                        el.scrollIntoView({ behavior: 'smooth' });
-                        window.history.pushState(null, '', '/events#movement-timeline');
-                      }
-                    }
-                  }}
-                  className="text-sm sm:text-[0.875rem] text-[#474747] hover:text-[#000000] transition-colors duration-200"
-                >
-                  Events calendar
-                </Link>
-              </li>
+
             </ul>
           </div>
 

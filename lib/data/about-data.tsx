@@ -113,3 +113,36 @@ export const timelineData = [
   }
 ];
 
+export const memoryLaneData = [
+  {
+    year: "2025",
+    headline: "Founded in Bangalore",
+    description: "Sustainable Sundays was established with a singular mission: to simplify environmental action and build a community focused on sustainable weekly rituals and urban ecology.",
+    backgroundImage: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2560&auto=format&fit=crop"
+  },
+  {
+    year: "Jan 2026",
+    headline: "First Community Waste Audit",
+    description: "Successfully conducted our first neighborhood-wide waste audit and clean-up in Bangalore, diverting 500+ kg of waste from landfills and establishing local composting hubs.",
+    backgroundImage: "https://images.unsplash.com/photo-1416879598555-2200155b4869?q=80&w=2560&auto=format&fit=crop"
+  },
+  {
+    year: "Feb 2026",
+    headline: "Green Rituals Initiative",
+    description: "Launched our signature zero-waste guides and sustainable Sundays workshops, combining environmental awareness with hands-on learning for eco-friendly urban living.",
+    backgroundImage: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2560&auto=format&fit=crop"
+  },
+  {
+    year: "Mar 2026",
+    headline: "Local Partnerships Network",
+    description: "Established a comprehensive collaboration network with local artisans, organic farms, and recycling groups, connecting Bangalore residents to direct sustainability resources.",
+    backgroundImage: "https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?q=80&w=2560&auto=format&fit=crop"
+  },
+  {
+    year: "Apr 2026",
+    headline: "Expanding Our Canopy",
+    description: "Continuing to grow our urban green spaces and volunteer hubs, ensuring that sustainable living becomes accessible, practical, and standard for every household.",
+    backgroundImage: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=2560&auto=format&fit=crop"
+  }
+];
+
