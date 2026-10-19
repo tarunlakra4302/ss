@@ -84,7 +84,7 @@ export default function FlowArtDefaultDemo() {
           >
             {/* Full-bleed background image */}
             <img
-              src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop"
+              src="/gallery/1.jpeg"
               alt="Sustainable Architecture Innovations"
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />

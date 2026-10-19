@@ -339,7 +339,7 @@ export function Navbar({ hideLogo = false, hideMenuText = false }: NavbarProps =
 
   return (
     <div ref={containerRef}>
-        <div className={`site-header-wrapper ${isMenuOpen ? 'is-menu-open' : ''} ${isHome && !isComplete ? 'opacity-0 invisible' : ''}`}>
+        <div className={`site-header-wrapper ${isMenuOpen ? 'is-menu-open' : ''} ${isHome && !isComplete ? 'opacity-0 invisible' : ''} ${isZeroWaste ? 'is-zero-waste' : ''}`}>
           <header className="header">
             <div className="container is--full">
               <nav className="nav-row">

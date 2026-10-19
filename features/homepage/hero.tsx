@@ -135,9 +135,50 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
+    // Detect whether the current page load is a browser reload
+    const navEntries = typeof performance !== "undefined" && performance.getEntriesByType
+      ? performance.getEntriesByType("navigation")
+      : [];
+    const isReload = navEntries.length > 0 && (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+
+    if (isReload) {
+      sessionStorage.removeItem("hero_has_animated");
+    }
+
+    // Check if hero has already animated during this browsing session
+    const heroAlreadyLoaded = !isReload && typeof window !== "undefined" && sessionStorage.getItem("hero_has_animated") === "true";
+
+    if (heroAlreadyLoaded) {
+      hasAnimatedRef.current = true;
+      // Immediately set all elements visible and in resting position without animation
+      const titleEl = titleRef.current;
+      const subtitleEl = subtitleRef.current;
+      const buttonsEl = buttonsRef.current;
+      const videoContainerEl = videoContainerRef.current;
+      const headerEl = document.querySelector(".site-header-wrapper");
+
+      if (titleEl) {
+        gsap.set(titleEl, { autoAlpha: 1, y: 0, clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", clearProps: "clipPath,transform" });
+      }
+      if (subtitleEl) {
+        gsap.set(subtitleEl, { autoAlpha: 1, y: 0, clearProps: "opacity,visibility,transform" });
+      }
+      if (buttonsEl) {
+        gsap.set(buttonsEl, { autoAlpha: 1, y: 0, clearProps: "opacity,visibility,transform" });
+      }
+      if (videoContainerEl) {
+        gsap.set(videoContainerEl, { clipPath: "inset(0px 0px 0px 0px)", clearProps: "clipPath" });
+      }
+      if (headerEl) {
+        gsap.set(headerEl, { autoAlpha: 1, y: 0, clearProps: "opacity,visibility,transform" });
+      }
+      return;
+    }
+
     if (isTransitioning) {
       const handleComplete = () => {
-        runAnimation(false); // Navigation = no video expansion
+        sessionStorage.setItem("hero_has_animated", "true");
+        runAnimation(false);
       };
       window.addEventListener("pageTransitionComplete", handleComplete, { once: true });
       return () => {
@@ -147,6 +188,7 @@ export function Hero() {
       let isMounted = true;
       const initAnim = () => {
         if (!isMounted) return;
+        sessionStorage.setItem("hero_has_animated", "true");
         runAnimation(true); // Initial load = video expansion
       };
 
@@ -165,8 +207,10 @@ export function Hero() {
   }, [isTransitioning, runAnimation]);
 
   useEffect(() => {
-    if (prevIsTransitioningRef.current && !isTransitioning) {
-      runAnimation(false); // Fallback for navigation completion
+    const heroAlreadyLoaded = typeof window !== "undefined" && sessionStorage.getItem("hero_has_animated") === "true";
+    if (prevIsTransitioningRef.current && !isTransitioning && !heroAlreadyLoaded) {
+      sessionStorage.setItem("hero_has_animated", "true");
+      runAnimation(false);
     }
     prevIsTransitioningRef.current = isTransitioning;
   }, [isTransitioning, runAnimation]);

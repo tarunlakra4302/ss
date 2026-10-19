@@ -202,6 +202,33 @@ body {
   }
 }
 
+.site-header-wrapper.is-zero-waste {
+  top: 2rem;
+}
+
+.site-header-wrapper.is-zero-waste .header {
+  height: 1.75rem;
+  padding: 0 1.5rem;
+}
+
+.site-header-wrapper.is-zero-waste .container,
+.site-header-wrapper.is-zero-waste .nav-row {
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .site-header-wrapper.is-zero-waste {
+    top: 2.5rem;
+  }
+
+  .site-header-wrapper.is-zero-waste .header {
+    height: 2rem;
+    padding: 0 3rem;
+    max-width: 1536px;
+    margin: 0 auto;
+  }
+}
+
 .header {
   height: 64px;
   display: flex;
@@ -601,4 +628,55 @@ body .site-header-wrapper.is-menu-open .nav-close-btn .menu-button-icon {
   100% {
     transform: translate(1%, 0);
   }
+}
+
+/* ─── Receipt Print Styles ─── */
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .site-header-wrapper,
+  header,
+  footer,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+
+  main {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .print-receipt-paper {
+    box-shadow: none !important;
+    border: 1px solid #ddd !important;
+    color: #000000 !important;
+    background: #ffffff !important;
+  }
+}
+
+/* Force custom cursor everywhere, including links, buttons, inputs and on active click */
+html,
+body,
+*,
+*::before,
+*::after,
+a,
+button,
+input,
+select,
+textarea,
+label {
+  cursor: none !important;
 }

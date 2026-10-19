@@ -89,7 +89,7 @@ export function DarkModeHeader({
 
           {/* Right Bio Block */}
           <div className="max-w-2xl">
-            <p className="text-zinc-500 text-base md:text-lg leading-relaxed">
+            <p className="text-white text-base md:text-lg leading-relaxed">
               {bio}
             </p>
           </div>

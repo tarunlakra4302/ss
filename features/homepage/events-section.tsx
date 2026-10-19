@@ -12,6 +12,26 @@ const MOCK_EVENTS = [
     imageUrl: "/edible-gardening-workshop.png",
     linkUrl: "/events/edible-gardening-workshop",
     buttonText: "Register Now"
+  },
+  {
+    title: "Textile Swap & Upcycling Drive",
+    location: "Koramangala, Bangalore",
+    date: "17 Oct",
+    startDate: "2026-10-17T10:00:00+05:30",
+    time: "10:00 AM",
+    imageUrl: "/images/events/Swap Gala event with music performance_22 March 2026.JPG",
+    linkUrl: "/events#upcoming-events",
+    buttonText: "View Event"
+  },
+  {
+    title: "Home Composting & Bioenzyme Masterclass",
+    location: "Indiranagar, Bangalore",
+    date: "24 Oct",
+    startDate: "2026-10-24T10:30:00+05:30",
+    time: "10:30 AM",
+    imageUrl: "/images/events/Soil preparation activity at Kasturinagar Lake_31 May 2026.jpeg",
+    linkUrl: "/events#upcoming-events",
+    buttonText: "View Event"
   }
 ];
 

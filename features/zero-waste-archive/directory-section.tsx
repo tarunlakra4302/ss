@@ -4,7 +4,6 @@ import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { directoryData } from '@/lib/data/archive-data'
 import { DirectoryCard } from './directory-card'
-import { FlowHoverButton } from "@/components/ui/flow-hover-button"
 import { ArrowRight, ArrowLeft } from "lucide-react"
 
 interface DirectorySectionProps {
@@ -131,20 +130,40 @@ export function DirectorySection({
             {/* Bottom Right Next / Previous Controls */}
             <div className="flex items-center gap-3 self-end sm:self-auto">
               {currentPage > 1 && (
-                <FlowHoverButton asChild className="bg-white text-brand-ink border border-gray-300 px-6 py-3.5 md:px-12 md:py-5 rounded-full font-bold uppercase tracking-wider md:tracking-widest text-xs sm:text-sm h-12 md:h-auto hover:border-black hover:bg-black hover:text-white transition-colors inline-flex items-center justify-center cursor-pointer">
-                  <button onClick={handlePrevPage} className="flex items-center gap-2">
-                    <ArrowLeft className="w-4 h-4 md:w-5 md:h-5 mr-1" />
+                <button
+                  type="button"
+                  onClick={handlePrevPage}
+                  className="group inline-flex items-center gap-2.5 px-4 sm:px-5 h-8 sm:h-9 rounded-full bg-black text-white text-xs sm:text-sm font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] hover:bg-neutral-800 hover:shadow-lg hover:shadow-black/10 active:scale-[0.97] select-none relative overflow-hidden will-change-transform cursor-pointer"
+                >
+                  {/* Shimmer highlight on hover */}
+                  <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+                  <span className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:bg-white group-hover:text-black group-hover:-translate-x-1 shrink-0">
+                    <ArrowLeft className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:rotate-45" />
+                  </span>
+
+                  <span className="relative z-10 transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:-translate-x-0.5">
                     Prev 15
-                  </button>
-                </FlowHoverButton>
+                  </span>
+                </button>
               )}
               {currentPage < totalPages && (
-                <FlowHoverButton asChild className="bg-brand-ink text-white px-6 py-3.5 md:px-12 md:py-5 rounded-full font-bold uppercase tracking-wider md:tracking-widest text-xs sm:text-sm h-12 md:h-auto border-none hover:bg-brand-accent transition-colors inline-flex items-center justify-center cursor-pointer">
-                  <button onClick={handleNextPage} className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  className="group inline-flex items-center gap-2.5 px-4 sm:px-5 h-8 sm:h-9 rounded-full bg-black text-white text-xs sm:text-sm font-medium tracking-wide transition-all duration-500 ease-[cubic-bezier(0.77,0,0.175,1)] hover:bg-neutral-800 hover:shadow-lg hover:shadow-black/10 active:scale-[0.97] select-none relative overflow-hidden will-change-transform cursor-pointer"
+                >
+                  {/* Shimmer highlight on hover */}
+                  <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out bg-gradient-to-r from-transparent via-white/15 to-transparent pointer-events-none" />
+
+                  <span className="relative z-10 transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:translate-x-0.5">
                     Next 15
-                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5 ml-1" />
-                  </button>
-                </FlowHoverButton>
+                  </span>
+
+                  <span className="relative z-10 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-white/20 flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:bg-white group-hover:text-black group-hover:translate-x-1 shrink-0">
+                    <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 transition-transform duration-300 ease-[cubic-bezier(0.77,0,0.175,1)] group-hover:-rotate-45" />
+                  </span>
+                </button>
               )}
             </div>
           </div>

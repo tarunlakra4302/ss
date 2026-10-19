@@ -34,7 +34,7 @@ export function ArchiveHero() {
       <div className="absolute inset-0 z-0 h-[130%]">
         <img
           ref={bgImage}
-          src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=2000"
+          src="/gallery/1.jpeg"
           alt="Sustainability Background"
           className="w-full h-full object-cover brightness-[0.7] contrast-[1.1]"
           referrerPolicy="no-referrer"
@@ -56,7 +56,7 @@ export function ArchiveHero() {
         </h1>
         
         <div className="max-w-2xl mx-auto">
-          <p className="text-sm md:text-xl font-sans text-white/90 leading-relaxed drop-shadow-sm font-medium">
+          <p className="text-sm md:text-xl font-sans text-white leading-relaxed drop-shadow-sm font-medium">
             A curated exploration of space, void, and the essential sustainable structures defining modern zero-waste living.
           </p>
         </div>

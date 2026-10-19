@@ -34,7 +34,7 @@ export function useRazorpay() {
 
     // Prefetch target success route so client chunks are instant in memory
     try {
-      router.prefetch(successRedirect || "/event/success");
+      router.prefetch(successRedirect || "/success");
     } catch (_) {}
 
     try {
@@ -79,7 +79,7 @@ export function useRazorpay() {
         handler: (response: RazorpayPaymentResponse) => {
           let redirectPath =
             successRedirect ||
-            `/event/success?type=ticket&amount=${serverAmountINR}&paymentId=${response.razorpay_payment_id}`;
+            `/success?type=ticket&amount=${serverAmountINR}&paymentId=${response.razorpay_payment_id}`;
           if (successRedirect && !redirectPath.includes("paymentId=") && response.razorpay_payment_id) {
             const separator = redirectPath.includes("?") ? "&" : "?";
             redirectPath = `${redirectPath}${separator}paymentId=${response.razorpay_payment_id}`;

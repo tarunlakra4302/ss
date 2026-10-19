@@ -44,27 +44,33 @@ const AboutPage = () => {
     const tl = gsap.timeline();
     tlRef.current = tl;
 
-    // 1. Render at the bottom of the viewport, initially hidden via clipPath
-    tl.set([titleEl, subtitleEl], {
+    // 1. Initial setup at bottom of screen (matching homepage Hero)
+    // Title positioned at bottom and clipped
+    tl.set(titleEl, {
       y: startY + 40,
       autoAlpha: 1,
       clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)",
+    });
+
+    // Subtitle initially hidden at bottom
+    tl.set(subtitleEl, {
+      y: startY + 40,
+      autoAlpha: 0,
     });
 
     if (restContentRef.current) {
       tl.set(restContentRef.current, { autoAlpha: 0 });
     }
 
-    // 2. Reveal text animation at the bottom of the screen
-    tl.to([titleEl, subtitleEl], {
+    // 2. Reveal ONLY the title text at the bottom of the screen (matching homepage Hero)
+    tl.to(titleEl, {
       y: startY,
       clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
       duration: 1.2,
-      stagger: 0.15,
       ease: ease as any,
     });
 
-    // 3. Smoothly animate and shift up into natural resting position
+    // 3. Shift elements up into natural resting position (y: 0)
     tl.to([titleEl, subtitleEl], {
       y: 0,
       duration: 1.2,
@@ -73,7 +79,15 @@ const AboutPage = () => {
       clearProps: "transform,clipPath",
     });
 
-    // 4. Coordinate graceful entrance for remaining page sections
+    // 4. Fade in subtitle simultaneously as it shifts up (matching homepage Hero)
+    tl.to(subtitleEl, {
+      autoAlpha: 1,
+      duration: 1.0,
+      ease: "power2.out",
+      clearProps: "opacity,visibility",
+    }, "<");
+
+    // 5. Fade in remaining page sections gracefully
     if (restContentRef.current) {
       tl.to(
         restContentRef.current,
@@ -88,39 +102,101 @@ const AboutPage = () => {
     }
   }, []);
 
-  // Trigger when page transition finishes, or on initial direct load
   useEffect(() => {
+    // Detect whether the current page load is a browser reload
+    const navEntries =
+      typeof performance !== "undefined" && performance.getEntriesByType
+        ? performance.getEntriesByType("navigation")
+        : [];
+    const isReload =
+      navEntries.length > 0 &&
+      (navEntries[0] as PerformanceNavigationTiming).type === "reload";
+
+    if (isReload) {
+      sessionStorage.removeItem("about_hero_has_animated");
+    }
+
+    const alreadyAnimated =
+      !isReload &&
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("about_hero_has_animated") === "true";
+
+    if (alreadyAnimated) {
+      hasAnimatedRef.current = true;
+      const titleEl = titleRef.current;
+      const subtitleEl = subtitleRef.current;
+      const restEl = restContentRef.current;
+      if (titleEl) {
+        gsap.set(titleEl, {
+          autoAlpha: 1,
+          y: 0,
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",
+          clearProps: "clipPath,transform",
+        });
+      }
+      if (subtitleEl) {
+        gsap.set(subtitleEl, {
+          autoAlpha: 1,
+          y: 0,
+          clearProps: "opacity,visibility,transform",
+        });
+      }
+      if (restEl) {
+        gsap.set(restEl, {
+          autoAlpha: 1,
+          clearProps: "opacity,visibility",
+        });
+      }
+      return;
+    }
+
     if (isTransitioning) {
       const handleComplete = () => {
+        sessionStorage.setItem("about_hero_has_animated", "true");
         runAnimation();
       };
-      window.addEventListener("pageTransitionComplete", handleComplete, { once: true });
+      window.addEventListener("pageTransitionComplete", handleComplete, {
+        once: true,
+      });
       return () => {
         window.removeEventListener("pageTransitionComplete", handleComplete);
       };
     } else {
-      // Direct load or refresh fallback
-      const timer = setTimeout(() => {
+      let isMounted = true;
+      const initAnim = () => {
+        if (!isMounted) return;
+        sessionStorage.setItem("about_hero_has_animated", "true");
         runAnimation();
-      }, 60);
-      return () => clearTimeout(timer);
+      };
+
+      if (typeof document !== "undefined" && document.fonts) {
+        document.fonts.ready.then(() => {
+          setTimeout(initAnim, 50);
+        });
+      } else {
+        setTimeout(initAnim, 80);
+      }
+
+      return () => {
+        isMounted = false;
+      };
     }
   }, [isTransitioning, runAnimation]);
 
-  // Safety trigger if isTransitioning toggles from true to false
   useEffect(() => {
-    if (prevIsTransitioningRef.current && !isTransitioning) {
+    const alreadyAnimated =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("about_hero_has_animated") === "true";
+    if (prevIsTransitioningRef.current && !isTransitioning && !alreadyAnimated) {
+      sessionStorage.setItem("about_hero_has_animated", "true");
       runAnimation();
     }
     prevIsTransitioningRef.current = isTransitioning;
   }, [isTransitioning, runAnimation]);
 
-  // Clean up animation on unmount
   useEffect(() => {
     return () => {
-      if (tlRef.current) {
-        tlRef.current.kill();
-      }
+      if (tlRef.current) tlRef.current.kill();
     };
   }, []);
 
@@ -140,29 +216,31 @@ const AboutPage = () => {
     <>
       <Navbar />
       <main className="flex-1 w-full mt-20 md:mt-28 lg:mt-36">
-        <section className="w-full bg-white pt-12 md:pt-16 lg:pt-20 pb-16 md:pb-24 overflow-hidden">
+        <section className="w-full bg-white pt-12 md:pt-16 lg:pt-20 pb-16 md:pb-24">
           <div className="w-full mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
             <div
               ref={titleRef}
-              className="w-full text-left mb-12 md:mb-16 lg:mb-20 will-change-transform opacity-0"
+              style={{ opacity: 0, visibility: "hidden" }}
+              className="w-full text-left mb-3 md:mb-4 lg:mb-6 will-change-transform"
             >
-              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-black select-none font-heading">
+              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-[#990000] select-none font-heading">
                 About Us
               </h1>
             </div>
 
             <div
               ref={subtitleRef}
-              className="w-full flow-root overflow-hidden will-change-transform opacity-0"
+              style={{ opacity: 0, visibility: "hidden" }}
+              className="w-full text-left will-change-transform"
             >
-              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-normal text-black leading-tight tracking-tight m-0 p-0">
+              <p className="text-[11px] sm:text-[13px] md:text-[15px] lg:text-[19px] font-normal text-gray-500 leading-snug tracking-tight m-0 p-0 text-left">
                 Here is a sneak peak into our communities redefining conscious living.
               </p>
             </div>
           </div>
         </section>
 
-        <div ref={restContentRef} className="w-full">
+        <div ref={restContentRef} style={{ opacity: 0, visibility: 'hidden' }}>
           <StorySection />
           <AboutJourney images={galleryImages} />
           <AboutInitiatives />

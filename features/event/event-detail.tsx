@@ -60,7 +60,7 @@ const EVENTS_DATA: Record<string, any> = {
     subLocation: "Market District",
     date: "May 30, 2026",
     time: "09:00 AM – 06:00 PM",
-    heroImage: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?q=80&w=2070&auto=format&fit=crop",
+    heroImage: "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
     description: "Join us for a vibrant gathering of eco-conscious creators, local farmers, and sustainable brands. Discover unique products, learn about zero-waste living, and support a greener future.",
     narrative: "Sustainable Sundays is proud to present our annual Market. This year, we're bringing together over 50 local vendors who share our commitment to the planet.",
     expectations: [
@@ -182,7 +182,7 @@ export function EventDetail({ slug }: EventDetailProps) {
       }
 
       try {
-        router.prefetch("/event/success");
+        router.prefetch("/success");
       } catch (_) {}
 
       const rzp = new window.Razorpay({
@@ -197,7 +197,7 @@ export function EventDetail({ slug }: EventDetailProps) {
           ondismiss: () => setSubmitState('idle'),
         },
         handler: (response: RazorpayPaymentResponse) => {
-          const redirectUrl = `/event/success?type=donation&amount=${donationAmount}&paymentId=${response.razorpay_payment_id || ''}`;
+          const redirectUrl = `/success?type=donation&amount=${donationAmount}&paymentId=${response.razorpay_payment_id || ''}`;
 
           fetch("/api/donate/verify-payment", {
             method: "POST",
@@ -320,7 +320,7 @@ export function EventDetail({ slug }: EventDetailProps) {
         },
         onDismiss: () => setSubmitState('idle'),
         onError: (msg) => { setSubmitState('idle'); setDonationError(msg); },
-        successRedirect: `/event/success?type=ticket&amount=${totalAmount}`,
+        successRedirect: `/success?type=ticket&amount=${totalAmount}`,
       });
     }
   };

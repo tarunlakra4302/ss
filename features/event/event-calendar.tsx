@@ -13,6 +13,8 @@ interface CalendarEvent {
   time: string;
   location: string;
   description: string;
+  slot?: string;
+  href?: string;
 }
 
 interface EventMap {
@@ -20,63 +22,101 @@ interface EventMap {
 }
 
 const SAMPLE_EVENTS: EventMap = {
-  '2026-03-07': [
+  '2026-10-25': [
     {
-      id: 1,
-      title: 'Cubbon Park Plogging',
-      time: '07:00 AM — 09:30 AM',
-      location: 'Cubbon Park, Bangalore',
-      description: 'Join us for our signature plogging run — jog through Cubbon Park while collecting litter to keep our city green.',
-    },
-  ],
-  '2026-03-14': [
-    {
-      id: 2,
-      title: 'Beach Cleanup Drive',
-      time: '06:30 AM — 10:00 AM',
-      location: 'Marina Beach, Chennai',
-      description: 'A large-scale shoreline cleanup to protect ocean ecosystems. Gloves and bags provided.',
-    },
-    {
-      id: 3,
-      title: 'Sustainability Workshop',
-      time: '11:00 AM — 01:00 PM',
-      location: 'Community Hall, Indiranagar',
-      description: 'Interactive session on zero-waste living, composting, and sustainable shopping.',
-    },
-  ],
-  '2026-03-21': [
-    {
-      id: 4,
-      title: 'Tree Planting Initiative',
-      time: '07:30 AM — 11:00 AM',
-      location: 'Green Valley, Whitefield',
-      description: 'Help us plant 200 native saplings and restore the green cover in and around Whitefield.',
-    },
-  ],
-  '2026-03-28': [
-    {
-      id: 5,
-      title: 'Urban Garden Workshop',
-      time: '09:00 AM — 12:00 PM',
-      location: 'JP Nagar Community Grounds',
-      description: 'Learn container gardening and terrace farming — take home your own starter kit.',
-    },
-    {
-      id: 6,
-      title: 'Sustainable Sundays Fundraising Party',
-      time: '07:00 PM — 11:00 PM',
-      location: 'Cubbon Park, KA (TBD)',
-      description: 'A night of impact raising vital funds for cancer patients worldwide with Sustainable Sundays.',
-    },
-  ],
-  '2026-08-23': [
-    {
-      id: 7,
+      id: 101,
       title: 'Edible Gardening Workshop',
-      time: '10:00 AM — 01:00 PM',
-      location: 'Pure & Sure Organic Cafe & Store, Jayanagar',
-      description: 'Learn soil ecology, moon phases, companion planting, beneficial insects & more by Barani Muthukumaran. Take home up to 10 heirloom seed varieties!',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore (TBD)',
+      description: 'Hands-on organic gardening session covering soil health, seed sowing, and home vegetable cultivation.',
+      href: '/events/edible-gardening-workshop',
+    },
+    {
+      id: 102,
+      title: 'Ambalipura Sapling Care',
+      time: 'TBD',
+      slot: 'Event 2',
+      location: 'Ambalipura Lake, Bangalore',
+      description: 'Sapling maintenance, de-weeding, mulching, and nurturing native flora around Ambalipura.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-11-01': [
+    {
+      id: 103,
+      title: 'SWAP Gala 2nd Edition',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore (TBD)',
+      description: 'Community circular exchange celebration bringing conscious fashion, pre-loved textiles, and live music together.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-11-14': [
+    {
+      id: 104,
+      title: 'Lake Restoration Session: Online',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Online Webinar',
+      description: 'Digital masterclass exploring Bangalore lake rejuvenation blueprints, citizen action frameworks, and water quality revival.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-11-15': [
+    {
+      id: 105,
+      title: 'Nature Walk - IISC',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'IISc Campus, Bangalore',
+      description: 'Guided biodiversity trail exploring native trees, bird habitats, and ecological canopies across the historic IISc campus.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-11-22': [
+    {
+      id: 106,
+      title: 'Lake Restoration Session: Offline',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore Lake Site (TBD)',
+      description: 'On-ground lake restoration, bund stabilization, native tree plantation, and cleanup drive.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-11-29': [
+    {
+      id: 107,
+      title: 'Edible Gardening Workshop',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore (TBD)',
+      description: 'Urban homesteading and kitchen gardening masterclass — balcony setups, natural composting, and organic pest care.',
+      href: '/events/edible-gardening-workshop',
+    },
+  ],
+  '2026-12-06': [
+    {
+      id: 108,
+      title: 'Nature Walk',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore (TBD)',
+      description: 'Immersive weekend nature walk through city green corridors to reconnect with urban biodiversity.',
+      href: '#upcoming-events',
+    },
+  ],
+  '2026-12-13': [
+    {
+      id: 109,
+      title: 'Nature Walk',
+      time: 'TBD',
+      slot: 'Event 1',
+      location: 'Bangalore (TBD)',
+      description: 'Weekend tree walk and bird watching expedition discovering local ecology in urban Bangalore.',
+      href: '#upcoming-events',
     },
   ],
 };
@@ -95,7 +135,7 @@ export function EventCalendar() {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [selectedKey, setSelectedKey] = useState<string | null>('2026-10-25');
 
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -286,7 +326,7 @@ export function EventCalendar() {
                   const hasActiveEvent = dayEvents.some(ev => {
                     const [y, m, d] = cell.key.split('-').map(Number);
                     // Match start time if provided or end of start time
-                    const match = ev.time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+                    const match = ev.time?.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)/i);
                     let eventDate = new Date(y, m - 1, d, 23, 59, 59);
                     if (match) {
                       let hours = parseInt(match[1], 10);
@@ -296,7 +336,7 @@ export function EventCalendar() {
                       if (meridian === 'AM' && hours === 12) hours = 0;
                       eventDate = new Date(y, m - 1, d, hours, minutes);
                     }
-                    return eventDate > today;
+                    return eventDate >= new Date(today.getFullYear(), today.getMonth(), today.getDate());
                   });
                   const isSelected = selectedKey === cell.key;
                   const isToday = cell.key === todayKey;
@@ -415,14 +455,23 @@ export function EventCalendar() {
                     className="event-card group relative bg-white dark:bg-slate-900 rounded-3xl md:rounded-[2.5rem] p-6 md:p-8 border border-[oklch(0.2_0.08_240)]/[0.03] shadow-[0_8px_30px_-12px_rgba(0,0,0,0.08)] hover:border-[oklch(0.2_0.08_240)]/10 hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.12)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)]"
                   >
                     <div className="flex justify-between items-center mb-6 md:mb-8">
-                      <div className="px-3 md:px-4 py-1.5 md:py-2 bg-[oklch(0.2_0.08_240)]/[0.03] dark:bg-white/5 rounded-full flex items-center gap-2">
-                        <Clock className="w-3 md:w-3.5 h-3 md:h-3.5 text-[oklch(0.2_0.08_240)]/20" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.1em] text-[oklch(0.2_0.08_240)]/60 dark:text-white/60">
-                          {event.time}
-                        </span>
+                      <div className="flex items-center gap-2">
+                        {event.slot && (
+                          <div className="px-3 md:px-4 py-1.5 md:py-2 bg-[oklch(0.2_0.08_240)] text-white rounded-full flex items-center">
+                            <span className="text-[10px] font-black uppercase tracking-[0.1em]">
+                              {event.slot}
+                            </span>
+                          </div>
+                        )}
+                        <div className="px-3 md:px-4 py-1.5 md:py-2 bg-[oklch(0.2_0.08_240)]/[0.03] dark:bg-white/5 rounded-full flex items-center gap-2">
+                          <Clock className="w-3 md:w-3.5 h-3 md:h-3.5 text-[oklch(0.2_0.08_240)]/20" />
+                          <span className="text-[10px] font-black uppercase tracking-[0.1em] text-[oklch(0.2_0.08_240)]/60 dark:text-white/60">
+                            {event.time}
+                          </span>
+                        </div>
                       </div>
                       <Link 
-                        href={`/events/${slugify(event.title)}`}
+                        href={event.href || `/events/${slugify(event.title)}`}
                         className="w-8 h-8 md:w-10 md:h-10 rounded-full border border-[oklch(0.2_0.08_240)]/10 flex items-center justify-center bg-[oklch(0.2_0.08_240)]/5 text-[oklch(0.2_0.08_240)] group-hover:bg-[oklch(0.2_0.08_240)] group-hover:text-white transition-all duration-500 ease-out"
                         aria-label={`Go to ${event.title} details`}
                       >

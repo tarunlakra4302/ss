@@ -17,7 +17,7 @@ interface PhilosophySectionProps {
 }
 
 export function StorySection({
-  eyebrow = "(OUR PHILOSOPHY)",
+  eyebrow = "OUR PHILOSOPHY",
   headline = "We believe Sundays shouldn't just be for resting. By uniting people with a shared purpose, we turn the weekend into a catalyst for climate action.",
   body = "Sunday is the bridge between the week behind us and the week ahead. It's the perfect day to pause, reset, and step outside. Transform your Sunday, and together, we'll change the trajectory of our environment.",
   className = "",
@@ -65,8 +65,8 @@ export function StorySection({
         */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12 items-start w-full">
           {/* ── Column 1 · Eyebrow Label (Top-Left) ── */}
-          <div className="col-span-12 md:col-span-3 pt-0 md:pt-1.5">
-            <span className="story-eyebrow text-xs font-semibold tracking-wider uppercase block text-[#B5563C] opacity-0 will-change-transform">
+          <div className="col-span-12 md:col-span-3 pt-0 md:pt-2">
+            <span className="story-eyebrow text-base sm:text-lg md:text-[40px] md:leading-[1.1] font-bold tracking-wider md:tracking-normal uppercase block text-[#B5563C] opacity-0 will-change-transform">
               {eyebrow}
             </span>
           </div>
@@ -74,12 +74,12 @@ export function StorySection({
           {/* ── Column 2 · Complete Right Side: Heading + Paragraph ── */}
           <div className="col-span-12 md:col-span-9 w-full text-left pr-0">
             {/* Heading — scales and spans flush to the right edge with no right gap */}
-            <h2 className="story-headline text-3xl sm:text-4xl md:text-5xl lg:text-[clamp(2.5rem,4.2vw,5.5rem)] font-bold text-black tracking-tight leading-[1.05] w-full text-left pr-0 opacity-0 will-change-transform">
+            <h2 className="story-headline text-[28px] sm:text-[32px] md:text-[35px] font-bold text-black tracking-tight leading-[1.15] w-full text-left pr-0 opacity-0 will-change-transform">
               {headline}
             </h2>
 
-            {/* Paragraph — sits indented under the right half of the heading, increased text size */}
-            <p className="story-body mt-8 md:mt-12 w-full max-w-xl md:ml-[36%] lg:ml-[40%] text-xl sm:text-2xl md:text-[1.75rem] lg:text-3xl text-black/85 font-normal leading-relaxed tracking-tight text-left pr-6 md:pr-12 opacity-0 will-change-transform">
+            {/* Paragraph — aligned with the heading width */}
+            <p className="story-body mt-8 md:mt-12 w-full text-xl sm:text-2xl md:text-[1.75rem] lg:text-3xl text-black/85 font-normal leading-relaxed tracking-tight text-left pr-6 md:pr-12 opacity-0 will-change-transform">
               {body}
             </p>
           </div>

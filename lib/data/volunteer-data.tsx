@@ -12,7 +12,7 @@ export const volunteerCards = [
       </div>
     ),
     className: "md:col-span-2",
-    thumbnail: "https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?q=80&w=2560&auto=format&fit=crop",
+    thumbnail: "/images/volunteer/General volunteer.jpeg",
   },
   {
     id: 2,
@@ -25,7 +25,7 @@ export const volunteerCards = [
       </div>
     ),
     className: "col-span-1",
-    thumbnail: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2560&auto=format&fit=crop",
+    thumbnail: "/gallery/3.jpeg",
   },
   {
     id: 3,
@@ -38,7 +38,7 @@ export const volunteerCards = [
       </div>
     ),
     className: "col-span-1",
-    thumbnail: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=2560&auto=format&fit=crop",
+    thumbnail: "/gallery/1.jpeg",
   },
   {
     id: 4,
@@ -51,6 +51,6 @@ export const volunteerCards = [
       </div>
     ),
     className: "md:col-span-2",
-    thumbnail: "https://images.unsplash.com/photo-1592150621344-828ec1830ade?q=80&w=2560&auto=format&fit=crop",
+    thumbnail: "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
   },
 ];

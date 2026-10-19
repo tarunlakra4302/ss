@@ -25,6 +25,28 @@ const UPCOMING_EVENTS: EventItem[] = [
     href: "/events/edible-gardening-workshop",
     startDate: "2026-08-23T10:00:00+05:30",
   },
+  {
+    id: 2,
+    dayOfWeek: "Sat",
+    dayNumber: "17",
+    monthYear: "Oct 2026",
+    title: "Textile Swap & Upcycling Drive",
+    dateRange: "October 17, 2026 • 10:00 AM – 02:00 PM IST",
+    price: "Free Community Entry",
+    href: "/events#upcoming-events",
+    startDate: "2026-10-17T10:00:00+05:30",
+  },
+  {
+    id: 3,
+    dayOfWeek: "Sat",
+    dayNumber: "24",
+    monthYear: "Oct 2026",
+    title: "Home Composting & Bioenzyme Masterclass",
+    dateRange: "October 24, 2026 • 10:30 AM – 01:30 PM IST",
+    price: "Free Community Entry",
+    href: "/events#upcoming-events",
+    startDate: "2026-10-24T10:30:00+05:30",
+  },
 ];
 
 export function UpcomingEventsList() {

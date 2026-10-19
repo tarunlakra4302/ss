@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { House } from "@phosphor-icons/react";
+import { House, Printer } from "@phosphor-icons/react";
 import {
   ReceiptPrinter,
   type ReceiptPrinterStage,
@@ -97,6 +97,12 @@ export function EventSuccessView({
     };
   }, []);
 
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
+
   return (
     <div className={`flex flex-col items-center w-full max-w-md mx-auto ${className}`}>
       {/* ─── Receipt Printer Component ─── */}
@@ -104,10 +110,21 @@ export function EventSuccessView({
         <ReceiptPrinter.Machine>
           <ReceiptPrinter.Header>
             <BrandLogo />
-            <TactileButton depth="shallow" href="/" size="sm">
-              <House aria-hidden="true" size={13} weight="fill" />
-              Home
-            </TactileButton>
+            <div className="flex items-center gap-2 no-print">
+              <TactileButton
+                depth="shallow"
+                size="sm"
+                onClick={handlePrint}
+                className="hover:border-emerald-600/70"
+              >
+                <Printer aria-hidden="true" size={13} weight="fill" />
+                Print
+              </TactileButton>
+              <TactileButton depth="shallow" href="/" size="sm">
+                <House aria-hidden="true" size={13} weight="fill" />
+                Home
+              </TactileButton>
+            </div>
           </ReceiptPrinter.Header>
 
           <ReceiptPrinter.Screen>

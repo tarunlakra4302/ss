@@ -5,6 +5,7 @@ import "./globals.css";
 import { LoadingProvider } from "@/features/homepage/loading-context";
 import { FooterWrapper } from "@/components/footer-wrapper";
 import { PageTransitionProvider } from "@/components/ui/page-transition";
+import { GlobalCursorProvider } from "@/components/global-cursor-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -39,10 +40,12 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <PageTransitionProvider variant="rectangle" start="bottom-up">
-          <LoadingProvider>
-            {children}
-            <FooterWrapper />
-          </LoadingProvider>
+          <GlobalCursorProvider>
+            <LoadingProvider>
+              {children}
+              <FooterWrapper />
+            </LoadingProvider>
+          </GlobalCursorProvider>
         </PageTransitionProvider>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"

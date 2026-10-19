@@ -38,7 +38,7 @@ const BLOG_POSTS_DATA: Record<string, {
     published: "Mar 21, 2023",
     readTime: "4 min read",
     tags: ["Sustainability", "Eco Friendly", "Zero Waste"],
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop",
+    image: "/gallery/1.jpeg",
     content: {
       intro: "Sustainability is an act of love and care, for the place you call home — Mother Earth. Sustainability is about community living and not being hyper-individualistic. No man is an island, and we cannot thrive without caring for others.",
       sections: [
@@ -99,7 +99,7 @@ const BLOG_POSTS_DATA: Record<string, {
     published: "Mar 28, 2023",
     readTime: "3 min read",
     tags: ["Fast Fashion", "Sustainability", "Free", "Overconsumption", "Capitalism"],
-    image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop",
+    image: "/gallery/2.jpeg",
     content: {
       intro: "A friend reached out and asked me about how she should price her classes. I told her that you could lure more clients by giving them a demo class. She was just starting off with her classes and asked if she should give classes for free — to the first few clients. I was immediately like — no do not do that. When you give the demo class charge for the demo as well.",
       sections: [
@@ -158,7 +158,7 @@ const BLOG_POSTS_DATA: Record<string, {
     published: "Sep 27, 2023",
     readTime: "4 min read",
     tags: ["Sustainability", "Parents", "Children", "Climate Change", "Earth"],
-    image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=2070&auto=format&fit=crop",
+    image: "/gallery/3.jpeg",
     content: {
       intro: "As bleak or pessimistic it sounds, your kids are not going to have a good future if we don’t take immediate action towards climate change. You all might have heard this quote — “We borrow the earth from our grandchildren”. The earth you live in is borrowed from future generations. Are you taking enough care of it?",
       sections: [

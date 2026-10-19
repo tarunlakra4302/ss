@@ -37,7 +37,7 @@ export function useDonation(options: UseDonationOptions = {}) {
 
 
     try {
-      router.prefetch("/donate/success");
+      router.prefetch("/success");
     } catch (_) {}
 
     try {
@@ -77,7 +77,7 @@ export function useDonation(options: UseDonationOptions = {}) {
           },
         },
         handler: (response: RazorpayPaymentResponse) => {
-          const redirectUrl = `/donate/success?amount=${amount}&paymentId=${response.razorpay_payment_id}`;
+          const redirectUrl = `/success?type=donation&amount=${amount}&paymentId=${response.razorpay_payment_id}`;
 
           // Non-blocking background verification
           fetch("/api/donate/verify-payment", {

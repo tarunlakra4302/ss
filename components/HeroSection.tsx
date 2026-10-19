@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Lenis from "lenis";
+import ReactLenis from "lenis/react";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { CardsParallax, type iCardItem } from "@/components/ui/scroll-cards";
 import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { SectionContainer } from "@/components/layout/section-container";
@@ -12,44 +12,102 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MOBILE_CARDS: iCardItem[] = [
+const projects = [
   {
-    title: "Agara Lake Walk",
-    description: "Explore urban biodiversity and wetland conservation at Agara Lake",
-    tag: "wetlands",
-    src: "/images/events/Agara Lake walk_24 May 2026.jpg",
-    link: "#",
-    color: "white",
-    textColor: "white",
+    title: "Project 1",
+    src: "/images/lummi/img8.png",
   },
   {
-    title: "Sapling Care Drives",
-    description: "Nurturing native saplings and restoring the green canopy across Bangalore lakes",
-    src: "/images/events/Sapling Care at Ambalipura Lake_9 August 2026.jpg",
-    tag: "sapling-care",
-    link: "#",
-    color: "green",
-    textColor: "white",
+    title: "Project 2",
+    src: "/images/lummi/img14.png",
   },
   {
-    title: "Edible Gardening",
-    description: "Hands-on urban farming and sustainable kitchen gardening workshops",
-    src: "/images/events/Edible Gardening workshop by Muthukaran_10 May.jpg",
-    tag: "gardening",
-    link: "#",
-    color: "white",
-    textColor: "white",
+    title: "Project 3",
+    src: "/images/lummi/img10.png",
   },
   {
-    title: "Soil Preparation & Rewilding",
-    description: "Rejuvenating native soil health and lake eco-restoration at Kasturinagar",
-    src: "/images/events/Soil preparation activity at Kasturinagar Lake_31 May 2026.jpeg",
-    tag: "rewilding",
-    link: "#",
-    color: "white",
-    textColor: "white",
+    title: "Project 4",
+    src: "/images/lummi/img15.png",
+  },
+  {
+    title: "Project 5",
+    src: "/images/lummi/img12.png",
   },
 ];
+
+const StickyCard_001 = ({
+  i,
+  title,
+  src,
+  progress,
+  range,
+  targetScale,
+}: {
+  i: number;
+  title: string;
+  src: string;
+  progress: any;
+  range: [number, number];
+  targetScale: number;
+}) => {
+  const container = useRef<HTMLDivElement>(null);
+
+  const scale = useTransform(progress, range, [1, targetScale]);
+
+  return (
+    <div
+      ref={container}
+      className="sticky top-0 flex items-center justify-center"
+    >
+      <motion.div
+        style={{
+          scale,
+          top: `calc(-5vh + ${i * 20 + 250}px)`,
+        }}
+        className="rounded-4xl relative -top-1/4 flex h-[300px] w-[500px] max-w-[calc(100vw-32px)] origin-top flex-col overflow-hidden shadow-2xl"
+      >
+        <img src={src} alt={title} className="h-full w-full object-cover" />
+      </motion.div>
+    </div>
+  );
+};
+
+const Skiper16 = () => {
+  const container = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ["start start", "end end"],
+  });
+
+  return (
+    <ReactLenis root>
+      <main
+        ref={container}
+        style={{ paddingBottom: "calc(-5vh + 360px)" }}
+        className="relative flex w-full flex-col items-center justify-center pt-1"
+      >
+        {projects.map((project, i) => {
+          const targetScale = Math.max(
+            0.5,
+            1 - (projects.length - i - 1) * 0.1,
+          );
+          return (
+            <StickyCard_001
+              key={`p_${i}`}
+              i={i}
+              {...project}
+              progress={scrollYProgress}
+              range={[i * 0.25, 1]}
+              targetScale={targetScale}
+            />
+          );
+        })}
+      </main>
+    </ReactLenis>
+  );
+};
+
+export { Skiper16, StickyCard_001 };
 
 const desktopImages = [
   "/images/events/Agara Lake walk_24 May 2026.jpg",
@@ -125,19 +183,13 @@ function DesktopHero() {
 
 function MobileHero() {
   return (
-    <section className="w-full relative pt-8 pb-16">
-      <div className="relative">
-        {/* Sticky Hero title - stays visible just below navbar on scroll */}
-        <div className="sticky top-[80px] z-[30] w-full flex flex-col items-center justify-center px-4 py-6 text-center gap-2 pointer-events-none">
-          <h1 className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-gray-900 leading-snug max-w-sm mx-auto">
-            Here is a sneak peak into our communities redefining conscious living.
-          </h1>
-        </div>
-        
-        <div className="relative z-10">
-          <CardsParallax items={MOBILE_CARDS} stickyOffset="320px" />
-        </div>
+    <section className="w-full relative pt-10 sm:pt-12 pb-0">
+      <div className="flex items-center justify-center bg-transparent pt-2 pb-0 text-center px-4">
+        <p className="max-w-sm text-base sm:text-lg font-bold text-gray-900 leading-snug text-center px-4">
+          Here is a sneak peak into our communities redefining conscious living.
+        </p>
       </div>
+      <Skiper16 />
     </section>
   );
 }
@@ -147,6 +199,8 @@ export default function HeroSection() {
 
   // Lenis smooth scroll synced with GSAP ScrollTrigger
   useEffect(() => {
+    if (isMobile) return;
+
     const lenis = new Lenis();
     
     lenis.on('scroll', ScrollTrigger.update);
@@ -162,7 +216,7 @@ export default function HeroSection() {
       gsap.ticker.remove(updateGsap);
       lenis.destroy();
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <div className="w-full">

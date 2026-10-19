@@ -9,7 +9,6 @@ import TextAnimation1 from '@/components/TextAnimation1'
 import { NewsletterSection } from '@/features/homepage/newsletter-section'
 import { RelatedArticlesSection } from '@/features/homepage/related-articles'
 import HeroSection from '@/components/HeroSection'
-import { EventsCardsSection } from '@/features/homepage/events-section'
 import DonationBox from '@/components/donation-box'
 import FlowArtDefaultDemo from '@/components/ui/story-scroll-demo'
 import { dummyArticles } from '@/lib/data/landing-data';
@@ -41,10 +40,8 @@ const page = () => {
       <Navbar />
       <main className="flex-1 w-full">
         <Hero />
-        
-<EventsCardsSection />
-<HeroSection />
-        <SectionContainer className="bg-background">
+        <HeroSection />
+        <SectionContainer className="bg-background pt-6 md:pt-24">
           <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-12">
             {[
               { 

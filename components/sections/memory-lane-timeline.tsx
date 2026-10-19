@@ -76,29 +76,28 @@ export function MemoryLaneTimeline({ data }: MemoryLaneTimelineProps) {
 
       const getHeaderOffset = () => (typeof window !== "undefined" && window.innerWidth >= 768 ? 112 : 80);
 
-      // Refresh ScrollTrigger to recalculate exact positions after layout / font settling
-      const handleLoad = () => {
-        ScrollTrigger.refresh();
-      };
-      if (typeof window !== "undefined") {
-        window.addEventListener("load", handleLoad);
-      }
-
-      // Master scrubbed GSAP timeline (pins below the logo/header)
+      // Master scrubbed GSAP timeline
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: () => `top ${getHeaderOffset()}px`,
+          start: () => `top top+=${getHeaderOffset()}px`,
           end: () => `+=${Math.max(totalSlides * 150, 420)}vh`,
           pin: true,
           pinSpacing: true,
-          scrub: 1, // Ultra-smooth scrub with gentle inertia
           anticipatePin: 1,
-          fastScrollEnd: true,
-          preventOverlaps: true,
+          scrub: 0.6,
           invalidateOnRefresh: true,
         },
       });
+
+      // ── Step 0: Smooth Entrance as Pin Locks In ──
+      const revealWrapper = containerRef.current?.querySelector(".memory-lane-reveal-wrapper");
+      if (revealWrapper) {
+        gsap.set(revealWrapper, {
+          willChange: "transform, opacity",
+          transformStyle: "preserve-3d",
+        });
+      }
 
       // ── Step 1: Scroll travels towards 2018 (Text is strictly hidden) ──
       tl.to(
@@ -330,11 +329,42 @@ export function MemoryLaneTimeline({ data }: MemoryLaneTimelineProps) {
         }
       }
 
-      return () => {
-        if (typeof window !== "undefined") {
-          window.removeEventListener("load", handleLoad);
-        }
-      };
+      // ── Step 4: Smooth Exit Outro as Pin Ends ──
+      // When scrolling past the final milestone, smoothly fade and lift the pinned elements
+      // so unpinning into the subsequent section is graceful and seamless.
+      const exitLabel = "exit-out";
+      tl.addLabel(exitLabel);
+
+      const lastIdx = totalSlides - 1;
+      if (textBlocks[lastIdx]) {
+        tl.to(
+          textBlocks[lastIdx],
+          { autoAlpha: 0, y: -30, duration: 0.9, ease: "power2.inOut" },
+          exitLabel
+        );
+      }
+      if (yearItems[lastIdx]) {
+        tl.to(
+          yearItems[lastIdx],
+          { autoAlpha: 0, y: -60, duration: 0.9, ease: "power2.inOut" },
+          exitLabel
+        );
+      }
+      if (backgrounds[lastIdx]) {
+        tl.to(
+          backgrounds[lastIdx],
+          { autoAlpha: 0, scale: 1.04, duration: 1.0, ease: "power2.inOut" },
+          exitLabel
+        );
+      }
+
+      if (revealWrapper) {
+        tl.to(
+          revealWrapper,
+          { autoAlpha: 0, y: -40, duration: 1.0, ease: "power2.inOut" },
+          `${exitLabel}+=0.1`
+        );
+      }
     },
     { scope: containerRef, dependencies: [data] }
   );
@@ -342,9 +372,9 @@ export function MemoryLaneTimeline({ data }: MemoryLaneTimelineProps) {
   return (
     <div 
       ref={containerRef} 
-      className="relative w-full h-[calc(100vh-5rem)] md:h-[calc(100vh-7rem)] overflow-hidden bg-black"
+      className="relative z-10 w-full h-[calc(100vh-5rem)] md:h-[calc(100vh-7rem)] overflow-hidden bg-black"
     >
-        <div className="memory-lane-reveal-wrapper relative w-full h-full">
+        <div className="memory-lane-reveal-wrapper relative w-full h-full will-change-transform">
           {/* Fixed Memory Lane Label */}
           <div className="absolute top-6 left-6 md:top-8 md:left-10 z-50 pointer-events-none">
             <span className="uppercase tracking-widest text-xs sm:text-sm md:text-base text-white/70 font-medium">

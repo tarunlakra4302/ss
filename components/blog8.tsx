@@ -36,7 +36,7 @@ const Blog8 = ({
       published: "Mar 21, 2023",
       readTime: "4 min read",
       url: "/blog/sustainability-and-why-you-should-care-about-it",
-      image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop",
+      image: "/gallery/1.jpeg",
       tags: ["Sustainability", "Eco Friendly", "Zero Waste"],
     },
     {
@@ -48,7 +48,7 @@ const Blog8 = ({
       published: "Mar 28, 2023",
       readTime: "3 min read",
       url: "/blog/the-culture-of-free-and-sustainability",
-      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2070&auto=format&fit=crop",
+      image: "/gallery/2.jpeg",
       tags: ["Fast Fashion", "Sustainability", "Free", "Overconsumption", "Capitalism"],
     },
     {
@@ -60,7 +60,7 @@ const Blog8 = ({
       published: "Sep 27, 2023",
       readTime: "4 min read",
       url: "/blog/a-note-to-current-and-future-parents",
-      image: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=2070&auto=format&fit=crop",
+      image: "/gallery/3.jpeg",
       tags: ["Sustainability", "Parents", "Children", "Climate Change", "Earth"],
     },
   ],
