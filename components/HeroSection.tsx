@@ -66,7 +66,7 @@ const StickyCard_001 = ({
         }}
         className="rounded-4xl relative -top-1/4 flex h-[300px] w-[500px] max-w-[calc(100vw-32px)] origin-top flex-col overflow-hidden shadow-2xl"
       >
-        <img src={src} alt={title} className="h-full w-full object-cover" />
+        <Image src={src} alt={title} fill sizes="(max-width: 768px) 100vw, 500px" className="object-cover" />
       </motion.div>
     </div>
   );

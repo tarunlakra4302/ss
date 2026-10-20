@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import FlowArt, { FlowSection } from '@/components/ui/story-scroll';
 
@@ -28,10 +29,12 @@ export default function FlowArtDefaultDemo() {
             className="relative w-full max-w-[340px] xs:max-w-[360px] sm:max-w-[380px] md:w-[360px] lg:w-[380px] h-[390px] xs:h-[430px] sm:h-[470px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0 bg-black"
           >
             {/* Full-bleed translucent background image */}
-            <img
+            <Image
               src="/images/volunteer/General volunteer.jpeg"
               alt="Volunteer"
-              className="w-full h-full object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
+              fill
+              sizes="(max-width: 768px) 340px, 380px"
+              className="object-cover opacity-80 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
             />
 
             {/* Contrast Overlay */}
@@ -83,10 +86,12 @@ export default function FlowArtDefaultDemo() {
             className="relative w-full max-w-[340px] xs:max-w-[360px] sm:max-w-[380px] md:w-[360px] lg:w-[380px] h-[390px] xs:h-[430px] sm:h-[470px] md:h-[520px] aspect-[3/4] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shrink-0"
           >
             {/* Full-bleed background image */}
-            <img
+            <Image
               src="/gallery/1.jpeg"
               alt="Sustainable Architecture Innovations"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              fill
+              sizes="(max-width: 768px) 340px, 380px"
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
             />
 
             {/* Top Gradient Overlay */}

@@ -241,12 +241,11 @@ export function Hero() {
           muted
           playsInline
           {...{ "webkit-playsinline": "true" }}
-          preload="auto"
+          preload="metadata"
           poster="/videos/hero-bg-poster.jpg"
           className="w-full h-full object-cover"
         >
           <source src="/videos/hero-bg.mp4" type="video/mp4" />
-          <source src="/images/events/Children%20at%20Sapling%20Care%20%281%29.MOV" type="video/quicktime" />
         </video>
         {/* Cinematic dark overlay for text contrast */}
         <div className="absolute inset-0 bg-black/50" />

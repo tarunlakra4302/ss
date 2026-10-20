@@ -1,13 +1,8 @@
-import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { getEvent } from "@/lib/events/catalog";
 import { checkRateLimit } from "@/lib/rate-limit";
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+import { getRazorpayClient } from "@/lib/razorpay";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,6 +39,7 @@ export async function POST(req: NextRequest) {
     // Server-computed amount — never trust the client
     const amountINR = event.pricePerTicket * qty;
 
+    const razorpay = getRazorpayClient();
     const order = await razorpay.orders.create({
       amount: amountINR * 100, // paise
       currency: "INR",
@@ -56,11 +52,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      orderId: order.id,
-      amount: order.amount,
-      eventId,
-    });
+    return NextResponse.json(
+      {
+        orderId: order.id,
+        amount: order.amount,
+        eventId,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-store, must-revalidate",
+          ...rateStatus.headers,
+        },
+      }
+    );
   } catch (err) {
     console.error("Order creation failed:", err);
     return NextResponse.json(

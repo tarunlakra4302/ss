@@ -147,20 +147,6 @@ export function EventDetail({ slug }: EventDetailProps) {
 
     setSubmitState('loading');
 
-    try {
-      await fetch("/api/forms/submit-to-sheet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          formType: 'donation',
-          amount: Number(donationAmount),
-          donationTime: new Date().toLocaleString(),
-        }),
-      });
-    } catch (e) {
-      console.warn('Failed to submit event donation to Google Sheets:', e);
-    }
-
     // Donations use the donate API directly (free-form amount)
     try {
       const orderRes = await fetch("/api/donate/create-order", {

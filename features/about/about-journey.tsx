@@ -2,7 +2,12 @@
 
 import { useRef, useState, useEffect } from "react";
 import { useScroll } from "framer-motion";
-import InfiniteGallery from "@/components/ui/gallery-photography";
+import dynamic from "next/dynamic";
+
+const InfiniteGallery = dynamic(() => import("@/components/ui/gallery-photography"), {
+  ssr: false,
+  loading: () => <div className="w-full h-full bg-white flex items-center justify-center" />,
+});
 
 interface Image {
   src: string;

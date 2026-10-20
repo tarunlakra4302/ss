@@ -13,6 +13,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://sustainablesundays.in"),
   title: "Sustainable Sundays",
   description: "Sustainable Sundays",
   icons: {
@@ -32,7 +33,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <link rel="preload" as="image" href="/ss%20preloader%20images/1.jpeg" />
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/font-share/v2/css?f[]=nohemi@400,500,600,700,800,900&display=swap" />
       </head>
       <body
@@ -49,7 +51,7 @@ export default function RootLayout({
         </PageTransitionProvider>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>

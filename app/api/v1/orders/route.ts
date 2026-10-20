@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { CreateOrderSchema } from '@/lib/schemas';
 import { checkRateLimit } from '@/lib/rate-limit';
 import { getCachedIdempotentResponse, saveIdempotentResponse } from '@/lib/idempotency';
 import { badRequest, tooManyRequests, internalServerError } from '@/lib/errors';
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
-});
+import { getRazorpayClient } from '@/lib/razorpay';
 
 export async function POST(req: NextRequest) {
   const instancePath = '/api/v1/orders';
@@ -61,6 +56,7 @@ export async function POST(req: NextRequest) {
     const { amount, currency, purpose, quantity, note } = validationResult.data;
 
     // 4. Create Razorpay Order
+    const razorpay = getRazorpayClient();
     const receiptId = `rcpt_${crypto.randomBytes(8).toString('hex')}`;
     const order = await razorpay.orders.create({
       amount,

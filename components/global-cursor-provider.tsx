@@ -73,6 +73,11 @@ export function GlobalCursorProvider({ children }: { children: React.ReactNode }
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      const now = performance.now();
+      // Throttle DOM calculations to ~60ms (plenty fast for cursor contrast, zero main-thread hitching)
+      if (now - lastCheckedTime < 60) return;
+      lastCheckedTime = now;
+
       // 1. Hero section boundary detection for target pages (only if menu is closed)
       if (isTargetPage && !isNavMenuOpen()) {
         const heroEl = findHeroElement();
@@ -91,34 +96,25 @@ export function GlobalCursorProvider({ children }: { children: React.ReactNode }
         setIsInHeroSection(false);
       }
 
-      // 2. Sample background color under cursor (throttled to ~50ms for performance)
-      const now = performance.now();
-      if (now - lastCheckedTime > 40) {
-        lastCheckedTime = now;
-
-        const el = document.elementFromPoint(e.clientX, e.clientY);
-        if (el) {
-          // Walk up DOM tree to find first non-transparent background color or dark mode container
+      // 2. Sample background color under cursor using fast selector first
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el) {
+        if (el.closest('[data-theme="dark"], .dark, [data-mode="dark"]')) {
+          setIsDarkBg(true);
+        } else {
+          // Walk up at most 3 levels to avoid deep DOM traversal
           let curr: HTMLElement | null = el as HTMLElement;
           let detectedDark = false;
+          let depth = 0;
 
-          while (curr && curr !== document.body && curr !== document.documentElement) {
-            // Check for explicit dark theme markers
-            if (
-              curr.classList.contains('dark') ||
-              curr.getAttribute('data-theme') === 'dark' ||
-              curr.getAttribute('data-mode') === 'dark'
-            ) {
-              detectedDark = true;
-              break;
-            }
-
-            const bg = window.getComputedStyle(curr).backgroundColor;
+          while (curr && curr !== document.body && depth < 3) {
+            const bg = curr.style.backgroundColor || window.getComputedStyle(curr).backgroundColor;
             if (bg && bg !== 'transparent' && bg !== 'rgba(0, 0, 0, 0)') {
               detectedDark = isColorDark(bg);
               break;
             }
             curr = curr.parentElement;
+            depth++;
           }
 
           setIsDarkBg(detectedDark);
@@ -159,7 +155,7 @@ export function GlobalCursorProvider({ children }: { children: React.ReactNode }
       {children}
       <Cursor>
         <svg
-          className={`size-6 transition-colors duration-200 ${
+          className={`size-6 -translate-x-[1px] -translate-y-[1.5px] transition-colors duration-200 ${
             isDarkBg
               ? 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
               : 'text-black drop-shadow-[0_2px_4px_rgba(255,255,255,0.4)]'

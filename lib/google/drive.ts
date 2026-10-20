@@ -13,7 +13,7 @@ const DRIVE_FOLDER_ID = process.env.GOOGLE_DRIVE_FOLDER_ID;
  * Sets the file to be viewable by anyone with the link (configurable).
  */
 export async function uploadToDrive(file: Buffer | ArrayBuffer, fileName: string, mimeType: string = 'image/png') {
-  const drive = getDriveClient();
+  const drive = await getDriveClient();
 
   if (!DRIVE_FOLDER_ID) {
     throw new Error('GOOGLE_DRIVE_FOLDER_ID is missing in the environment.');

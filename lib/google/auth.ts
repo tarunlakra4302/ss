@@ -1,15 +1,23 @@
-import { google } from 'googleapis';
-import { GoogleAuthCredentials } from '@/types/forms';
+import type { GoogleAuthCredentials } from '@/types/forms';
 
 /**
- * Singleton Google Auth Client.
- * Ensures only one instance of the auth object is created for the server lifecycle.
- * Securely handles line-break formatting in private keys from .env.local.
+ * Singleton Google Auth Client with Deferred/Lazy Loading.
+ * Eliminates top-level parsing of the 60MB `googleapis` library on module load,
+ * dropping serverless cold-start initialization time by hundreds of milliseconds.
  */
 
-let authInstance: InstanceType<typeof google.auth.JWT> | null = null;
+let authInstance: any = null;
+let googleApi: typeof import('googleapis').google | null = null;
 
-export const getGoogleAuth = () => {
+async function getGoogle() {
+  if (!googleApi) {
+    const { google } = await import('googleapis');
+    googleApi = google;
+  }
+  return googleApi;
+}
+
+export const getGoogleAuth = async () => {
   if (authInstance) return authInstance;
 
   const client_email = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
@@ -19,6 +27,8 @@ export const getGoogleAuth = () => {
   if (!client_email || !private_key) {
     throw new Error('Missing Google Auth environment variables.');
   }
+
+  const google = await getGoogle();
 
   try {
     authInstance = new google.auth.JWT({
@@ -40,15 +50,17 @@ export const getGoogleAuth = () => {
 /**
  * Convenience method to get a Sheets client instance
  */
-export const getSheetsClient = () => {
-  const auth = getGoogleAuth();
+export const getSheetsClient = async () => {
+  const auth = await getGoogleAuth();
+  const google = await getGoogle();
   return google.sheets({ version: 'v4', auth });
 };
 
 /**
  * Convenience method to get a Drive client instance
  */
-export const getDriveClient = () => {
-  const auth = getGoogleAuth();
+export const getDriveClient = async () => {
+  const auth = await getGoogleAuth();
+  const google = await getGoogle();
   return google.drive({ version: 'v3', auth });
 };

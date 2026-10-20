@@ -19,22 +19,6 @@ export function useDonation(options: UseDonationOptions = {}) {
     setError(null);
     setIsLoading(true);
 
-    // Record donation to Google Sheets via server proxy in background
-    fetch("/api/forms/submit-to-sheet", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        formType: "donation",
-        amount: Number(amount),
-        donationTime: new Date().toLocaleString(),
-        note: note || "",
-        donorName: options.donorName || "",
-        donorEmail: options.donorEmail || "",
-        donorPhone: options.donorPhone || "",
-      }),
-    }).catch((e) => console.warn("Failed to log donation to Google Sheets:", e));
-
 
     try {
       router.prefetch("/success");

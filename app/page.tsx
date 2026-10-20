@@ -7,11 +7,9 @@ import { Hero } from '@/features/homepage/hero'
 import { Navbar } from '@/components/navigation/navbar'
 import TextAnimation1 from '@/components/TextAnimation1'
 import { NewsletterSection } from '@/features/homepage/newsletter-section'
-import { RelatedArticlesSection } from '@/features/homepage/related-articles'
 import HeroSection from '@/components/HeroSection'
 import DonationBox from '@/components/donation-box'
 import FlowArtDefaultDemo from '@/components/ui/story-scroll-demo'
-import { dummyArticles } from '@/lib/data/landing-data';
 import { TypographySection } from '@/components/sections/typography-section';
   
 const page = () => {

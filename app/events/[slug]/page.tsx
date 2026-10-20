@@ -3,7 +3,15 @@ import { EventDetail } from "@/features/event/event-detail";
 import { Metadata } from "next";
 import { Navbar } from "@/components/navigation/navbar";
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export function generateStaticParams() {
+  return [
+    { slug: "edible-gardening-workshop" },
+    { slug: "sustainable-market" },
+    { slug: "plogging" },
+  ];
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   return {
     title: `${slug.replace(/-/g, ' ').toUpperCase()} | Sustainable Sundays`,
@@ -11,7 +19,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   return (
     <div className="flex-1 w-full bg-white">

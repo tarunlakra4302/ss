@@ -84,7 +84,7 @@ export async function appendToSheet(tabName: string, rowData: (string | number |
   }
 
   try {
-    const sheets = getSheetsClient();
+    const sheets = await getSheetsClient();
     const response = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID!,
       range: `${tabName}!A1`,
@@ -120,7 +120,7 @@ export async function appendToSheet(tabName: string, rowData: (string | number |
  * Utility: Initialize sheet with headers if completely empty
  */
 export async function ensureSheetHeaders(tabName: string, headers: string[]) {
-  const sheets = getSheetsClient();
+  const sheets = await getSheetsClient();
   const range = `${tabName}!A1:Z1`;
 
   try {

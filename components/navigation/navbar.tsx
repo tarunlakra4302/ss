@@ -204,82 +204,23 @@ export function Navbar({ hideLogo = false, hideMenuText = false }: NavbarProps =
     let lastScrollY = window.scrollY;
     let rafId: number | null = null;
 
-    const getColorBrightness = (colorStr: string): number | null => {
-      if (!colorStr || colorStr === "transparent" || colorStr === "rgba(0, 0, 0, 0)") {
-        return null;
-      }
-
-      // 1. Standard rgb/rgba format: rgb(r, g, b) or rgba(r, g, b, a)
-      const rgbMatch = colorStr.match(/^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)/i);
-      if (rgbMatch) {
-        const r = parseFloat(rgbMatch[1]);
-        const g = parseFloat(rgbMatch[2]);
-        const b = parseFloat(rgbMatch[3]);
-        return (r * 299 + g * 587 + b * 114) / 1000;
-      }
-
-      // 2. oklch(L C H ...) where L is lightness 0..1 or 0%..100%
-      const oklchMatch = colorStr.match(/^oklch\(\s*([\d.]+%?)/i);
-      if (oklchMatch) {
-        let l = parseFloat(oklchMatch[1]);
-        if (oklchMatch[1].endsWith("%")) l = l / 100;
-        return l * 255;
-      }
-
-      // 3. Fallback using temporary canvas for other modern CSS formats
-      try {
-        const canvas = document.createElement("canvas");
-        canvas.width = 1;
-        canvas.height = 1;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.fillStyle = colorStr;
-          ctx.fillRect(0, 0, 1, 1);
-          const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
-          if (a === 0) return null;
-          return (r * 299 + g * 587 + b * 114) / 1000;
-        }
-      } catch {
-        // Fallback gracefully
-      }
-
-      return null;
-    };
-
     const detectBackground = (headerWrapper: HTMLElement | null) => {
-      const checkPointX = window.innerWidth - 80;
       const checkPointY = 40;
-      const menuContainer = document.querySelector('.fullscreen-menu-container') as HTMLElement | null;
-
-      // Temporarily hide fixed overlays so elementFromPoint hits actual page content
-      if (headerWrapper) headerWrapper.style.visibility = 'hidden';
-      if (menuContainer) menuContainer.style.visibility = 'hidden';
-
-      const elementAtPoint = document.elementFromPoint(checkPointX, checkPointY);
-
-      if (headerWrapper) headerWrapper.style.visibility = '';
-      if (menuContainer) menuContainer.style.visibility = '';
-
       let foundDark = false;
-      if (elementAtPoint) {
-        const darkParent = elementAtPoint.closest('[data-theme="dark"]');
-        if (darkParent) {
+
+      // Fast, zero-stall geometry check: query dark-themed sections without touching visibility or canvas
+      const darkSections = document.querySelectorAll<HTMLElement>(
+        '[data-theme="dark"], .dark, [data-mode="dark"], #donation-section'
+      );
+
+      for (let i = 0; i < darkSections.length; i++) {
+        const rect = darkSections[i].getBoundingClientRect();
+        if (rect.top <= checkPointY && rect.bottom >= checkPointY) {
           foundDark = true;
-        } else {
-          let currentEl: HTMLElement | null = elementAtPoint as HTMLElement;
-          while (currentEl && currentEl !== document.documentElement) {
-            const bg = window.getComputedStyle(currentEl).backgroundColor;
-            const brightness = getColorBrightness(bg);
-            if (brightness !== null) {
-              if (brightness < 128) foundDark = true;
-              break;
-            }
-            currentEl = currentEl.parentElement;
-          }
+          break;
         }
       }
 
-      // Direct DOM toggle for theme — zero lag
       if (headerWrapper) {
         headerWrapper.classList.toggle('is-dark-bg', foundDark);
       }

@@ -1,12 +1,7 @@
-import Razorpay from "razorpay";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { checkRateLimit } from "@/lib/rate-limit";
-
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+import { getRazorpayClient } from "@/lib/razorpay";
 
 // Donation bounds (INR)
 const MIN_DONATION_INR = 1;
@@ -38,6 +33,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const razorpay = getRazorpayClient();
     const order = await razorpay.orders.create({
       amount: amountNum * 100, // convert to paise
       currency: "INR",
@@ -48,10 +44,18 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({
-      orderId: order.id,
-      amount: order.amount,
-    });
+    return NextResponse.json(
+      {
+        orderId: order.id,
+        amount: order.amount,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, no-cache, no-store, must-revalidate",
+          ...rateStatus.headers,
+        },
+      }
+    );
   } catch (err) {
     console.error("Razorpay order creation failed:", err);
     return NextResponse.json(

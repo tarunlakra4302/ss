@@ -135,7 +135,10 @@ export function EventCalendar() {
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
-  const [selectedKey, setSelectedKey] = useState<string | null>('2026-10-25');
+  const [selectedKey, setSelectedKey] = useState<string | null>(() =>
+    toKey(today.getFullYear(), today.getMonth(), today.getDate())
+  );
+  const isInitialMountRef = useRef(true);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -190,6 +193,10 @@ export function EventCalendar() {
 
   // Mobile Scroll-to-Panel Animation
   useGSAP(() => {
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false;
+      return;
+    }
     if (!selectedKey || !panelRef.current) return;
     
     const mm = gsap.matchMedia();

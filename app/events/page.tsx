@@ -126,7 +126,7 @@ const EventsPage = () => {
               ref={titleRef}
               className="w-full text-left mb-6 md:mb-8 lg:mb-10 will-change-transform opacity-0"
             >
-              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-[#98A869] select-none font-heading">
+              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-black select-none font-heading">
                 Upcoming Events
               </h1>
             </div>
@@ -135,7 +135,7 @@ const EventsPage = () => {
               ref={subtitleRef}
               className="w-full flow-root overflow-hidden will-change-transform opacity-0"
             >
-              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-normal text-[#664569] leading-tight tracking-tight m-0 p-0">
+              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-normal text-black leading-tight tracking-tight m-0 p-0">
                 Real change happens offline. Find a local project, roll up your sleeves, and make this weekend count.
               </p>
             </div>

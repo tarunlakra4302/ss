@@ -223,7 +223,7 @@ const AboutPage = () => {
               style={{ opacity: 0, visibility: "hidden" }}
               className="w-full text-left mb-3 md:mb-4 lg:mb-6 will-change-transform"
             >
-              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-[#990000] select-none font-heading">
+              <h1 className="text-[clamp(3.5rem,12vw,14rem)] font-bold tracking-tight leading-[0.92] text-black select-none font-heading">
                 About Us
               </h1>
             </div>
@@ -233,7 +233,7 @@ const AboutPage = () => {
               style={{ opacity: 0, visibility: "hidden" }}
               className="w-full text-left will-change-transform"
             >
-              <p className="text-[11px] sm:text-[13px] md:text-[15px] lg:text-[19px] font-normal text-gray-500 leading-snug tracking-tight m-0 p-0 text-left">
+              <p className="text-[11px] sm:text-[13px] md:text-[15px] lg:text-[19px] font-normal text-black leading-snug tracking-tight m-0 p-0 text-left">
                 Here is a sneak peak into our communities redefining conscious living.
               </p>
             </div>

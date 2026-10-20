@@ -4,6 +4,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -173,7 +174,7 @@ const Carousel_006 = ({
               }}
               className="h-full w-full overflow-hidden rounded-3xl"
             >
-              <div className="relative h-full w-full border bg-neutral-900">
+              <div className="relative h-full w-full border bg-neutral-900 overflow-hidden">
                 {item.type === "video" || item.src.endsWith(".MOV") || item.src.endsWith(".mp4") ? (
                   <video
                     src={item.src}
@@ -181,13 +182,17 @@ const Carousel_006 = ({
                     loop
                     muted
                     playsInline
+                    preload="metadata"
                     className="h-full w-full scale-105 object-cover"
                   />
                 ) : (
-                  <img
+                  <Image
                     src={item.src}
                     alt={item.alt}
-                    className="h-full w-full scale-105 object-cover"
+                    fill
+                    sizes="(max-width: 640px) 73vw, (max-width: 768px) 50vw, (max-width: 1024px) 30vw, 21vw"
+                    loading={index < 3 ? "eager" : "lazy"}
+                    className="scale-105 object-cover"
                   />
                 )}
               </div>

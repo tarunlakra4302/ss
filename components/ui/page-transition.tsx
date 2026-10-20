@@ -294,6 +294,11 @@ export function PageTransitionProvider({
         return;
       }
 
+      // Prefetch destination immediately to parallelize network fetch with animation
+      try {
+        router.prefetch(href);
+      } catch (_) {}
+
       const paths = getBlackCurtainClipPaths(activeVariant, activeStart);
       const ease = gsap.parseEase("awwwardsEase") ? "awwwardsEase" : "power4.inOut";
 
@@ -319,7 +324,7 @@ export function PageTransitionProvider({
 
       tl.to(curtain, {
         clipPath: paths.covered,
-        duration: 0.42,
+        duration: 0.36,
         ease: ease as any,
         filter: activeBlur ? "blur(2px)" : "none",
       });
@@ -327,8 +332,27 @@ export function PageTransitionProvider({
     [router, variant, start, blur]
   );
 
-  // Global click interceptor for standard Next.js Link / <a> tags
+  // Global click & hover prefetch interceptor for standard Next.js Link / <a> tags
   useEffect(() => {
+    const handlePointerOver = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      const anchor = target?.closest("a");
+      if (!anchor) return;
+      const href = anchor.getAttribute("href");
+      if (
+        href &&
+        !href.startsWith("#") &&
+        !href.startsWith("mailto:") &&
+        !href.startsWith("tel:") &&
+        !href.startsWith("blob:") &&
+        !href.startsWith("http")
+      ) {
+        try {
+          router.prefetch(href);
+        } catch (_) {}
+      }
+    };
+
     const handleClick = (event: MouseEvent) => {
       if (
         event.defaultPrevented ||
@@ -396,11 +420,13 @@ export function PageTransitionProvider({
       }
     };
 
+    document.addEventListener("mouseover", handlePointerOver, { passive: true });
     document.addEventListener("click", handleClick, true);
     return () => {
+      document.removeEventListener("mouseover", handlePointerOver);
       document.removeEventListener("click", handleClick, true);
     };
-  }, [navigateWithTransition, variant, start, blur, gifUrl]);
+  }, [navigateWithTransition, router, variant, start, blur, gifUrl]);
 
   return (
     <PageTransitionContext.Provider value={{ navigateWithTransition, isTransitioning }}>

@@ -114,18 +114,6 @@ export default function EventCheckout() {
     }
     setIsLoading(true);
 
-    // Non-blocking donation logging with keepalive
-    fetch("/api/forms/submit-to-sheet", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        formType: "donation",
-        amount: Number(amount),
-        donationTime: new Date().toLocaleString(),
-      }),
-    }).catch((e) => console.warn("Failed to submit donation to Google Sheets:", e));
-
     try {
       router.prefetch("/donate/success");
     } catch (_) {}

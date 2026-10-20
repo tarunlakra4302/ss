@@ -35,6 +35,7 @@ export async function submitToGoogleScript(payload: Record<string, any>): Promis
         "Content-Type": "text/plain;charset=utf-8",
       },
       body: JSON.stringify(formattedPayload),
+      signal: AbortSignal.timeout(8000),
     });
 
     const text = await response.text();
